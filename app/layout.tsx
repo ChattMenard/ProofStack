@@ -1,0 +1,29 @@
+import '../styles/globals.css'
+import { ReactNode } from 'react'
+import SupabaseWarning from '../components/SupabaseWarning'
+import UserProfile from '../components/UserProfile'
+
+export const metadata = {
+  title: 'ProofStack - Verified Skills Portfolio',
+}
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <div className="max-w-4xl mx-auto p-6">
+          <header className="mb-6 flex justify-between items-center">
+            <h1 className="text-2xl font-semibold">ProofStack (Demo)</h1>
+            <div>
+              <UserProfile />
+            </div>
+          </header>
+          <main>
+            <SupabaseWarning />
+            {children}
+          </main>
+        </div>
+      </body>
+    </html>
+  )
+}

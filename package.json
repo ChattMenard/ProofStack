@@ -1,0 +1,27 @@
+{
+  "name": "proofstack-starter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "check-tasks": "python tools/check_tasks.py",
+    "worker": "node workers/analyzeSample.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.0.0",
+    "next": "^14.2.33",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "autoprefixer": "^10.0.0",
+    "node-fetch": "2.6.9",
+  "postcss": "^8.0.0",
+  "tailwindcss": "^3.4.8",
+    "typescript": "^5.0.0"
+  }
+}
