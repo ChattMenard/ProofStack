@@ -7,11 +7,15 @@ const MAX_BATCH = parseInt(process.env.WORKER_BATCH || '5', 10)
 const MAX_RETRIES = parseInt(process.env.WORKER_MAX_RETRIES || '3', 10)
 
 async function processAnalysis(a: any) {
-  console.log('Processing analysis', a.id)
+  console.log('Processing analysis', a.id, 'for sample', a.sample_id)
   const id = a.id
 
   // mark running
-  await supabaseServer.from('analyses').update({ status: 'running', started_at: new Date().toISOString() }).eq('id', id)
+  const { error: updateError } = await supabaseServer.from('analyses').update({ status: 'running', started_at: new Date().toISOString() }).eq('id', id)
+  if (updateError) {
+    console.error('Failed to mark analysis as running:', updateError)
+    return
+  }
 
   // Read current metrics
   const { data: fresh } = await supabaseServer.from('analyses').select('metrics').eq('id', id).single()
@@ -45,7 +49,15 @@ async function processAnalysis(a: any) {
       skills = { javascript: { confidence: 0.8, evidence: [{ type: 'sample', id: a.sample_id }] } }
     }
 
-    await supabaseServer.from('analyses').update({ status: 'done', summary: 'Analysis complete', skills, finished_at: new Date().toISOString(), metrics: { ...metrics, retry_count: retries } }).eq('id', id)
+    const result = { skills, summary: 'Analysis complete', processed_at: new Date().toISOString() }
+    await supabaseServer.from('analyses').update({ 
+      status: 'done', 
+      summary: 'Analysis complete', 
+      result,
+      skills, 
+      completed_at: new Date().toISOString(), 
+      metrics: { ...metrics, retry_count: retries } 
+    }).eq('id', id)
     console.log('Analysis completed', id)
   } catch (err) {
     console.error('Worker error', err)
@@ -66,13 +78,16 @@ async function pollLoop() {
   console.log('Worker: starting poll loop, polling every', POLL_INTERVAL_MS, 'ms')
   while (true) {
     try {
+      // Find queued analyses OR running analyses that are stuck (started > 5 min ago)
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
       const { data: queued } = await supabaseServer
         .from('analyses')
         .select('*')
-        .in('status', ['queued'])
+        .or(`status.eq.queued,and(status.eq.running,started_at.lt.${fiveMinutesAgo})`)
         .limit(MAX_BATCH)
 
       if (queued && queued.length > 0) {
+        console.log(`Found ${queued.length} analysis job(s) to process`)
         for (const a of queued) {
           // defensive: process each without await blocking the entire loop
           // but to simplify, we'll await sequentially to avoid concurrency issues

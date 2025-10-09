@@ -23,8 +23,8 @@ High-level milestones
 4. Month3 - Growth & GTM
 5. Month6 - B2B/enterprise features
 
-Milestone: Week0 — Project scaffold (Done: partial)
---------------------------------------------------
+Milestone: Week0 — Project scaffold ✅ COMPLETE
+------------------------------------------------
 
 - [x] Create Next.js 14 + Tailwind scaffold (`package.json`, `next.config.js`, `tailwind.config.js`, `postcss.config.js`) — @matt - 0.5d
 - [x] Add global styles (`styles/globals.css`) — @matt - 0.25d
@@ -32,6 +32,19 @@ Milestone: Week0 — Project scaffold (Done: partial)
 - [x] Create Python `.venv` & upgrade pip tools (for LLM helpers) — @matt - 0.25d
 - [x] Add `supabase/schema.sql` with base tables — @matt - 0.5d
 - [x] Create a minimal `app/` home page and layout — @matt - 1d
+- [x] E2E verification complete (DB + worker + analysis pipeline) — @matt - 1d
+
+Progress: E2E verification ✅ COMPLETE
+--------------------------------------
+
+- [x] Schema applied to Supabase project — @matt - DONE (2025-10-09)
+- [x] Test sample inserted via REST API — @matt - DONE (sample ID: 19711bde-0cd0-413a-ab2d-ec472bd8be12)
+- [x] Queued analysis created — @matt - DONE (analysis ID: 1ca7637b-9c35-41e0-bdf1-2801cd9a3281)
+- [x] Worker successfully connected and picked up queued job — @matt - DONE
+- [x] Worker completes analysis and writes result — @matt - DONE (2025-10-09)
+  - ✅ Analysis completed with status="done", result contains skills extraction
+  - ✅ Worker properly handles stuck/running jobs (5min timeout retry logic)
+  - ✅ Full pipeline verified: sample → queued analysis → worker processing → completed result
 
 Milestone: Week1 — Core auth, upload, queue, simple analysis
 -----------------------------------------------------------
