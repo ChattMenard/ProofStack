@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import supabaseServer from '../../lib/supabaseServer'
 import requireAuth from '../../lib/requireAuth'
+import cloudinary from '../../lib/cloudinaryClient'
 
 const ALLOWED_TYPES = ['writing', 'code', 'design', 'audio', 'video', 'repo']
 
@@ -10,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const user = await requireAuth(req, res)
   if (!user) return
 
-  const { type = 'writing', filename, storage_url, source_url, size_bytes, hash, content } = req.body
+  const { type = 'writing', filename, storage_url, source_url, size_bytes, hash, content, fileData } = req.body
 
   // normalize size
   const size = typeof size_bytes === 'string' ? parseInt(size_bytes, 10) : typeof size_bytes === 'number' ? size_bytes : 0
@@ -20,14 +21,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // validate type
   if (!ALLOWED_TYPES.includes(type)) return res.status(400).json({ error: 'Invalid sample type' })
 
-  // require either inline content or storage_url
-  if (!content && !storage_url) return res.status(400).json({ error: 'Missing content or storage_url' })
+  // require either inline content, fileData, or storage_url
+  if (!content && !fileData && !storage_url) return res.status(400).json({ error: 'Missing content, fileData, or storage_url' })
 
   try {
+    let uploadedUrl = storage_url ?? null
+    // If fileData is present, upload to Cloudinary
+    if (fileData) {
+      // fileData is a base64 data URL
+      const uploadRes = await cloudinary.uploader.upload(fileData, {
+        resource_type: 'auto',
+        folder: 'proofstack',
+        public_id: filename ? filename.split('.')[0] : undefined,
+      })
+      uploadedUrl = uploadRes.secure_url
+    }
+
     // insert sample using owner_id to match schema
     const { data: sample, error: sampleErr } = await supabaseServer
       .from('samples')
-      .insert({ owner_id: user.id, type, filename: filename ?? null, storage_url: storage_url ?? null, source_url: source_url ?? null, size_bytes: size, hash: hash ?? null, content: content ?? null })
+      .insert({ owner_id: user.id, type, filename: filename ?? null, storage_url: uploadedUrl, source_url: source_url ?? null, size_bytes: size, hash: hash ?? null, content: content ?? null })
       .select('*')
       .single()
 
