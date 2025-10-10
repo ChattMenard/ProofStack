@@ -22,6 +22,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SupabaseWarning />
             {children}
           </main>
+          <footer className="mt-12 pt-6 border-t border-gray-200">
+            <div className="flex justify-center items-center space-x-2 text-sm text-gray-600">
+              <span>Powered by</span>
+              <img 
+                src="/brand-assets/supabase-logo-wordmark--dark.png" 
+                alt="Supabase" 
+                className="h-5" 
+              />
+            </div>
+          </footer>
         </div>
       </body>
     </html>

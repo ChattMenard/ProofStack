@@ -8,10 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "check-tasks": "python tools/check_tasks.py",
-    "worker": "node workers/analyzeSample.ts"
+    "worker": "npx tsx workers/analyzeSample.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.0.0",
+    "dotenv": "^17.2.3",
     "next": "^14.2.33",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -20,8 +21,8 @@
     "@types/react": "19.2.2",
     "autoprefixer": "^10.0.0",
     "node-fetch": "2.6.9",
-  "postcss": "^8.0.0",
-  "tailwindcss": "^3.4.8",
+    "postcss": "^8.0.0",
+    "tailwindcss": "^3.4.8",
     "typescript": "^5.0.0"
   }
 }

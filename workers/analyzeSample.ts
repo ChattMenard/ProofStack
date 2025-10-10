@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import supabaseServer from '../lib/supabaseServer'
-import { analyzeWithOllama } from '../lib/ollamaClient'
+import extractSkillsFromText, { type ExtractedSkill } from '../lib/ai/skillExtractor'
+import analyzeRepo from '../lib/analyzers/githubAnalyzer'
 
 const POLL_INTERVAL_MS = parseInt(process.env.WORKER_POLL_MS || '5000', 10)
 const MAX_BATCH = parseInt(process.env.WORKER_BATCH || '5', 10)
@@ -17,36 +18,45 @@ async function processAnalysis(a: any) {
     return
   }
 
-  // Read current metrics
+    // Read current metrics
   const { data: fresh } = await supabaseServer.from('analyses').select('metrics').eq('id', id).single()
   let metrics = fresh?.metrics ?? {}
   let retries = Number(metrics?.retry_count ?? 0)
 
   try {
-    let skills = null
-    const { data: sampleRow } = await supabaseServer.from('samples').select('content').eq('id', a.sample_id).single()
+    let skills: ExtractedSkill[] | null = null
+    const { data: sampleRow } = await supabaseServer.from('samples').select('content, owner_id, type, source_url').eq('id', a.sample_id).single()
     const content = sampleRow?.content ?? ''
+    const userId = sampleRow?.owner_id
+    const type = sampleRow?.type
+    const sourceUrl = sampleRow?.source_url
 
-    if (process.env.OLLAMA_URL) {
-      try {
-        const prompt = `Extract top skills as a JSON object with confidence between 0-1 and evidence.\n\nContent:\n${content}`
-        const oresp: any = await analyzeWithOllama(prompt)
-        // Try to extract JSON from response. Ollama output shapes vary; try common fields.
-        const textOut = (oresp.output && typeof oresp.output === 'string') ? oresp.output : JSON.stringify(oresp)
-        // naive JSON extraction
-        const m = textOut.match(/\{[\s\S]*\}/)
-        if (m) {
-          try { skills = JSON.parse(m[0]) } catch (e) { skills = { parsed: textOut } }
-        } else {
-          skills = { parsed: textOut }
+    if (type === 'repo' && sourceUrl) {
+      // Analyze GitHub repo
+      const m = sourceUrl.match(/github.com\/([^\/]+)\/([^\/]+)(?:\/|$)/i)
+      if (m) {
+        const owner = m[1]
+        const repo = m[2].replace(/\.git$/, '')
+        
+        // Get user's GitHub token for private repo access
+        let githubToken: string | undefined
+        if (userId) {
+          const { data: userData, error } = await supabaseServer.auth.admin.getUserById(userId)
+          if (!error && userData?.user) {
+            githubToken = userData.user.user_metadata?.provider_token || userData.user.app_metadata?.provider_token
+          }
         }
-      } catch (e) {
-        console.error('Ollama error, falling back to mock', e)
-        skills = { fallback: { confidence: 0.5, evidence: [{ type: 'sample', id: a.sample_id }] } }
+        
+        const repoData = await analyzeRepo(owner, repo, githubToken)
+        // Extract skills from repo languages and commits
+        const repoSummary = `Languages: ${Object.keys(repoData.languages).join(', ')}. Recent commits: ${repoData.recent_commits.map(c => c.message).join('; ')}`
+        skills = await extractSkillsFromText(repoSummary)
+      } else {
+        skills = []
       }
     } else {
-      // Mocked analysis
-      skills = { javascript: { confidence: 0.8, evidence: [{ type: 'sample', id: a.sample_id }] } }
+      // Extract skills from text content
+      skills = await extractSkillsFromText(content)
     }
 
     const result = { skills, summary: 'Analysis complete', processed_at: new Date().toISOString() }
@@ -58,6 +68,49 @@ async function processAnalysis(a: any) {
       completed_at: new Date().toISOString(), 
       metrics: { ...metrics, retry_count: retries } 
     }).eq('id', id)
+
+    // Store skills in database
+    if (skills && Array.isArray(skills) && userId) {
+      for (const skill of skills) {
+        const { data: existingSkill } = await supabaseServer
+          .from('skills')
+          .select('id, proficiency')
+          .eq('user_id', userId)
+          .eq('name', skill.skill)
+          .single()
+
+        let skillId
+        if (existingSkill) {
+          skillId = existingSkill.id
+          // Update proficiency if higher
+          if (skill.level > existingSkill.proficiency) {
+            await supabaseServer.from('skills').update({ proficiency: skill.level }).eq('id', skillId)
+          }
+        } else {
+          const { data: newSkill } = await supabaseServer
+            .from('skills')
+            .insert({
+              user_id: userId,
+              name: skill.skill,
+              proficiency: skill.level,
+              verified: true
+            })
+            .select('id')
+            .single()
+          skillId = newSkill?.id
+        }
+
+        // Insert evidence
+        if (skillId) {
+          await supabaseServer.from('skill_evidence').insert({
+            skill_id: skillId,
+            sample_id: a.sample_id,
+            confidence_score: skill.confidence,
+            analysis: { evidence: skill.evidence }
+          })
+        }
+      }
+    }
     console.log('Analysis completed', id)
   } catch (err) {
     console.error('Worker error', err)
@@ -83,12 +136,21 @@ async function pollLoop() {
       const { data: queued } = await supabaseServer
         .from('analyses')
         .select('*')
-        .or(`status.eq.queued,and(status.eq.running,started_at.lt.${fiveMinutesAgo})`)
+        .eq('status', 'queued')
         .limit(MAX_BATCH)
 
-      if (queued && queued.length > 0) {
-        console.log(`Found ${queued.length} analysis job(s) to process`)
-        for (const a of queued) {
+      const { data: stuck } = await supabaseServer
+        .from('analyses')
+        .select('*')
+        .eq('status', 'running')
+        .lt('started_at', fiveMinutesAgo)
+        .limit(MAX_BATCH)
+
+      const all = [...(queued || []), ...(stuck || [])]
+
+      if (all && all.length > 0) {
+        console.log(`Found ${all.length} analysis job(s) to process`)
+        for (const a of all) {
           // defensive: process each without await blocking the entire loop
           // but to simplify, we'll await sequentially to avoid concurrency issues
           await processAnalysis(a)

@@ -4,7 +4,19 @@ ProofStack — Task List and Roadmap
 Purpose
 -------
 
-Single source of truth checklist for the ProofStack MVP and next milestones. Use this file to track work, run weekly check-ins, and manage priorities. Update it as tasks complete.
+Single source of truth c- - - - - - [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month2-3 — Premium features & employer flowsal) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month2-3 — Premium features & employer flowsal) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month2-3 — Premium features & employer flowsal) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month2-3 — Premium features & employer flowsal) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month2-3 — Premium features & employer flowsal) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month2-3 — Premium features & employer flowsr the ProofStack MVP and next milestones. Use this file to track work, run weekly check-ins, and manage priorities. Update it as tasks complete.
 
 How to use
 ---------
@@ -46,45 +58,59 @@ Progress: E2E verification ✅ COMPLETE
   - ✅ Worker properly handles stuck/running jobs (5min timeout retry logic)
   - ✅ Full pipeline verified: sample → queued analysis → worker processing → completed result
 
-Milestone: Week1 — Core auth, upload, queue, simple analysis
+Milestone: Week1 — Core auth, upload, queue, simple analysis ✅ COMPLETE
 -----------------------------------------------------------
 
 Auth
 
-- [ ] Wire Supabase client helper (`lib/supabaseClient.ts`) — @matt - 0.5d
-- [ ] Implement sign-in: email magic link + GitHub OAuth (basic) — @matt - 1d
-- [ ] Protect API routes / session handling — @matt - 0.5d
-
 - [x] Wire Supabase client helper (`lib/supabaseClient.ts`) — @matt - 0.5d
-- [x] Implement sign-in: email magic link + GitHub OAuth (basic) — @matt - 1d (demo)
-- [x] Protect API routes / session handling — @matt - 0.5d (upload API protected using requireAuth)
+- [x] Implement sign-in: email magic link + GitHub OAuth (basic) — @matt - 1d
+- [x] Protect API routes / session handling — @matt - 0.5d
 
 Storage & Upload
 
-- [ ] Integrate Cloudinary/Direct unsigned upload flow (`/api/upload`) — @matt - 1d
-- [ ] Client-side upload page (drag/drop, sample type) — @matt - 1d
-- [ ] Validate file types & max size on client + server — @matt - 0.5d
-
-- [x] Integrate Cloudinary/Direct unsigned upload flow (`/api/upload`) — @matt - 1d (demo server flow implemented)
-- [x] Client-side upload page (drag/drop, sample type) — @matt - 1d (UploadForm demo added)
-- [ ] Validate file types & max size on client + server — @matt - 0.5d
+- [x] Integrate Cloudinary/Direct unsigned upload flow (`/api/upload`) — @matt - 1d
+- [x] Client-side upload page (drag/drop, sample type) — @matt - 1d
+- [x] Validate file types & max size on client + server — @matt - 0.5d
 
 Queue & Worker
 
-- [ ] Add job queue design (Supabase Realtime, Redis, or webhook queue) — @matt - 0.5d
-- [ ] Create worker skeleton (`workers/analyzeSample.ts`) that reads from queue — @matt - 1d
-
-- [x] Add job queue design (Supabase Realtime, Redis, or webhook queue) — @matt - 0.5d (DB-backed queue + worker implemented)
+- [x] Add job queue design (Supabase Realtime, Redis, or webhook queue) — @matt - 0.5d
 - [x] Create worker skeleton (`workers/analyzeSample.ts`) that reads from queue — @matt - 1d
 
 Basic Analysis
 
-- [ ] Integrate Ollama client call wrapper (local/remote config) — @matt - 1d
-- [ ] Write a simple skill extraction prompt + store results in `analyses` table — @matt - 1d
-- [ ] Implement profile page to display sample + analysis card — @matt - 1d
+- [x] Integrate Ollama client call wrapper (local/remote config) — @matt - 1d
+- [x] Write a simple skill extraction prompt + store results in `analyses` table — @matt - 1d
+- [x] Implement profile page to display sample + analysis card — @matt - 1d
 
-Milestone: Week2 — GitHub ingestion, transcription, proofs
----------------------------------------------------------
+Milestone: Week2 — GitHub ingestion, transcription, proofs ✅ MOSTLY COMPLETE
+-------------------------------------------------------------
+
+GitHub Integration
+
+- [x] Full GitHub OAuth flow with repo read permission option — @matt - 1d (per-user tokens implemented)
+- [x] Repo fetcher: clone/fetch lightweight zip via GitHub API and extract metadata — @matt - 1d (API-based analysis implemented)
+- [ ] Challenge-response verification flow (create ephemeral file/commit) — @matt - 1d (not started)
+
+Transcription & Media
+
+- [ ] Add whisper.cpp pipeline sketch + wrapper script (worker) — @matt - 1d (not started)
+- [ ] Audio/video -> transcript -> skill extraction pipeline — @matt - 1d (not started)
+
+Proofs & Hashing
+
+- [ ] Implement artifact hashing and server-signed JSON proof (`proofs` table) — @matt - 1d (not started)
+- [ ] Display proof signature on profile and provide download link — @matt - 0.5d (not started)
+- [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+
+Milestone: Month1 — UX polish, tests, deploy
+--------------------------------------------
+
+- [ ] Add tests: unit for API routes + integration for upload->analysis flow — @matt - 2d
+- [ ] Add E2E smoke test for sign-in, upload, analysis (Playwright) — @matt - 2d
+- [ ] Deploy to Vercel + configure env vars & secrets — @matt - 0.5d
+- [ ] Add basic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
 
 GitHub Integration
 
