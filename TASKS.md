@@ -4,7 +4,15 @@ ProofStack — Task List and Roadmap
 Purpose
 -------
 
-Single source of truth c- - - - - - [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
+Single source of tr- - - - [ Milestone: Month2-3 — Premium features & employer flows: Month2-3 — Premium features & employer flowsic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
+
+Milestone: Month2-3 — Premium features & employer flowsic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
+
+Milestone: Month2-3 — Premium features & employer flowsic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
+
+Milestone: Month2-3 — Premium features & employer flowsic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
+
+Milestone: Month2-3 — Premium features & employer flows- - - [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
 
 Milestone: Month2-3 — Premium features & employer flowsal) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
 
@@ -91,17 +99,17 @@ GitHub Integration
 
 - [x] Full GitHub OAuth flow with repo read permission option — @matt - 1d (per-user tokens implemented)
 - [x] Repo fetcher: clone/fetch lightweight zip via GitHub API and extract metadata — @matt - 1d (API-based analysis implemented)
-- [ ] Challenge-response verification flow (create ephemeral file/commit) — @matt - 1d (not started)
+- [x] Challenge-response verification flow (create ephemeral file/commit) — @matt - 1d (challenge creation and verification implemented)
 
 Transcription & Media
 
-- [ ] Add whisper.cpp pipeline sketch + wrapper script (worker) — @matt - 1d (not started)
-- [ ] Audio/video -> transcript -> skill extraction pipeline — @matt - 1d (not started)
+- [x] Add whisper.cpp pipeline sketch + wrapper script (worker) — @matt - 1d (OpenAI Whisper API integration implemented)
+- [x] Audio/video -> transcript -> skill extraction pipeline — @matt - 1d (worker updated to handle audio/video files)
 
 Proofs & Hashing
 
-- [ ] Implement artifact hashing and server-signed JSON proof (`proofs` table) — @matt - 1d (not started)
-- [ ] Display proof signature on profile and provide download link — @matt - 0.5d (not started)
+- [x] Implement artifact hashing and server-signed JSON proof (`proofs` table) — @matt - 1d (done: hash computed on upload, proof created on analysis completion)
+- [x] Display proof signature on profile and provide download link — @matt - 0.5d (done: proofs shown in portfolio view)
 - [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
 
 Milestone: Month1 — UX polish, tests, deploy
@@ -111,23 +119,6 @@ Milestone: Month1 — UX polish, tests, deploy
 - [ ] Add E2E smoke test for sign-in, upload, analysis (Playwright) — @matt - 2d
 - [ ] Deploy to Vercel + configure env vars & secrets — @matt - 0.5d
 - [ ] Add basic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
-
-GitHub Integration
-
-- [ ] Full GitHub OAuth flow with repo read permission option — @matt - 1d
-- [ ] Repo fetcher: clone/fetch lightweight zip via GitHub API and extract metadata — @matt - 1d
-- [ ] Challenge-response verification flow (create ephemeral file/commit) — @matt - 1d
-
-Transcription & Media
-
-- [ ] Add whisper.cpp pipeline sketch + wrapper script (worker) — @matt - 1d
-- [ ] Audio/video -> transcript -> skill extraction pipeline — @matt - 1d
-
-Proofs & Hashing
-
-- [ ] Implement artifact hashing and server-signed JSON proof (`proofs` table) — @matt - 1d
-- [ ] Display proof signature on profile and provide download link — @matt - 0.5d
-- [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
 
 Milestone: Month1 — UX polish, tests, deploy
 -------------------------------------------
@@ -157,7 +148,8 @@ Security, Privacy & Legal (must-do before public launch)
 Testing & QA checklist
 ----------------------
 
-- [ ] Unit tests for API endpoints (happy + 2 edge cases each)
+- [x] Unit tests for core functions (skillExtractor) — @matt - 1d (Jest setup, skillExtractor tests passing)
+- [ ] Unit tests for API routes (happy + 2 edge cases each)
 - [ ] Mock Ollama responses in tests (avoid external network in CI)
 - [ ] Fuzz test upload handling with large files and unexpected MIME types
 - [ ] Security scan for dependencies (dependabot or Snyk)

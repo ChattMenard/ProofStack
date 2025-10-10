@@ -40,7 +40,7 @@ export default function UploadForm() {
         size_bytes = file.size
         const reader = new FileReader()
         reader.onload = async (ev) => {
-          fileData = ev.target?.result
+          fileData = ev.target?.result || null
           uploadPayload = { ...uploadPayload, filename, size_bytes, content: '', fileData }
           await doUpload(uploadPayload)
         }

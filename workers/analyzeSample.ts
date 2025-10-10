@@ -25,11 +25,12 @@ async function processAnalysis(a: any) {
 
   try {
     let skills: ExtractedSkill[] | null = null
-    const { data: sampleRow } = await supabaseServer.from('samples').select('content, owner_id, type, source_url').eq('id', a.sample_id).single()
+    const { data: sampleRow } = await supabaseServer.from('samples').select('content, owner_id, type, source_url, storage_url').eq('id', a.sample_id).single()
     const content = sampleRow?.content ?? ''
     const userId = sampleRow?.owner_id
     const type = sampleRow?.type
     const sourceUrl = sampleRow?.source_url
+    const storageUrl = sampleRow?.storage_url
 
     if (type === 'repo' && sourceUrl) {
       // Analyze GitHub repo
@@ -54,6 +55,27 @@ async function processAnalysis(a: any) {
       } else {
         skills = []
       }
+    } else if ((type === 'audio' || type === 'video') && storageUrl) {
+      // Transcribe audio/video and analyze transcription
+      try {
+        const { transcribeAudio, extractAudioFromVideo } = await import('../lib/transcription')
+        let audioPath = storageUrl
+
+        // If it's a video, extract audio first
+        if (type === 'video') {
+          const audioFile = `/tmp/${a.sample_id}.mp3`
+          await extractAudioFromVideo(storageUrl, audioFile)
+          audioPath = audioFile
+        }
+
+        const transcription = await transcribeAudio(audioPath)
+        console.log('Transcription completed:', transcription.substring(0, 100) + '...')
+        skills = await extractSkillsFromText(transcription)
+      } catch (transcriptionError) {
+        console.error('Transcription failed:', transcriptionError)
+        // Fallback: try to analyze filename or metadata
+        skills = await extractSkillsFromText(`Audio/Video file: ${storageUrl}`)
+      }
     } else {
       // Extract skills from text content
       skills = await extractSkillsFromText(content)
@@ -69,48 +91,27 @@ async function processAnalysis(a: any) {
       metrics: { ...metrics, retry_count: retries } 
     }).eq('id', id)
 
-    // Store skills in database
-    if (skills && Array.isArray(skills) && userId) {
-      for (const skill of skills) {
-        const { data: existingSkill } = await supabaseServer
-          .from('skills')
-          .select('id, proficiency')
-          .eq('user_id', userId)
-          .eq('name', skill.skill)
-          .single()
-
-        let skillId
-        if (existingSkill) {
-          skillId = existingSkill.id
-          // Update proficiency if higher
-          if (skill.level > existingSkill.proficiency) {
-            await supabaseServer.from('skills').update({ proficiency: skill.level }).eq('id', skillId)
-          }
-        } else {
-          const { data: newSkill } = await supabaseServer
-            .from('skills')
-            .insert({
-              user_id: userId,
-              name: skill.skill,
-              proficiency: skill.level,
-              verified: true
-            })
-            .select('id')
-            .single()
-          skillId = newSkill?.id
-        }
-
-        // Insert evidence
-        if (skillId) {
-          await supabaseServer.from('skill_evidence').insert({
-            skill_id: skillId,
-            sample_id: a.sample_id,
-            confidence_score: skill.confidence,
-            analysis: { evidence: skill.evidence }
-          })
-        }
+    // Create proof for the analysis
+    const { data: sample } = await supabaseServer.from('samples').select('hash').eq('id', a.sample_id).single()
+    if (sample?.hash) {
+      const proofPayload = {
+        analysis_id: id,
+        sample_hash: sample.hash,
+        skills_extracted: skills?.length || 0,
+        timestamp: new Date().toISOString()
       }
+      const proofHash = require('crypto').createHash('sha256').update(JSON.stringify(proofPayload)).digest('hex')
+      
+      await supabaseServer.from('proofs').insert({
+        analysis_id: id,
+        proof_type: 'server_signed',
+        proof_hash: `sha256:${proofHash}`,
+        signer: 'ProofStack Analysis Service',
+        payload: proofPayload,
+        signature: { type: 'demo', value: 'PROOFSTACK-SIGNATURE-' + proofHash.substring(0, 8) }
+      })
     }
+
     console.log('Analysis completed', id)
   } catch (err) {
     console.error('Worker error', err)

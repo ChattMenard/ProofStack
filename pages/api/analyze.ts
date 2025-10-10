@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import supabaseServer from '../../lib/supabaseServer'
-import requireAuth from '../../lib/requireAuth'
+import { requireAuth } from '../../lib/requireAuth'
 import extractSkillsFromText from '../../lib/ai/skillExtractor'
 import analyzeRepo from '../../lib/analyzers/githubAnalyzer'
 

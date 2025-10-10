@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import requireAuth from '../../../lib/requireAuth'
+import { requireAuth } from '../../../lib/requireAuth'
+import supabaseServer from '../../../lib/supabaseServer'
 import fetch from 'node-fetch'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -9,10 +10,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!user) return
 
   try {
-    // For demo, use env GITHUB_TOKEN. In production, get from user's OAuth session.
-    const githubToken = process.env.GITHUB_TOKEN
+    // Get user's GitHub token from their OAuth session
+    const { data: userData, error: authError } = await supabaseServer.auth.admin.getUserById(user.id)
+    if (authError) throw authError
 
-    if (!githubToken) return res.status(400).json({ error: 'GitHub token not configured' })
+    const githubToken = userData?.user?.user_metadata?.provider_token ||
+                       userData?.user?.app_metadata?.provider_token
+
+    if (!githubToken) return res.status(400).json({ error: 'GitHub not connected. Please sign in with GitHub first.' })
 
     const response = await fetch('https://api.github.com/user/repos?sort=updated&per_page=100', {
       headers: { Authorization: `token ${githubToken}` }

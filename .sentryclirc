@@ -1,0 +1,6 @@
+[defaults]
+org=proofstack
+project=proofstack
+
+[auth]
+token=

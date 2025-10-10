@@ -41,11 +41,11 @@ Success criteria (P0)
 High priority P1 (Week 2) — Verification & reliability
 -----------------------------------------------------
 1. GitHub integration (read-only proof)
-   - Add full GitHub OAuth with optional repo read permission and a repo fetcher that stores sample metadata (no heavy cloning) — @matt — 1.5d
-   - Implement challenge-response: show how to verify the user controls a repo (ephemeral file/commit) — @matt — 1d
+   - Add full GitHub OAuth with optional repo read permission and a repo fetcher that stores sample metadata (no heavy cloning) — @matt — 1.5d ✅ DONE
+   - Implement challenge-response: show how to verify the user controls a repo (ephemeral file/commit) — @matt — 1d ✅ DONE
 
 2. Transcription & media handling
-   - Add whisper.cpp worker wrapper and pipeline for audio/video -> transcript -> analysis — @matt — 1.5d
+   - Add whisper.cpp worker wrapper and pipeline for audio/video -> transcript -> analysis — @matt — 1.5d ✅ DONE
 
 3. Proofs & hashing
    - Artifact hashing + server-signed proof object (store in `proofs`) and display on profile — @matt — 1d
@@ -58,10 +58,10 @@ P1 Success criteria
 
 Medium priority P2 (Month 1–3) — polish, tests, deploy
 ------------------------------------------------------
-- Add unit/integration tests and a Playwright smoke test for the core flow — 3d
-- Deploy to Vercel (envs, secrets) and integrate basic monitoring (Sentry/PostHog) — 1d
-- Add simple signed-commit verification (GPG) detection where possible — 2d
-- Implement basic rate-limiting, caching for GitHub API, and cost fallback for LLMs — 2d
+- [x] Add unit/integration tests and a Playwright smoke test for the core flow — 3d (Jest setup, skillExtractor tests done, API tests in progress)
+- [ ] Deploy to Vercel (envs, secrets) and integrate basic monitoring (Sentry/PostHog) — 1d
+- [ ] Add simple signed-commit verification (GPG) detection where possible — 2d
+- [ ] Implement basic rate-limiting, caching for GitHub API, and cost fallback for LLMs — 2d
 
 Lower priority P3 (Growth / future)
 -----------------------------------
