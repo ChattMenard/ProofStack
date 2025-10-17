@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 import { ReactNode } from 'react'
+import Image from 'next/image'
 import SupabaseWarning from '../components/SupabaseWarning'
 import UserProfile from '../components/UserProfile'
 import { PostHogProvider } from '../components/PostHogProvider'
@@ -7,6 +8,23 @@ import BuiltWith from '../components/BuiltWith'
 
 export const metadata = {
   title: 'ProofStack - Verified Skills Portfolio',
+  description: 'Build and share your verified skills portfolio with ProofStack. Transform your projects, contributions, and achievements into a professional portfolio.',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/logo-icon.svg',
+  },
+  openGraph: {
+    title: 'ProofStack - Verified Skills Portfolio',
+    description: 'Build and share your verified skills portfolio with ProofStack',
+    images: ['/og-image.svg'],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ProofStack - Verified Skills Portfolio',
+    description: 'Build and share your verified skills portfolio',
+    images: ['/og-image.svg'],
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -16,7 +34,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <PostHogProvider>
           <div className="max-w-4xl mx-auto p-6">
             <header className="mb-6 flex justify-between items-center">
-              <h1 className="text-2xl font-semibold">ProofStack (Demo)</h1>
+              <div className="flex items-center gap-3">
+                <Image 
+                  src="/logo.svg" 
+                  alt="ProofStack" 
+                  width={200} 
+                  height={75}
+                  priority
+                />
+                <span className="text-sm text-gray-500">(Demo)</span>
+              </div>
               <div>
                 <UserProfile />
               </div>
