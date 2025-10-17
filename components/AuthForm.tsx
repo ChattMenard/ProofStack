@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import posthog from 'posthog-js'
 
 export default function AuthForm() {
   const [email, setEmail] = useState('')
@@ -12,8 +13,10 @@ export default function AuthForm() {
     try {
       const { error } = await supabase.auth.signInWithOtp({ email })
       if (error) throw error
+      posthog.capture('auth_magic_link_sent', { email_domain: email.split('@')[1] })
       setMessage('Check your email for the magic link.')
     } catch (err: any) {
+      posthog.capture('auth_error', { method: 'magic_link', error: err.message })
       setMessage(err.message || 'Error sending magic link')
     }
   }
@@ -21,10 +24,12 @@ export default function AuthForm() {
   const handleGitHub = async () => {
     setMessage('')
     try {
+      posthog.capture('auth_github_started')
       // Redirects to GitHub OAuth via Supabase
       const { error } = await supabase.auth.signInWithOAuth({ provider: 'github' })
       if (error) throw error
     } catch (err: any) {
+      posthog.capture('auth_error', { method: 'github', error: err.message })
       setMessage(err.message || 'Error signing in with GitHub')
     }
   }

@@ -8,11 +8,15 @@ jest.mock('../../lib/supabaseServer')
 jest.mock('../../lib/requireAuth', () => ({
   requireAuth: jest.fn()
 }))
-jest.mock('../../lib/cloudinaryClient')
+jest.mock('../../lib/cloudinaryClient', () => ({
+  uploader: {
+    upload: jest.fn()
+  }
+}))
 
 const mockSupabase = supabaseServer as jest.Mocked<typeof supabaseServer>
 const mockRequireAuth = require('../../lib/requireAuth').requireAuth as jest.MockedFunction<any>
-const mockCloudinary = cloudinary as jest.Mocked<typeof cloudinary>
+const mockCloudinary = require('../../lib/cloudinaryClient')
 
 describe('/api/upload', () => {
   beforeEach(() => {
@@ -32,8 +36,27 @@ describe('/api/upload', () => {
     })
   })
 
-  it.skip('should reject requests without authentication', async () => {
-    // Skip this test for now - requireAuth mocking is complex
+  it('should reject requests without authentication', async () => {
+    // Mock requireAuth to simulate auth failure
+    mockRequireAuth.mockImplementation(async (req, res) => {
+      res.status(401).json({ error: 'Missing bearer token' })
+      return null
+    })
+
+    const { req, res } = createMocks({
+      method: 'POST',
+      body: {
+        type: 'writing',
+        content: 'test content'
+      }
+    })
+
+    await handler(req, res)
+
+    expect(res._getStatusCode()).toBe(401)
+    expect(JSON.parse(res._getData())).toEqual({
+      error: 'Missing bearer token'
+    })
   })
 
   it('should reject invalid sample types', async () => {
@@ -165,11 +188,17 @@ describe('/api/upload', () => {
     const mockUser = { id: 'user-123' }
     mockRequireAuth.mockResolvedValue(mockUser)
 
+    // Mock Cloudinary env vars
+    const originalEnv = process.env
+    process.env.CLOUDINARY_CLOUD_NAME = 'test-cloud'
+    process.env.CLOUDINARY_API_KEY = 'test-key'
+    process.env.CLOUDINARY_API_SECRET = 'test-secret'
+
     const mockCloudinaryResponse = {
       secure_url: 'https://cloudinary.com/test-image.jpg'
     }
 
-    mockCloudinary.uploader.upload = jest.fn().mockResolvedValue(mockCloudinaryResponse)
+    mockCloudinary.uploader.upload.mockResolvedValue(mockCloudinaryResponse)
 
     const mockSample = {
       id: 'sample-123',
@@ -179,13 +208,36 @@ describe('/api/upload', () => {
       hash: 'mock-hash'
     }
 
-    mockSupabase.from.mockReturnValue({
+    const mockAnalysis = {
+      id: 'analysis-123',
+      sample_id: 'sample-123',
+      status: 'queued'
+    }
+
+    // Mock the samples insert
+    const mockSamplesFrom = {
       insert: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({ data: mockSample, error: null })
         })
       })
-    } as any)
+    }
+
+    // Mock the analyses insert
+    const mockAnalysesFrom = {
+      insert: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({ data: mockAnalysis, error: null })
+        })
+      })
+    }
+
+    // Set up mock to return different objects for samples vs analyses
+    mockSupabase.from.mockImplementation((table: string) => {
+      if (table === 'samples') return mockSamplesFrom as any
+      if (table === 'analyses') return mockAnalysesFrom as any
+      return {} as any
+    })
 
     const { req, res } = createMocks({
       method: 'POST',
@@ -201,6 +253,8 @@ describe('/api/upload', () => {
 
     expect(mockCloudinary.uploader.upload).toHaveBeenCalled()
     expect(res._getStatusCode()).toBe(200)
+
+    process.env = originalEnv
   })
 
   it('should handle database errors gracefully', async () => {

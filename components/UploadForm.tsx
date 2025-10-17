@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024 // 20 MB
@@ -10,16 +10,45 @@ const ALLOWED_FILE_TYPES = [
   'audio/mpeg', 'audio/wav', 'video/mp4', 'video/webm',
 ]
 
+// Keywords that might indicate employer-owned content
+const EMPLOYER_KEYWORDS = [
+  'confidential', 'proprietary', 'internal', 'company', 'corporate',
+  'client', 'customer', 'project', 'assignment', 'work', 'job',
+  'employer', 'contract', 'nda', 'non-disclosure'
+]
+
 export default function UploadForm() {
   const [text, setText] = useState('')
   const [file, setFile] = useState<File|null>(null)
   const [message, setMessage] = useState('')
   const [type, setType] = useState('writing')
+  const [employerConsent, setEmployerConsent] = useState(false)
+  const [showEmployerWarning, setShowEmployerWarning] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Check if content might be employer-owned
+  useEffect(() => {
+    const content = text || (file ? file.name : '')
+    const lowerContent = content.toLowerCase()
+    const hasEmployerKeywords = EMPLOYER_KEYWORDS.some(keyword =>
+      lowerContent.includes(keyword)
+    )
+    setShowEmployerWarning(hasEmployerKeywords)
+    if (!hasEmployerKeywords) {
+      setEmployerConsent(false) // Reset if warning is hidden
+    }
+  }, [text, file])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
+
+    // Check employer consent if warning is shown
+    if (showEmployerWarning && !employerConsent) {
+      setMessage('Please confirm that this content is not employer-owned or you have permission to share it.')
+      return
+    }
+
     const { data: userData } = await supabase.auth.getUser()
     const user_id = userData.user?.id
     if (!user_id) return setMessage('Sign in first')
@@ -131,6 +160,41 @@ export default function UploadForm() {
       <div>
         <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">Upload sample</button>
       </div>
+
+      {showEmployerWarning && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h4 className="text-sm font-medium text-yellow-800 mb-2">
+                Potential Employer-Owned Content Detected
+              </h4>
+              <p className="text-sm text-yellow-700 mb-3">
+                Your content appears to contain terms that may indicate it's owned by your employer
+                or created as part of your job. Please ensure you have permission to share this content
+                and that it doesn't violate any agreements.
+              </p>
+              <div className="flex items-center">
+                <input
+                  id="employer-consent"
+                  type="checkbox"
+                  checked={employerConsent}
+                  onChange={(e) => setEmployerConsent(e.target.checked)}
+                  className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                />
+                <label htmlFor="employer-consent" className="ml-2 text-sm text-yellow-800">
+                  I confirm this content is not employer-owned or I have explicit permission to share it
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {message && <p className="text-sm text-gray-700">{message}</p>}
     </form>
   )

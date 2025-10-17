@@ -59,7 +59,7 @@ P1 Success criteria
 Medium priority P2 (Month 1–3) — polish, tests, deploy
 ------------------------------------------------------
 - [x] Add unit/integration tests and a Playwright smoke test for the core flow — 3d (Jest setup, skillExtractor tests done, API tests in progress)
-- [ ] Deploy to Vercel (envs, secrets) and integrate basic monitoring (Sentry/PostHog) — 1d
+- [ ] Deploy to Vercel (envs, secrets) and integrate basic monitoring (Sentry/PostHog) — 1d (Sentry monitoring completed)
 - [ ] Add simple signed-commit verification (GPG) detection where possible — 2d
 - [ ] Implement basic rate-limiting, caching for GitHub API, and cost fallback for LLMs — 2d
 
