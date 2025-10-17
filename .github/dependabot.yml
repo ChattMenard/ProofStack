@@ -1,0 +1,70 @@
+# Dependabot configuration for ProofStack
+# Automatically checks for dependency updates and security vulnerabilities
+
+version: 2
+updates:
+  # Enable version updates for npm (JavaScript/TypeScript)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "ChattMenard"
+    labels:
+      - "dependencies"
+      - "security"
+    # Security updates
+    versioning-strategy: increase
+    # Group dependencies by type
+    groups:
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "jest*"
+          - "playwright*"
+          - "eslint*"
+          - "typescript"
+        update-types:
+          - "minor"
+          - "patch"
+      production-dependencies:
+        patterns:
+          - "next"
+          - "react*"
+          - "supabase*"
+        update-types:
+          - "patch"
+    # Ignore specific packages if needed
+    ignore:
+      # Example: ignore major version updates for stable packages
+      # - dependency-name: "next"
+      #   update-types: ["version-update:semver-major"]
+
+  # Enable version updates for pip (Python)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "ChattMenard"
+    labels:
+      - "dependencies"
+      - "python"
+
+  # Enable updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "ChattMenard"
+    labels:
+      - "dependencies"
+      - "ci"

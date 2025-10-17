@@ -1,6 +1,7 @@
 import { extractSkillsFromText } from '../lib/ai/skillExtractor'
+import { mockSkillExtractionResult } from './mocks/aiClients'
 
-// Mock the external API calls
+// Mock the external API calls to avoid network requests in CI
 jest.mock('../lib/ollamaClient', () => ({
   analyzeWithOllama: jest.fn(),
 }))

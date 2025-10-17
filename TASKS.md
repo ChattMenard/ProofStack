@@ -122,9 +122,9 @@ Testing & QA checklist
 
 - [x] Unit tests for core functions (skillExtractor) — @matt - 1d (Jest setup, skillExtractor tests passing)
 - [x] Unit tests for API routes (happy + 2 edge cases each) — @matt - 2d (Jest setup done, upload API, analyze API, and GitHub repos API tests passing)
-- [ ] Mock Ollama responses in tests (avoid external network in CI)
-- [ ] Fuzz test upload handling with large files and unexpected MIME types
-- [ ] Security scan for dependencies (dependabot or Snyk)
+- [x] Mock Ollama responses in tests (avoid external network in CI) — @matt - 0.5d (AI client mocks implemented)
+- [x] Fuzz test upload handling with large files and unexpected MIME types — @matt - 1d (Comprehensive fuzz tests added)
+- [x] Security scan for dependencies (dependabot or Snyk) — @matt - 0.5d (Dependabot + GitHub Actions security workflows configured)
 
 Data model & schema tasks
 -------------------------
