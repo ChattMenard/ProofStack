@@ -2,13 +2,20 @@
 
 ## Quick Start
 
-### Option 1: Use the PowerShell Helper Script (Easiest)
+### Option 1: Use Supabase CLI (Recommended if CLI is installed)
 
-```powershell
-.\scripts\apply-migrations.ps1
+```bash
+# Step 1: Link to your project (get project ref from dashboard URL)
+npx supabase link --project-ref YOUR-PROJECT-REF
+
+# Step 2: Push all migrations
+npx supabase db push
 ```
 
-This will show you the migration files and help you copy them to Supabase.
+**Helper script:**
+```powershell
+.\scripts\push-migrations.ps1
+```
 
 ### Option 2: Manual Application via Supabase Dashboard
 
