@@ -111,11 +111,11 @@ Milestone: Month2-3 — Premium features & employer flows
 Security, Privacy & Legal (must-do before public launch)
 --------------------------------------------------------
 
-- [ ] Draft Terms of Service & Privacy Policy (explicit consent for analyzing uploads) — Legal - 3d
+- [x] Draft Terms of Service & Privacy Policy (explicit consent for analyzing uploads) — Legal - 3d
 - [x] Implement DMCA / takedown flow + contact endpoint — @matt - 0.5d
 - [x] Add data deletion endpoint and retention policy in UI — @matt - 1d
 - [x] Check employer-owned artifacts: show warning and require checkbox consent on upload — @matt - 0.5d
-- [ ] Store service keys securely using Vercel secrets or environment variables — Ops - 0.25d
+- [x] Store service keys securely using Vercel secrets or environment variables — Ops - 0.25d (done via Vercel env vars)
 
 Testing & QA checklist
 ----------------------

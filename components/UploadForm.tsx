@@ -187,7 +187,8 @@ export default function UploadForm() {
                   className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
                 />
                 <label htmlFor="employer-consent" className="ml-2 text-sm text-yellow-800">
-                  I confirm this content is not employer-owned or I have explicit permission to share it
+                  I confirm this content is not employer-owned or I have explicit permission to share it.
+                  See our <a href="/terms" className="underline hover:text-yellow-900" target="_blank">Terms of Service</a>.
                 </label>
               </div>
             </div>

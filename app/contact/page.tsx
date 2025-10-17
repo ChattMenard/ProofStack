@@ -201,7 +201,7 @@ function ContactForm() {
         />
         <label htmlFor="privacy-consent" className="ml-2 text-sm text-gray-700">
           I agree to the processing of my personal data in accordance with the{' '}
-          <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
+          <a href="/privacy" className="text-blue-600 hover:underline" target="_blank">Privacy Policy</a>
         </label>
       </div>
 
