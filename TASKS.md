@@ -162,8 +162,8 @@ Operations & cost control
 -------------------------
 
 - [x] Cache GitHub API responses (store etags & conditional requests) — @matt - 0.5d (✅ ETag-based caching implemented, see GITHUB_CACHING.md)
-- [ ] Implement rate limiting on API endpoints — @matt - 0.5d
-- [ ] Monitor LLM/Transcription costs and configure fallback to cheaper models — @matt - 1d
+- [x] Implement rate limiting on API endpoints — @matt - 0.5d (✅ IP/user-based rate limiting with standard headers, see RATE_LIMITING_AND_COSTS.md)
+- [x] Monitor LLM/Transcription costs and configure fallback to cheaper models — @matt - 1d (✅ Cost tracking DB, fallback chains, monitoring dashboard, see RATE_LIMITING_AND_COSTS.md)
 
 Recurring tasks & cadence
 -------------------------

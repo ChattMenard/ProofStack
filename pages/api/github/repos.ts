@@ -2,8 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAuth } from '../../../lib/requireAuth'
 import supabaseServer from '../../../lib/supabaseServer'
 import { fetchGitHubWithCache } from '../../../lib/githubCache'
+import { withRateLimit } from '../../../lib/rateLimit'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
 
   const user = await requireAuth(req, res)
@@ -41,3 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ error: err.message })
   }
 }
+
+// Export with rate limiting
+export default withRateLimit(handler)

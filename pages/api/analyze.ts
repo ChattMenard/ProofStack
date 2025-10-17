@@ -3,8 +3,9 @@ import supabaseServer from '../../lib/supabaseServer'
 import { requireAuth } from '../../lib/requireAuth'
 import extractSkillsFromText from '../../lib/ai/skillExtractor'
 import analyzeRepo from '../../lib/analyzers/githubAnalyzer'
+import { withRateLimit } from '../../lib/rateLimit'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const user = await requireAuth(req, res)
@@ -47,3 +48,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: err.message || 'Analysis failed' })
   }
 }
+
+// Export with rate limiting (20 analysis requests per minute max)
+export default withRateLimit(handler, { maxRequests: 20, windowMs: 60000 })

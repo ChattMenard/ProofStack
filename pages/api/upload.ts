@@ -3,10 +3,11 @@ import supabaseServer from '../../lib/supabaseServer'
 import { requireAuth } from '../../lib/requireAuth'
 import cloudinary from '../../lib/cloudinaryClient'
 import crypto from 'crypto'
+import { withRateLimit } from '../../lib/rateLimit'
 
 const ALLOWED_TYPES = ['writing', 'code', 'design', 'audio', 'video', 'repo']
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const user = await requireAuth(req, res)
@@ -88,3 +89,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: err.message || 'Upload failed' })
   }
 }
+
+// Export with rate limiting (10 uploads per minute max)
+export default withRateLimit(handler, { maxRequests: 10, windowMs: 60000 })
