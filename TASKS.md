@@ -92,13 +92,14 @@ Proofs & Hashing
 - [x] Display proof signature on profile and provide download link — @matt - 0.5d (done: proofs shown in portfolio view)
 - [ ] (Optional) Add IPFS anchoring script for high-trust proofs — @matt - 2d (later)
 
-Milestone: Month1 — UX polish, tests, deploy
+Milestone: Month1 — UX polish, tests, deploy ✅ COMPLETE
 --------------------------------------------
 
 - [x] Add tests: unit for API routes + integration for upload->analysis flow — @matt - 2d (Jest setup done, skillExtractor tests passing, upload API tests in progress)
 - [x] Add E2E smoke test for sign-in, upload, analysis (Playwright) — @matt - 2d (Playwright setup complete, 12 tests passing across 3 browsers)
 - [x] Deploy to Vercel + configure env vars & secrets — @matt - 0.5d
 - [x] Add basic monitoring (Sentry) and analytics (Vercel/PostHog/Plausible) — @matt - 0.5d
+- [x] Operational infrastructure (rate limiting, cost tracking, caching) — @matt - 1.5d (✅ See Operations & cost control section)
 
 Milestone: Month2-3 — Premium features & employer flows
 ------------------------------------------------------
@@ -158,12 +159,18 @@ Post-launch
 - [ ] SEO content plan (target keywords + 3 pillar posts) — Content - ongoing
 - [ ] Reach out to bootcamps & coding schools for partnerships — Growth - ongoing
 
-Operations & cost control
+Operations & cost control ✅ COMPLETE
 -------------------------
 
 - [x] Cache GitHub API responses (store etags & conditional requests) — @matt - 0.5d (✅ ETag-based caching implemented, see GITHUB_CACHING.md)
-- [x] Implement rate limiting on API endpoints — @matt - 0.5d (✅ IP/user-based rate limiting with standard headers, see RATE_LIMITING_AND_COSTS.md)
+- [x] Implement rate limiting on API endpoints — @matt - 0.5d (✅ Distributed rate limiting with Upstash Redis (multi-region) + in-memory fallback, see RATE_LIMITING_AND_COSTS.md)
 - [x] Monitor LLM/Transcription costs and configure fallback to cheaper models — @matt - 1d (✅ Cost tracking DB, fallback chains, monitoring dashboard, see RATE_LIMITING_AND_COSTS.md)
+
+**Implementation Summary:**
+- GitHub API caching reduces API calls by ~90% via ETag-based conditional requests
+- Rate limiting: Upstash Redis for production (global enforcement across Vercel regions) with automatic in-memory fallback for development
+- Cost tracking: Real-time monitoring, daily budget limits (Free $0.50, Pro $5, Enterprise $50), automatic model fallback chains (Claude → GPT → Ollama)
+- See `IMPLEMENTATION_SUMMARY.md` for complete details
 
 Recurring tasks & cadence
 -------------------------
