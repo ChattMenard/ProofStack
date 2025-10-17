@@ -185,8 +185,8 @@ export async function getABTestMetrics(testId: string): Promise<{
     throw new Error('No results found for test')
   }
 
-  const controlResults = results.filter(r => r.variant === 'control')
-  const treatmentResults = results.filter(r => r.variant === 'treatment')
+  const controlResults = results.filter((r: any) => r.variant === 'control')
+  const treatmentResults = results.filter((r: any) => r.variant === 'treatment')
 
   return {
     control: calculateMetrics(controlResults, 'control'),
