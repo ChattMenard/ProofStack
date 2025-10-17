@@ -3,7 +3,7 @@ import supabaseServer from '../../lib/supabaseServer'
 import { requireAuth } from '../../lib/requireAuth'
 import extractSkillsFromText from '../../lib/ai/skillExtractor'
 import analyzeRepo from '../../lib/analyzers/githubAnalyzer'
-import { withRateLimit } from '../../lib/rateLimit'
+import { withRateLimit } from '@/lib/rateLimitRedis'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })

@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAuth } from '../../../lib/requireAuth'
 import supabaseServer from '../../../lib/supabaseServer'
 import { fetchGitHubWithCache } from '../../../lib/githubCache'
-import { withRateLimit } from '../../../lib/rateLimit'
+import { withRateLimit } from '@/lib/rateLimitRedis'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })

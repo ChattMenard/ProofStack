@@ -10,21 +10,25 @@ ProofStack now includes comprehensive **rate limiting** to prevent abuse and **c
 
 ### Implementation
 
-**In-memory rate limiting** (for single-instance deployments) using IP address and user ID as identifiers.
+**Distributed rate limiting** using Upstash Redis for production (multi-region) or in-memory fallback for development (single-instance).
 
 #### Features
 
 - **30 requests per minute** per client (default)
 - **IP-based** rate limiting for anonymous users
 - **User-based** rate limiting for authenticated users
+- **Distributed across all regions** with Upstash Redis (production)
+- **Automatic fallback** to in-memory for development
 - Standard HTTP headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
 - **429 Too Many Requests** response with `Retry-After` header
+- **Sliding window** algorithm (Upstash) for fairer distribution
+- **Analytics tracking** with Upstash
 - **Fail-open** design: if rate limiting errors, requests are allowed through
 
 #### Usage
 
 ```typescript
-import { withRateLimit } from '@/lib/rateLimit'
+import { withRateLimit } from '@/lib/rateLimitRedis'  // Use Redis-based version
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Your handler code
@@ -40,6 +44,11 @@ export default withRateLimit(handler, {
 })
 ```
 
+**Backend Selection:**
+- **Production** (with `UPSTASH_REDIS_REST_URL`): Uses Upstash Redis (distributed)
+- **Development** (without Upstash): Falls back to in-memory (single-instance)
+- Check header: `X-RateLimit-Backend: redis` or `memory`
+
 #### Endpoint Limits
 
 | Endpoint | Limit | Window | Reason |
@@ -51,18 +60,40 @@ export default withRateLimit(handler, {
 
 ### Production Considerations
 
-For **multi-instance** deployments (Vercel with multiple regions), migrate to **Redis-based rate limiting** using Upstash:
+For **multi-instance/multi-region** deployments (Vercel with edge functions):
+
+**✅ Upstash Redis (Recommended - Already Implemented)**
 
 ```typescript
-// Future implementation with Upstash Redis
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
-
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(30, '1 m'),
-})
+// lib/rateLimitRedis.ts - Automatic backend selection
+if (UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN) {
+  // Production: Distributed rate limiting across all regions
+  ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(30, '1 m'),
+    analytics: true
+  })
+} else {
+  // Development: In-memory fallback
+  console.log('Using in-memory rate limiting')
+}
 ```
+
+**Setup:**
+1. Create free Upstash Redis database: https://console.upstash.com/
+2. Add environment variables:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+3. Deploy - automatic Redis usage!
+
+**Benefits:**
+- ✅ Rate limits enforced globally across all Vercel regions
+- ✅ Sliding window algorithm (fairer than fixed window)
+- ✅ Built-in analytics and monitoring
+- ✅ Automatic fallback to in-memory for development
+- ✅ Free tier: 10,000 commands/day (sufficient for most apps)
+
+**See:** `UPSTASH_SETUP.md` for complete setup guide
 
 ---
 

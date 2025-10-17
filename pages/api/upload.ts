@@ -3,7 +3,7 @@ import supabaseServer from '../../lib/supabaseServer'
 import { requireAuth } from '../../lib/requireAuth'
 import cloudinary from '../../lib/cloudinaryClient'
 import crypto from 'crypto'
-import { withRateLimit } from '../../lib/rateLimit'
+import { withRateLimit } from '@/lib/rateLimitRedis'
 
 const ALLOWED_TYPES = ['writing', 'code', 'design', 'audio', 'video', 'repo']
 
