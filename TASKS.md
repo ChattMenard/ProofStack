@@ -161,7 +161,7 @@ Post-launch
 Operations & cost control
 -------------------------
 
-- [ ] Cache GitHub API responses (store etags & conditional requests) — @matt - 0.5d
+- [x] Cache GitHub API responses (store etags & conditional requests) — @matt - 0.5d (✅ ETag-based caching implemented, see GITHUB_CACHING.md)
 - [ ] Implement rate limiting on API endpoints — @matt - 0.5d
 - [ ] Monitor LLM/Transcription costs and configure fallback to cheaper models — @matt - 1d
 

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAuth } from '../../../lib/requireAuth'
 import supabaseServer from '../../../lib/supabaseServer'
-import fetch from 'node-fetch'
+import { fetchGitHubWithCache } from '../../../lib/githubCache'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
@@ -47,12 +47,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const githubToken = userData?.user?.user_metadata?.provider_token ||
                        userData?.user?.app_metadata?.provider_token
 
-    const headers: Record<string, string> = { 'User-Agent': 'proofstack-verifier' }
-    if (githubToken) headers['Authorization'] = `token ${githubToken}`
+    if (!githubToken) return res.status(400).json({ error: 'GitHub not connected' })
 
-    const response = await fetch(fileUrl, { headers })
+    // Use cached GitHub API request with shorter TTL (5 minutes) for verification checks
+    const { data: fileData, fromCache } = await fetchGitHubWithCache(
+      fileUrl,
+      githubToken,
+      user.id,
+      5 // Cache for 5 minutes
+    )
 
-    if (response.status === 200) {
+    if (fileData) {
       // File exists, mark as verified
       await supabaseServer
         .from('samples')
@@ -65,12 +70,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
         .eq('id', sample.id)
 
-      res.status(200).json({ verified: true })
-    } else if (response.status === 404) {
-      // File doesn't exist
-      res.status(200).json({ verified: false })
+      res.status(200).json({ verified: true, fromCache })
     } else {
-      throw new Error(`GitHub API error: ${response.status}`)
+      // File doesn't exist (404 from GitHub)
+      res.status(200).json({ verified: false })
     }
   } catch (err: any) {
     console.error(err)

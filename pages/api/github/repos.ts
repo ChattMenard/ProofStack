@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAuth } from '../../../lib/requireAuth'
 import supabaseServer from '../../../lib/supabaseServer'
-import fetch from 'node-fetch'
+import { fetchGitHubWithCache } from '../../../lib/githubCache'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
@@ -19,13 +19,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!githubToken) return res.status(400).json({ error: 'GitHub not connected. Please sign in with GitHub first.' })
 
-    const response = await fetch('https://api.github.com/user/repos?sort=updated&per_page=100', {
-      headers: { Authorization: `token ${githubToken}` }
-    })
+    const url = 'https://api.github.com/user/repos?sort=updated&per_page=100'
+    
+    // Use cached GitHub API request with ETag support
+    const { data: repos, fromCache, rateLimitRemaining } = await fetchGitHubWithCache(
+      url,
+      githubToken,
+      user.id,
+      60 // Cache for 60 minutes
+    )
 
-    if (!response.ok) throw new Error('Failed to fetch repos')
+    // Include cache info in response headers
+    res.setHeader('X-Cache', fromCache ? 'HIT' : 'MISS')
+    if (rateLimitRemaining !== undefined) {
+      res.setHeader('X-RateLimit-Remaining', rateLimitRemaining.toString())
+    }
 
-    const repos = await response.json()
     res.status(200).json(repos)
   } catch (err: any) {
     console.error(err)
