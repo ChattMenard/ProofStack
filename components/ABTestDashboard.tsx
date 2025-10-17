@@ -7,7 +7,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabaseClient'
+import supabase from '@/lib/supabaseClient'
 import { 
   compareVariants, 
   getABTestMetrics, 
@@ -41,8 +41,6 @@ export default function ABTestDashboard() {
   const [metrics, setMetrics] = useState<{ control: ABTestMetrics; treatment: ABTestMetrics } | null>(null)
   const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
-
-  const supabase = createClient()
 
   useEffect(() => {
     loadTests()
