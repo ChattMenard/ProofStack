@@ -11,7 +11,7 @@ function isValidUrl(u: string) {
     // eslint-disable-next-line no-new
     new URL(u)
     return true
-  } catch (e) {
+  } catch {
     return false
   }
 }

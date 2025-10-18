@@ -45,7 +45,7 @@ export default function DataDeletion() {
       } else {
         setMessage(data.error || 'Failed to delete data. Please try again.')
       }
-    } catch (error) {
+    } catch {
       setMessage('An error occurred. Please try again.')
     } finally {
       setIsDeleting(false)

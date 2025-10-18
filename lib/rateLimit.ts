@@ -117,7 +117,7 @@ export function withRateLimit(
             const token = authHeader.replace('Bearer ', '')
             const { data: { user } } = await supabase.auth.getUser(token)
             userId = user?.id
-          } catch (e) {
+          } catch {
             // Ignore auth errors, fall back to IP-based limiting
           }
         }

@@ -184,7 +184,7 @@ export function withRateLimit(
             const token = authHeader.replace('Bearer ', '')
             const { data: { user } } = await supabase.auth.getUser(token)
             userId = user?.id
-          } catch (e) {
+          } catch {
             // Ignore auth errors, fall back to IP-based limiting
           }
         }
@@ -252,7 +252,7 @@ export async function getRateLimitStatus(req: NextApiRequest, userId?: string) {
   
   if (ratelimit) {
     // For Redis, we need to check the limit to get current status
-    const { success, limit, remaining, reset } = await ratelimit.limit(clientId)
+    const { limit, remaining, reset } = await ratelimit.limit(clientId)
     return {
       limit,
       remaining: Math.max(0, remaining - 1), // Subtract the check itself

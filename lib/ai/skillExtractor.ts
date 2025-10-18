@@ -88,7 +88,7 @@ export async function extractSkillsFromText(text: string, model = 'mistral') : P
   let parsed: any = []
   try {
     parsed = JSON.parse(String(raw))
-  } catch (err) {
+  } catch {
     const textRaw = String(raw)
     // Safer JSON extraction: find the first complete JSON array or object
     const extracted = extractFirstValidJSON(textRaw)

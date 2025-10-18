@@ -3,6 +3,11 @@ node_modules/
 .env.local
 .env.*.local
 .env.vercel
+.env.backup
+CREDENTIALS.md
+CREDENTIALS_QUICK_REF.md
+ProofStack/
+ProofStack_DELETE_ME/
 .DS_Store
 .vscode/
 dist/

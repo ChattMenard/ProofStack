@@ -105,7 +105,7 @@ function ContactForm() {
       } else {
         setSubmitMessage(data.error || 'Failed to send message. Please try again.')
       }
-    } catch (error) {
+    } catch {
       setSubmitMessage('An error occurred. Please try again.')
     } finally {
       setIsSubmitting(false)
@@ -116,7 +116,7 @@ function ContactForm() {
     const { name, value, type } = e.target
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined
 
-    setFormData((prev: any) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }))

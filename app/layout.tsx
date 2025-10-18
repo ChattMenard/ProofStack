@@ -44,7 +44,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 />
                 <span className="text-sm text-gray-500">(Demo)</span>
               </div>
-              <div>
+              <div className="flex items-center gap-4">
+                <a 
+                  href="/login" 
+                  className="text-sm text-gray-600 hover:text-blue-600 hover:underline"
+                >
+                  Sign In
+                </a>
+                <a 
+                  href="/dashboard" 
+                  className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Dashboard
+                </a>
                 <UserProfile />
               </div>
             </header>
