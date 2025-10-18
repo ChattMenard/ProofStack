@@ -54,14 +54,46 @@ export default function PortfolioPage({ params }: { params: { username: string }
   useEffect(() => {
     async function loadPortfolio() {
       try {
-        // Get profile by email (username)
-        const { data: profileData, error: profileError } = await supabase
+        console.log('Loading portfolio for:', username)
+        
+        // Try to get profile by email first
+        let profileData = null
+        let profileError = null
+        
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('email', username)
-          .single()
+          .maybeSingle()
 
-        if (profileError) throw profileError
+        profileData = data
+        profileError = error
+
+        // If not found by email, try by full_name (for demo/display names)
+        if (!profileData && !username.includes('@')) {
+          const { data: nameData, error: nameError } = await supabase
+            .from('profiles')
+            .select('*')
+            .ilike('full_name', `%${username}%`)
+            .limit(1)
+            .maybeSingle()
+          
+          profileData = nameData
+          profileError = nameError
+        }
+
+        console.log('Profile query result:', { profileData, profileError })
+
+        if (profileError) {
+          console.error('Profile error:', profileError)
+        }
+        
+        if (!profileData) {
+          console.error('No profile found for:', username)
+          setLoading(false)
+          return
+        }
+        
         setProfile(profileData)
 
         // Get samples with analyses
