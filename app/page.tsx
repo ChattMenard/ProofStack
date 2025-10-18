@@ -168,9 +168,9 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-sage-800 to-earth-800 rounded-xl p-8 text-center border border-sage-700">
-        <h2 className="text-2xl font-bold mb-4 text-forest-50">Ready to Prove Your Skills?</h2>
-        <p className="text-forest-200 mb-6 max-w-2xl mx-auto">
+      <section className="bg-gradient-to-r from-sage-600 to-earth-600 rounded-xl p-8 text-center border border-sage-500 shadow-lg">
+        <h2 className="text-2xl font-bold mb-4 text-white">Ready to Prove Your Skills?</h2>
+        <p className="text-sage-50 mb-6 max-w-2xl mx-auto">
           Join thousands of developers who are already building verified skill portfolios with ProofStack.
         </p>
         {!isSubmitted && (
@@ -181,12 +181,12 @@ export default function Home() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 px-4 py-3 rounded-lg bg-forest-900 border border-forest-700 text-forest-50 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-3 bg-sage-600 text-forest-50 font-medium rounded-lg hover:bg-sage-500 focus:outline-none focus:ring-2 focus:ring-sage-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-3 bg-white text-sage-700 font-semibold rounded-lg hover:bg-sage-50 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
             >
               {isLoading ? 'Joining...' : 'Join Waitlist'}
             </button>
