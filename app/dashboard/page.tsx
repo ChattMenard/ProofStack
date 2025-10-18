@@ -160,6 +160,8 @@ export default function DashboardPage() {
                   {samples.map(sample => {
                     const analysis = sample.analyses?.[0]
                     const aiScore = analysis?.metrics?.ai_detection_score || 0
+                    // ai_detection_score is 0-100 where higher = more AI-like
+                    // So human score is the inverse
                     const humanScore = 100 - aiScore
 
                     return (
@@ -187,12 +189,12 @@ export default function DashboardPage() {
                           {analysis?.status === 'done' && (
                             <div className="text-right">
                               <div className="text-sm font-semibold text-forest-50">
-                                {humanScore.toFixed(0)}% Human
+                                {aiScore.toFixed(0)}% AI
                               </div>
                               <div className={`w-2 h-2 rounded-full mx-auto mt-1 ${
-                                humanScore >= 80 ? 'bg-sage-500' : 
-                                humanScore >= 50 ? 'bg-earth-500' : 
-                                'bg-red-500'
+                                aiScore <= 20 ? 'bg-sage-500' :    // Low AI score = good (human)
+                                aiScore <= 50 ? 'bg-earth-500' :   // Medium AI score = uncertain
+                                'bg-red-500'                        // High AI score = likely AI
                               }`} />
                             </div>
                           )}

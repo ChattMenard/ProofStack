@@ -321,7 +321,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
                   {samples.map(sample => {
                     const analysis = sample.analyses?.find(a => a.status === 'done')
                     const aiScore = analysis?.metrics?.ai_detection_score || 0
-                    const humanScore = 100 - aiScore
+                    // ai_detection_score is 0-100 where higher = more AI-generated
 
                     return (
                       <div key={sample.id} className="border border-forest-700 bg-forest-800/30 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -332,9 +332,13 @@ export default function PortfolioPage({ params }: { params: { username: string }
                           </span>
                           {analysis && (
                             <div className="flex items-center gap-1">
-                              <div className={`w-2 h-2 rounded-full ${humanScore >= 80 ? 'bg-sage-500' : humanScore >= 50 ? 'bg-earth-500' : 'bg-red-500'}`} />
+                              <div className={`w-2 h-2 rounded-full ${
+                                aiScore <= 20 ? 'bg-sage-500' :    // Low AI = good (human-written)
+                                aiScore <= 50 ? 'bg-earth-500' :   // Medium AI = uncertain
+                                'bg-red-500'                        // High AI = likely AI-generated
+                              }`} />
                               <span className="text-xs font-medium text-forest-300">
-                                {humanScore.toFixed(0)}% Human
+                                {aiScore.toFixed(0)}% AI
                               </span>
                             </div>
                           )}
