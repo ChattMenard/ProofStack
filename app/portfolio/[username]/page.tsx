@@ -56,7 +56,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
       try {
         console.log('Loading portfolio for:', username)
         
-        // Try to get profile by email first
+        // Try to get profile by email first (take most recent if duplicates exist)
         let profileData = null
         let profileError = null
         
@@ -64,7 +64,9 @@ export default function PortfolioPage({ params }: { params: { username: string }
           .from('profiles')
           .select('*')
           .eq('email', username)
-          .maybeSingle()
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
 
         profileData = data
         profileError = error
