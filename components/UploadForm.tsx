@@ -49,8 +49,14 @@ export default function UploadForm() {
       return
     }
 
-    const { data: userData } = await supabase.auth.getUser()
-    const user_id = userData.user?.id
+    // Check if user is logged in
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError || !session) {
+      console.error('Session error:', sessionError)
+      return setMessage('Not signed in. Please sign in first.')
+    }
+
+    const user_id = session.user?.id
     if (!user_id) return setMessage('Sign in first')
 
     try {
@@ -90,6 +96,8 @@ export default function UploadForm() {
 
   async function doUpload(payload: any) {
     const token = await getAccessToken()
+    console.log('Token exists:', !!token, 'Token length:', token?.length)
+    
     if (!token) {
       setMessage('Session expired. Please sign in again.')
       return
@@ -101,6 +109,7 @@ export default function UploadForm() {
       body: JSON.stringify(payload)
     })
     const json = await res.json()
+    console.log('Upload response:', res.status, json)
     if (!res.ok) throw new Error(json?.error || 'Upload failed')
     setMessage('Uploaded. Analysis queued.')
     setText('')
