@@ -21,7 +21,7 @@ export default function BuiltWith() {
     },
     {
       name: 'Cloudinary',
-      logo: 'https://cloudinary-res.cloudinary.com/image/upload/c_scale,w_300/v1/logo/for_white_bg/cloudinary_logo_for_white_bg.svg',
+      logo: 'https://res.cloudinary.com/demo/image/upload/cloudinary_icon.png',
       url: 'https://cloudinary.com',
       category: 'Infrastructure'
     },

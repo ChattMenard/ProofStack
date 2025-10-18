@@ -1,17 +1,37 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabaseClient'
 import posthog from 'posthog-js'
 
 export default function AuthForm() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
+
+  // Listen for auth state changes and redirect
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: any, session: any) => {
+      if (event === 'SIGNED_IN' && session) {
+        posthog.capture('auth_success', { method: event })
+        // Redirect to dashboard after successful sign in
+        router.push('/dashboard')
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
     try {
-      const { error } = await supabase.auth.signInWithOtp({ email })
+      const { error } = await supabase.auth.signInWithOtp({ 
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`
+        }
+      })
       if (error) throw error
       posthog.capture('auth_magic_link_sent', { email_domain: email.split('@')[1] })
       setMessage('Check your email for the magic link.')
@@ -25,8 +45,12 @@ export default function AuthForm() {
     setMessage('')
     try {
       posthog.capture('auth_github_started')
-      // Redirects to GitHub OAuth via Supabase
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'github' })
+      const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      })
       if (error) throw error
     } catch (err: any) {
       posthog.capture('auth_error', { method: 'github', error: err.message })
