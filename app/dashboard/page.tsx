@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabaseClient'
+import { ensureUserProfile } from '../../lib/ensureProfile'
 import UploadForm from '../../components/UploadForm'
 
 interface UserProfile {
@@ -43,33 +44,42 @@ export default function DashboardPage() {
 
       setUser(user)
 
-      // Load profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('auth_uid', user.id)
-        .single()
-
+      // Ensure user has a profile (will create if missing)
+      const profileData = await ensureUserProfile()
+      
       if (profileData) {
         setProfile(profileData)
+      } else {
+        // Fallback: try to load profile manually
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('auth_uid', user.id)
+          .single()
+        
+        if (existingProfile) {
+          setProfile(existingProfile)
+        }
       }
 
-      // Load samples
-      const { data: samplesData } = await supabase
-        .from('samples')
-        .select(`
-          *,
-          analyses (
-            status,
-            metrics
-          )
-        `)
-        .eq('owner_id', profileData?.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
+      // Load samples only if we have a profile
+      if (profileData) {
+        const { data: samplesData } = await supabase
+          .from('samples')
+          .select(`
+            *,
+            analyses (
+              status,
+              metrics
+            )
+          `)
+          .eq('owner_id', profileData.id)
+          .order('created_at', { ascending: false })
+          .limit(10)
 
-      if (samplesData) {
-        setSamples(samplesData)
+        if (samplesData) {
+          setSamples(samplesData)
+        }
       }
 
       setLoading(false)
