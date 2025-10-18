@@ -87,16 +87,16 @@ export default function DashboardPage() {
   const portfolioUrl = `/portfolio/${encodeURIComponent(user?.email || '')}`
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-forest-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8 border">
+        <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Welcome back!</h1>
-              <p className="text-gray-600 mt-1">{user?.email}</p>
+              <h1 className="text-3xl font-bold text-forest-50">Welcome back!</h1>
+              <p className="text-forest-300 mt-1">{user?.email}</p>
               {profile?.is_founder && (
-                <span className="inline-flex items-center px-3 py-1 mt-2 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-sm">
+                <span className="inline-flex items-center px-3 py-1 mt-2 rounded-full text-sm font-medium bg-gradient-to-r from-earth-600 to-earth-500 text-forest-50 shadow-sm">
                   🎯 Founder #{profile.founder_number} - Unlimited Free Forever
                 </span>
               )}
@@ -104,7 +104,7 @@ export default function DashboardPage() {
             <div className="text-right">
               <Link 
                 href={portfolioUrl}
-                className="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:shadow-lg transition-shadow"
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-gradient-to-r from-sage-600 to-sage-700 text-forest-50 font-medium hover:shadow-lg transition-shadow"
               >
                 View Portfolio →
               </Link>
@@ -115,22 +115,22 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Stats */}
           <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <div className="text-sm font-medium text-gray-600">Total Samples</div>
-              <div className="text-3xl font-bold text-gray-900 mt-2">{samples.length}</div>
-              <div className="text-xs text-gray-500 mt-1">All uploads</div>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <div className="text-sm font-medium text-forest-300">Total Samples</div>
+              <div className="text-3xl font-bold text-forest-50 mt-2">{samples.length}</div>
+              <div className="text-xs text-forest-400 mt-1">All uploads</div>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <div className="text-sm font-medium text-gray-600">Analyzed</div>
-              <div className="text-3xl font-bold text-green-600 mt-2">{completedSamples}</div>
-              <div className="text-xs text-gray-500 mt-1">Completed analyses</div>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <div className="text-sm font-medium text-forest-300">Analyzed</div>
+              <div className="text-3xl font-bold text-sage-400 mt-2">{completedSamples}</div>
+              <div className="text-xs text-forest-400 mt-1">Completed analyses</div>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <div className="text-sm font-medium text-gray-600">Plan</div>
-              <div className="text-3xl font-bold text-purple-600 mt-2 capitalize">
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <div className="text-sm font-medium text-forest-300">Plan</div>
+              <div className="text-3xl font-bold text-earth-400 mt-2 capitalize">
                 {profile?.plan || 'Free'}
               </div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-forest-400 mt-1">
                 {profile?.is_founder ? 'Unlimited forever' : 'Current plan'}
               </div>
             </div>
@@ -138,22 +138,22 @@ export default function DashboardPage() {
 
           {/* Upload Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <h2 className="text-xl font-bold mb-4 text-gray-900">Upload Sample</h2>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4 text-forest-50">Upload Sample</h2>
               <UploadForm />
             </div>
           </div>
 
           {/* Recent Samples */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <h2 className="text-xl font-bold mb-4 text-gray-900">Recent Samples</h2>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4 text-forest-50">Recent Samples</h2>
               
               {samples.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">📤</div>
-                  <p className="text-gray-500 mb-4">No samples yet</p>
-                  <p className="text-sm text-gray-400">Upload your first sample to get started!</p>
+                  <p className="text-forest-300 mb-4">No samples yet</p>
+                  <p className="text-sm text-forest-400">Upload your first sample to get started!</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -163,41 +163,41 @@ export default function DashboardPage() {
                     const humanScore = 100 - aiScore
 
                     return (
-                      <div key={sample.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div key={sample.id} className="border border-forest-700 bg-forest-800/30 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 capitalize">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-sage-900/50 text-sage-300 border border-sage-700 capitalize">
                                 {sample.type}
                               </span>
                               {analysis && (
                                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                                  analysis.status === 'done' ? 'bg-green-100 text-green-800' :
-                                  analysis.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                  analysis.status === 'queued' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-gray-100 text-gray-800'
+                                  analysis.status === 'done' ? 'bg-sage-900/50 text-sage-300 border border-sage-700' :
+                                  analysis.status === 'processing' ? 'bg-earth-900/50 text-earth-300 border border-earth-700' :
+                                  analysis.status === 'queued' ? 'bg-earth-900/50 text-earth-300 border border-earth-700' :
+                                  'bg-forest-800 text-forest-300 border border-forest-700'
                                 }`}>
                                   {analysis.status}
                                 </span>
                               )}
                             </div>
-                            <h3 className="font-semibold text-gray-900">{sample.title}</h3>
-                            <p className="text-xs text-gray-500 mt-1">{sample.filename}</p>
+                            <h3 className="font-semibold text-forest-50">{sample.title}</h3>
+                            <p className="text-xs text-forest-400 mt-1">{sample.filename}</p>
                           </div>
                           {analysis?.status === 'done' && (
                             <div className="text-right">
-                              <div className="text-sm font-semibold text-gray-900">
+                              <div className="text-sm font-semibold text-forest-50">
                                 {humanScore.toFixed(0)}% Human
                               </div>
                               <div className={`w-2 h-2 rounded-full mx-auto mt-1 ${
-                                humanScore >= 80 ? 'bg-green-500' : 
-                                humanScore >= 50 ? 'bg-yellow-500' : 
+                                humanScore >= 80 ? 'bg-sage-500' : 
+                                humanScore >= 50 ? 'bg-earth-500' : 
                                 'bg-red-500'
                               }`} />
                             </div>
                           )}
                         </div>
-                        <div className="mt-2 text-xs text-gray-400">
+                        <div className="mt-2 text-xs text-forest-400">
                           {new Date(sample.created_at).toLocaleString()}
                         </div>
                       </div>

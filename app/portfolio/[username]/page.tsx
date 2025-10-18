@@ -159,9 +159,9 @@ export default function PortfolioPage({ params }: { params: { username: string }
     : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-forest-950">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="bg-forest-900 border-b border-forest-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-start gap-6">
             {/* Avatar */}
@@ -172,10 +172,10 @@ export default function PortfolioPage({ params }: { params: { username: string }
                   alt={profile.full_name || 'Profile'}
                   width={120}
                   height={120}
-                  className="rounded-full border-4 border-gray-200"
+                  className="rounded-full border-4 border-forest-700"
                 />
               ) : (
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-sage-600 to-sage-700 flex items-center justify-center text-forest-50 text-4xl font-bold border-2 border-sage-500">
                   {profile.full_name?.[0] || profile.email[0].toUpperCase()}
                 </div>
               )}
@@ -184,53 +184,53 @@ export default function PortfolioPage({ params }: { params: { username: string }
             {/* Info */}
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-forest-50">
                   {profile.full_name || profile.email.split('@')[0]}
                 </h1>
                 {profile.is_founder && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-sm">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-earth-600 to-earth-500 text-forest-50 shadow-sm">
                     🎯 Founder #{profile.founder_number}
                   </span>
                 )}
               </div>
 
-              <p className="text-gray-600 mb-3">{profile.email}</p>
+              <p className="text-forest-300 mb-3">{profile.email}</p>
 
               {profile.bio && (
-                <p className="text-gray-700 mb-4 max-w-2xl">{profile.bio}</p>
+                <p className="text-forest-200 mb-4 max-w-2xl">{profile.bio}</p>
               )}
 
               <div className="flex gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{completedSamples.length}</span>
-                  <span className="text-gray-600">Verified Samples</span>
+                  <span className="font-semibold text-forest-50">{completedSamples.length}</span>
+                  <span className="text-forest-300">Verified Samples</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{Object.keys(skills).length}</span>
-                  <span className="text-gray-600">Skills</span>
+                  <span className="font-semibold text-forest-50">{Object.keys(skills).length}</span>
+                  <span className="text-forest-300">Skills</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{credentials.length}</span>
-                  <span className="text-gray-600">Credentials</span>
+                  <span className="font-semibold text-forest-50">{credentials.length}</span>
+                  <span className="text-forest-300">Credentials</span>
                 </div>
               </div>
 
               {/* AI Authenticity Score */}
-              <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 max-w-md">
+              <div className="mt-4 p-4 bg-sage-900/30 rounded-lg border border-sage-700 max-w-md">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-sm font-medium text-green-900">Human Authenticity</div>
-                    <div className="text-xs text-green-700 mt-1">
+                    <div className="text-sm font-medium text-sage-300">Human Authenticity</div>
+                    <div className="text-xs text-sage-400 mt-1">
                       Average AI Detection: {averageAIScore.toFixed(1)}%
                     </div>
                   </div>
-                  <div className="text-3xl font-bold text-green-600">
+                  <div className="text-3xl font-bold text-sage-400">
                     {(100 - averageAIScore).toFixed(0)}%
                   </div>
                 </div>
-                <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                <div className="mt-2 w-full bg-forest-800 rounded-full h-2">
                   <div
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all"
+                    className="bg-gradient-to-r from-sage-600 to-sage-500 h-2 rounded-full transition-all"
                     style={{ width: `${100 - averageAIScore}%` }}
                   />
                 </div>
@@ -246,10 +246,10 @@ export default function PortfolioPage({ params }: { params: { username: string }
           {/* Left Column: Skills & Credentials */}
           <div className="lg:col-span-1 space-y-6">
             {/* Skills */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <h2 className="text-xl font-bold mb-4 text-gray-900">Skills</h2>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4 text-forest-50">Skills</h2>
               {Object.keys(skills).length === 0 ? (
-                <p className="text-gray-500 text-sm">No skills detected yet</p>
+                <p className="text-forest-400 text-sm">No skills detected yet</p>
               ) : (
                 <div className="space-y-3">
                   {Object.entries(skills)
@@ -257,16 +257,16 @@ export default function PortfolioPage({ params }: { params: { username: string }
                     .map(([skill, data]) => (
                       <div key={skill}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-gray-900 capitalize">
+                          <span className="text-sm font-medium text-forest-50 capitalize">
                             {skill}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-forest-400">
                             {data.count} sample{data.count > 1 ? 's' : ''}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-forest-800 rounded-full h-2">
                           <div
-                            className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full"
+                            className="bg-gradient-to-r from-sage-600 to-sage-500 h-2 rounded-full"
                             style={{ width: `${data.confidence * 100}%` }}
                           />
                         </div>
@@ -277,25 +277,25 @@ export default function PortfolioPage({ params }: { params: { username: string }
             </div>
 
             {/* Credentials */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <h2 className="text-xl font-bold mb-4 text-gray-900">Credentials</h2>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4 text-forest-50">Credentials</h2>
               {credentials.length === 0 ? (
-                <p className="text-gray-500 text-sm">No credentials added yet</p>
+                <p className="text-forest-400 text-sm">No credentials added yet</p>
               ) : (
                 <div className="space-y-3">
                   {credentials.map((cred, idx) => (
-                    <div key={idx} className="p-3 bg-gray-50 rounded-lg border">
+                    <div key={idx} className="p-3 bg-earth-900/30 rounded-lg border border-earth-700">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="font-medium text-sm text-gray-900">{cred.name}</div>
+                          <div className="font-medium text-sm text-forest-50">{cred.name}</div>
                           {cred.issuer && (
-                            <div className="text-xs text-gray-600 mt-1">{cred.issuer}</div>
+                            <div className="text-xs text-forest-300 mt-1">{cred.issuer}</div>
                           )}
                           {cred.date && (
-                            <div className="text-xs text-gray-500 mt-1">{cred.date}</div>
+                            <div className="text-xs text-forest-400 mt-1">{cred.date}</div>
                           )}
                         </div>
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-earth-900/50 text-earth-300 border border-earth-700">
                           {cred.type}
                         </span>
                       </div>
@@ -308,13 +308,13 @@ export default function PortfolioPage({ params }: { params: { username: string }
 
           {/* Right Column: Work Samples */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-6 border">
-              <h2 className="text-xl font-bold mb-6 text-gray-900">Work Samples</h2>
+            <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-6 text-forest-50">Work Samples</h2>
 
               {samples.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">📁</div>
-                  <p className="text-gray-500">No samples uploaded yet</p>
+                  <p className="text-forest-400">No samples uploaded yet</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -324,16 +324,16 @@ export default function PortfolioPage({ params }: { params: { username: string }
                     const humanScore = 100 - aiScore
 
                     return (
-                      <div key={sample.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div key={sample.id} className="border border-forest-700 bg-forest-800/30 rounded-lg p-4 hover:shadow-md transition-shadow">
                         {/* Type Badge */}
                         <div className="flex items-start justify-between mb-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 capitalize">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sage-900/50 text-sage-300 border border-sage-700 capitalize">
                             {sample.type}
                           </span>
                           {analysis && (
                             <div className="flex items-center gap-1">
-                              <div className={`w-2 h-2 rounded-full ${humanScore >= 80 ? 'bg-green-500' : humanScore >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} />
-                              <span className="text-xs font-medium text-gray-600">
+                              <div className={`w-2 h-2 rounded-full ${humanScore >= 80 ? 'bg-sage-500' : humanScore >= 50 ? 'bg-earth-500' : 'bg-red-500'}`} />
+                              <span className="text-xs font-medium text-forest-300">
                                 {humanScore.toFixed(0)}% Human
                               </span>
                             </div>
@@ -341,16 +341,16 @@ export default function PortfolioPage({ params }: { params: { username: string }
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-semibold text-gray-900 mb-1">
+                        <h3 className="font-semibold text-forest-50 mb-1">
                           {sample.title}
                         </h3>
 
                         {/* Filename */}
-                        <p className="text-xs text-gray-500 mb-3">{sample.filename}</p>
+                        <p className="text-xs text-forest-400 mb-3">{sample.filename}</p>
 
                         {/* Analysis Summary */}
                         {analysis?.summary && (
-                          <p className="text-sm text-gray-700 mb-3 line-clamp-2">
+                          <p className="text-sm text-forest-200 mb-3 line-clamp-2">
                             {analysis.summary}
                           </p>
                         )}
@@ -359,12 +359,12 @@ export default function PortfolioPage({ params }: { params: { username: string }
                         {analysis?.skills && Object.keys(analysis.skills).length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-3">
                             {Object.keys(analysis.skills).slice(0, 4).map(skill => (
-                              <span key={skill} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-700 capitalize">
+                              <span key={skill} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-sage-900/50 text-sage-300 border border-sage-800 capitalize">
                                 {skill}
                               </span>
                             ))}
                             {Object.keys(analysis.skills).length > 4 && (
-                              <span className="text-xs text-gray-500">
+                              <span className="text-xs text-forest-400">
                                 +{Object.keys(analysis.skills).length - 4} more
                               </span>
                             )}
@@ -373,15 +373,15 @@ export default function PortfolioPage({ params }: { params: { username: string }
 
                         {/* Status */}
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-500">
+                          <span className="text-forest-400">
                             {new Date(sample.created_at).toLocaleDateString()}
                           </span>
                           {sample.analyses?.[0] && (
                             <span className={`px-2 py-1 rounded-full ${
-                              sample.analyses[0].status === 'done' ? 'bg-green-100 text-green-800' :
-                              sample.analyses[0].status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                              sample.analyses[0].status === 'queued' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
+                              sample.analyses[0].status === 'done' ? 'bg-sage-900/50 text-sage-300 border border-sage-700' :
+                              sample.analyses[0].status === 'processing' ? 'bg-earth-900/50 text-earth-300 border border-earth-700' :
+                              sample.analyses[0].status === 'queued' ? 'bg-earth-900/50 text-earth-300 border border-earth-700' :
+                              'bg-forest-800 text-forest-300 border border-forest-700'
                             }`}>
                               {sample.analyses[0].status}
                             </span>

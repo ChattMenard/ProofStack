@@ -34,15 +34,15 @@ export default function Home() {
   }
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-16 bg-forest-950 min-h-screen">
       {/* Hero Section */}
       <section className="text-center space-y-6 pt-8">
         <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-forest-50">
             Turn Your Skills Into
-            <span className="text-blue-600 block">Verified Proof</span>
+            <span className="text-sage-400 block">Verified Proof</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-forest-200 max-w-3xl mx-auto">
             Upload your code, projects, or achievements and get AI-powered skill extraction with cryptographic verification. Build a portfolio that employers can trust.
           </p>
         </div>
@@ -57,26 +57,26 @@ export default function Home() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-3 bg-forest-900 border border-forest-700 text-forest-50 placeholder-forest-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-6 py-3 bg-sage-600 text-forest-50 font-medium rounded-lg hover:bg-sage-500 focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2 focus:ring-offset-forest-950 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading ? 'Joining...' : 'Join Waitlist'}
               </button>
             </form>
           ) : (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-green-800 font-medium">🎉 You&apos;re on the waitlist!</p>
-              <p className="text-green-600 text-sm mt-1">We&apos;ll notify you when ProofStack launches.</p>
+            <div className="p-4 bg-sage-900/30 border border-sage-700 rounded-lg">
+              <p className="text-sage-300 font-medium">🎉 You&apos;re on the waitlist!</p>
+              <p className="text-sage-400 text-sm mt-1">We&apos;ll notify you when ProofStack launches.</p>
             </div>
           )}
           
-          <p className="text-sm text-gray-500 mt-3">
+          <p className="text-sm text-forest-400 mt-3">
             No spam. Unsubscribe anytime. 
-            <Link href="/login" className="text-blue-600 hover:underline ml-1">
+            <Link href="/login" className="text-sage-400 hover:text-sage-300 hover:underline ml-1">
               Already have access? Sign in
             </Link>
           </p>
@@ -86,81 +86,81 @@ export default function Home() {
       {/* Features Section */}
       <section className="grid md:grid-cols-3 gap-8 text-center">
         <div className="space-y-3">
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 bg-sage-900/50 rounded-lg flex items-center justify-center mx-auto border border-sage-800">
             <span className="text-2xl">🔍</span>
           </div>
-          <h3 className="text-lg font-semibold">AI-Powered Analysis</h3>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-semibold text-forest-50">AI-Powered Analysis</h3>
+          <p className="text-forest-300">
             Upload code, projects, or media. Our AI extracts your skills and creates detailed evidence.
           </p>
         </div>
         
         <div className="space-y-3">
-          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 bg-sage-900/50 rounded-lg flex items-center justify-center mx-auto border border-sage-800">
             <span className="text-2xl">✅</span>
           </div>
-          <h3 className="text-lg font-semibold">Cryptographic Verification</h3>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-semibold text-forest-50">Cryptographic Verification</h3>
+          <p className="text-forest-300">
             Every skill claim is backed by cryptographic proofs and immutable evidence.
           </p>
         </div>
         
         <div className="space-y-3">
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 bg-sage-900/50 rounded-lg flex items-center justify-center mx-auto border border-sage-800">
             <span className="text-2xl">🔗</span>
           </div>
-          <h3 className="text-lg font-semibold">GitHub Integration</h3>
-          <p className="text-gray-600">
+          <h3 className="text-lg font-semibold text-forest-50">GitHub Integration</h3>
+          <p className="text-forest-300">
             Verify repository ownership with challenge-response authentication.
           </p>
         </div>
       </section>
 
       {/* Social Proof / Stats */}
-      <section className="bg-gray-50 rounded-xl p-8 text-center">
-        <h2 className="text-2xl font-bold mb-6">Trusted by Developers</h2>
+      <section className="bg-forest-900 border border-forest-800 rounded-xl p-8 text-center">
+        <h2 className="text-2xl font-bold mb-6 text-forest-50">Trusted by Developers</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div>
-            <div className="text-2xl font-bold text-blue-600">500+</div>
-            <div className="text-sm text-gray-600">Skills Analyzed</div>
+            <div className="text-2xl font-bold text-sage-400">500+</div>
+            <div className="text-sm text-forest-300">Skills Analyzed</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-600">50+</div>
-            <div className="text-sm text-gray-600">Verified Repos</div>
+            <div className="text-2xl font-bold text-sage-400">50+</div>
+            <div className="text-sm text-forest-300">Verified Repos</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-purple-600">95%</div>
-            <div className="text-sm text-gray-600">Accuracy Rate</div>
+            <div className="text-2xl font-bold text-sage-400">95%</div>
+            <div className="text-sm text-forest-300">Accuracy Rate</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-orange-600">24h</div>
-            <div className="text-sm text-gray-600">Avg. Processing</div>
+            <div className="text-2xl font-bold text-earth-400">24h</div>
+            <div className="text-sm text-forest-300">Avg. Processing</div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
       <section className="space-y-8">
-        <h2 className="text-3xl font-bold text-center">How ProofStack Works</h2>
+        <h2 className="text-3xl font-bold text-center text-forest-50">How ProofStack Works</h2>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold">1</div>
-            <h3 className="text-lg font-semibold">Upload & Connect</h3>
-            <p className="text-gray-600">
+            <div className="w-16 h-16 bg-sage-700 text-forest-50 rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">1</div>
+            <h3 className="text-lg font-semibold text-forest-50">Upload & Connect</h3>
+            <p className="text-forest-300">
               Upload your projects, code samples, or connect your GitHub repositories.
             </p>
           </div>
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold">2</div>
-            <h3 className="text-lg font-semibold">AI Analysis</h3>
-            <p className="text-gray-600">
+            <div className="w-16 h-16 bg-sage-700 text-forest-50 rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">2</div>
+            <h3 className="text-lg font-semibold text-forest-50">AI Analysis</h3>
+            <p className="text-forest-300">
               Our AI analyzes your work and extracts specific skills with supporting evidence.
             </p>
           </div>
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold">3</div>
-            <h3 className="text-lg font-semibold">Get Verified</h3>
-            <p className="text-gray-600">
+            <div className="w-16 h-16 bg-sage-700 text-forest-50 rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">3</div>
+            <h3 className="text-lg font-semibold text-forest-50">Get Verified</h3>
+            <p className="text-forest-300">
               Receive cryptographically signed proofs that employers and recruiters can verify.
             </p>
           </div>
@@ -168,9 +168,9 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white rounded-xl p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">Ready to Prove Your Skills?</h2>
-        <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+      <section className="bg-gradient-to-r from-sage-800 to-earth-800 rounded-xl p-8 text-center border border-sage-700">
+        <h2 className="text-2xl font-bold mb-4 text-forest-50">Ready to Prove Your Skills?</h2>
+        <p className="text-forest-200 mb-6 max-w-2xl mx-auto">
           Join thousands of developers who are already building verified skill portfolios with ProofStack.
         </p>
         {!isSubmitted && (
@@ -181,12 +181,12 @@ export default function Home() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+              className="flex-1 px-4 py-3 rounded-lg bg-forest-900 border border-forest-700 text-forest-50 placeholder-forest-400 focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-transparent"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-3 bg-white text-blue-600 font-medium rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-3 bg-sage-600 text-forest-50 font-medium rounded-lg hover:bg-sage-500 focus:outline-none focus:ring-2 focus:ring-sage-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? 'Joining...' : 'Join Waitlist'}
             </button>
