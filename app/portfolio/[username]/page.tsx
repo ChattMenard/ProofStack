@@ -331,15 +331,25 @@ export default function PortfolioPage({ params }: { params: { username: string }
                             {sample.type}
                           </span>
                           {analysis && (
-                            <div className="flex items-center gap-1">
-                              <div className={`w-2 h-2 rounded-full ${
-                                aiScore <= 20 ? 'bg-sage-500' :    // Low AI = good (human-written)
-                                aiScore <= 50 ? 'bg-earth-500' :   // Medium AI = uncertain
-                                'bg-red-500'                        // High AI = likely AI-generated
-                              }`} />
-                              <span className="text-xs font-medium text-forest-300">
-                                {aiScore.toFixed(0)}% AI
-                              </span>
+                            <div className="text-right">
+                              <div className="flex items-center gap-1 justify-end mb-1">
+                                <div className={`w-2 h-2 rounded-full ${
+                                  aiScore <= 20 ? 'bg-sage-500' :    // Low AI = good (human-written)
+                                  aiScore <= 50 ? 'bg-earth-500' :   // Medium AI = uncertain
+                                  'bg-red-500'                        // High AI = likely AI-generated
+                                }`} />
+                                <span 
+                                  className="text-xs font-medium text-forest-300 cursor-help" 
+                                  title={analysis.metrics?.ai_detection_reasoning || 'AI detection analysis'}
+                                >
+                                  {aiScore.toFixed(0)}% AI
+                                </span>
+                              </div>
+                              {analysis.metrics?.ai_detection_reasoning && (
+                                <p className="text-xs text-forest-400 text-right max-w-[180px] ml-auto">
+                                  {analysis.metrics.ai_detection_reasoning}
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>

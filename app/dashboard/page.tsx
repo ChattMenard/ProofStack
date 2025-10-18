@@ -22,7 +22,10 @@ interface Sample {
   created_at: string
   analyses?: Array<{
     status: string
-    metrics?: { ai_detection_score?: number }
+    metrics?: { 
+      ai_detection_score?: number
+      ai_detection_reasoning?: string
+    }
   }>
 }
 
@@ -188,7 +191,10 @@ export default function DashboardPage() {
                           </div>
                           {analysis?.status === 'done' && (
                             <div className="text-right">
-                              <div className="text-sm font-semibold text-forest-50">
+                              <div 
+                                className="text-sm font-semibold text-forest-50 cursor-help" 
+                                title={analysis.metrics?.ai_detection_reasoning || 'AI detection analysis'}
+                              >
                                 {aiScore.toFixed(0)}% AI
                               </div>
                               <div className={`w-2 h-2 rounded-full mx-auto mt-1 ${
@@ -196,6 +202,11 @@ export default function DashboardPage() {
                                 aiScore <= 50 ? 'bg-earth-500' :   // Medium AI score = uncertain
                                 'bg-red-500'                        // High AI score = likely AI
                               }`} />
+                              {analysis.metrics?.ai_detection_reasoning && (
+                                <p className="text-xs text-forest-400 mt-1 max-w-[200px] text-right">
+                                  {analysis.metrics.ai_detection_reasoning}
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>

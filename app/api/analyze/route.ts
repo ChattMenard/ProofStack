@@ -77,6 +77,7 @@ export async function POST(req: NextRequest) {
             model: result.model || 'gpt-4o-mini',
             tokens_used: result.tokens_used || 0,
             ai_detection_score: result.ai_detection_score || 0,
+            ai_detection_reasoning: result.ai_detection_reasoning || '',
           },
           completed_at: new Date().toISOString(),
         })
