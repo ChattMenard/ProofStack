@@ -89,9 +89,15 @@ export default function UploadForm() {
   }
 
   async function doUpload(payload: any) {
+    const token = await getAccessToken()
+    if (!token) {
+      setMessage('Session expired. Please sign in again.')
+      return
+    }
+    
     const res = await fetch('/api/upload', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await getAccessToken()}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(payload)
     })
     const json = await res.json()
@@ -203,12 +209,14 @@ export default function UploadForm() {
 
 async function getAccessToken() {
   try {
-    const { data } = await (await import('../lib/supabaseClient')).supabase.auth.getSession()
-    // the above returns { data: { session } }
-    // handle both shapes
-    const session = (data as any)?.session ?? (data as any)
-    return session?.access_token ?? ''
+    const { data: { session } } = await (await import('../lib/supabaseClient')).supabase.auth.getSession()
+    if (!session?.access_token) {
+      console.error('No valid session found')
+      return ''
+    }
+    return session.access_token
   } catch (e) {
+    console.error('Error getting access token:', e)
     return ''
   }
 }
