@@ -107,6 +107,16 @@ export default function DiscoverPage() {
         return;
       }
 
+      // Track message action for promoted profiles
+      fetch('/api/promotions/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          professional_id: professionalId,
+          action: 'message'
+        })
+      }).catch(err => console.error('Tracking error:', err));
+
       // Check if conversation already exists
       const { data: existingParticipants } = await supabase
         .from('conversation_participants')
@@ -185,6 +195,18 @@ export default function DiscoverPage() {
     }
   };
 
+  const trackView = (professionalId: string) => {
+    // Track view action for promoted profiles (fire and forget)
+    fetch('/api/promotions/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        professional_id: professionalId,
+        action: 'view'
+      })
+    }).catch(err => console.error('Tracking error:', err));
+  };
+
   const toggleSave = async (professionalId: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -212,6 +234,16 @@ export default function DiscoverPage() {
         });
       
       setSavedIds(prev => new Set(prev).add(professionalId));
+
+      // Track save action for promoted profiles
+      fetch('/api/promotions/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          professional_id: professionalId,
+          action: 'save'
+        })
+      }).catch(err => console.error('Tracking error:', err));
 
       // Track view
       await supabase.from('profile_views').insert({
@@ -576,6 +608,7 @@ export default function DiscoverPage() {
                       <div className="flex gap-2">
                         <Link
                           href={`/portfolio/${prof.username}`}
+                          onClick={() => trackView(prof.id)}
                           className="flex-1 text-center bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
                           View Profile
