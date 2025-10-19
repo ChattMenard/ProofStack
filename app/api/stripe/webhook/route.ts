@@ -31,7 +31,37 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
         
-        // Get user ID from metadata
+        // Check if this is a promotion purchase
+        if (session.metadata?.type === 'promotion_purchase') {
+          const professionalId = session.metadata.professional_id
+          const tier = session.metadata.tier
+
+          if (professionalId && tier) {
+            // Create promotion record
+            const startsAt = new Date()
+            const expiresAt = new Date()
+            expiresAt.setMonth(expiresAt.getMonth() + 1) // 1 month from now
+
+            await supabase
+              .from('professional_promotions')
+              .insert({
+                professional_id: professionalId,
+                tier: tier,
+                starts_at: startsAt.toISOString(),
+                expires_at: expiresAt.toISOString(),
+                is_active: true,
+                stripe_subscription_id: session.subscription as string,
+                views_count: 0,
+                saves_count: 0,
+                messages_count: 0
+              })
+
+            console.log('Created promotion:', { professionalId, tier })
+          }
+          break
+        }
+        
+        // Original Pro subscription handling
         const userId = session.metadata?.userId
         if (!userId) break
 
@@ -71,7 +101,21 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription
 
-        // Downgrade to free
+        // Check if this is a promotion subscription
+        const professionalId = subscription.metadata?.professional_id
+        if (professionalId) {
+          // Deactivate promotion
+          await supabase
+            .from('professional_promotions')
+            .update({ is_active: false })
+            .eq('stripe_subscription_id', subscription.id)
+            .eq('professional_id', professionalId)
+
+          console.log('Promotion subscription canceled:', subscription.id)
+          break
+        }
+
+        // Original Pro subscription cancellation
         await supabase
           .from('profiles')
           .update({
