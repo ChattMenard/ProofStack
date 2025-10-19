@@ -83,11 +83,19 @@ In your Vercel dashboard, add these environment variables:
 - `NEXT_PUBLIC_POSTHOG_KEY`
 - `NEXT_PUBLIC_POSTHOG_HOST`
 
+**Email Notifications (Resend):**
+- `RESEND_API_KEY` - Get from https://resend.com/api-keys
+- `RESEND_FROM_EMAIL` - Format: "ProofStack <notifications@yourdomain.com>"
+- `CRON_SECRET` - Random secret for securing cron endpoints
+
+See [EMAIL_NOTIFICATIONS_GUIDE.md](EMAIL_NOTIFICATIONS_GUIDE.md) for complete setup instructions.
+
 ### Monitoring & Analytics
 
 - **Sentry**: Automatic error tracking and performance monitoring
 - **PostHog**: User analytics and event tracking
-- Both are configured to initialize automatically when environment variables are set
+- **Resend**: Email delivery tracking and analytics
+- All are configured to initialize automatically when environment variables are set
 
 Next steps:
 - Fill in .env variables
