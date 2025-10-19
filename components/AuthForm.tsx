@@ -80,7 +80,7 @@ export default function AuthForm() {
   }
 
   return (
-    <div className="space-y-4 max-w-sm">
+    <div className="space-y-4 max-w-sm bg-forest-900 p-8 rounded-lg border border-forest-800 shadow-xl">
       {/* Email Magic Link */}
       <form onSubmit={handleSubmit} className="space-y-2">
         <label className="block text-sm text-forest-200">Email</label>
@@ -115,7 +115,7 @@ export default function AuthForm() {
         <button 
           type="button" 
           onClick={handleGoogle}
-          className="w-full bg-white hover:bg-gray-50 text-gray-800 px-4 py-2 rounded border border-gray-300 flex items-center justify-center gap-2 transition"
+          className="w-full bg-forest-800 hover:bg-forest-700 text-forest-50 px-4 py-2 rounded border border-forest-700 flex items-center justify-center gap-2 transition"
         >
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
           Sign in with Google
@@ -124,7 +124,7 @@ export default function AuthForm() {
         <button 
           type="button" 
           onClick={handleGitHub} 
-          className="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded flex items-center justify-center gap-2 transition"
+          className="w-full bg-forest-800 hover:bg-forest-700 text-forest-50 px-4 py-2 rounded border border-forest-700 flex items-center justify-center gap-2 transition"
         >
           <img src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub" className="w-4 h-4 invert" />
           Sign in with GitHub
