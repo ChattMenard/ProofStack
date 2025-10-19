@@ -27,6 +27,12 @@
       ]
     }
   ],
+  "crons": [
+    {
+      "path": "/api/cron/check-expiring-promotions",
+      "schedule": "0 10 * * *"
+    }
+  ],
   "env": {
     "NODE_ENV": "production"
   }

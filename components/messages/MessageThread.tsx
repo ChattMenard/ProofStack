@@ -138,17 +138,28 @@ export default function MessageThread({ conversationId, currentUserId, recipient
 
     setSending(true);
     try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({
+      // Use the API endpoint that handles email notifications
+      const response = await fetch('/api/messages/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           conversation_id: conversationId,
           sender_id: currentUserId,
-          content: newMessage.trim(),
-          is_read: false
-        });
+          content: newMessage.trim()
+        })
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
       setNewMessage('');
+      
+      // Update last_message_at for conversation
+      await supabase
+        .from('conversations')
+        .update({ last_message_at: new Date().toISOString() })
+        .eq('id', conversationId);
     } catch (error) {
       console.error('Error sending message:', error);
       alert('Failed to send message');

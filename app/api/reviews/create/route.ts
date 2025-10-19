@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendNewReviewEmail } from '@/lib/email/notifications';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -141,6 +142,10 @@ export async function POST(request: NextRequest) {
     // Update professional_ratings aggregate
     await updateProfessionalRatings(professional_id);
 
+    // Send email notification to professional (fire and forget)
+    sendReviewEmailNotification(professional_id, employer_id, rating, review_text.trim())
+      .catch((err: any) => console.error('Failed to send review notification:', err));
+
     return NextResponse.json({
       success: true,
       review
@@ -203,5 +208,62 @@ async function updateProfessionalRatings(professionalId: string) {
     }
   } catch (error) {
     console.error('Failed to update professional ratings:', error);
+  }
+}
+
+async function sendReviewEmailNotification(
+  professionalId: string, 
+  employerId: string, 
+  rating: number, 
+  reviewText: string
+) {
+  try {
+    // Get professional details
+    const { data: professional } = await supabase
+      .from('profiles')
+      .select('email, full_name, username')
+      .eq('id', professionalId)
+      .single();
+
+    if (!professional || !professional.email) {
+      return;
+    }
+
+    // Get employer details
+    const { data: employerProfile } = await supabase
+      .from('profiles')
+      .select('username, full_name')
+      .eq('id', employerId)
+      .single();
+
+    if (!employerProfile) {
+      return;
+    }
+
+    // Get organization name if employer has one
+    const { data: org } = await supabase
+      .from('employer_organizations')
+      .select('company_name')
+      .eq('employer_id', employerId)
+      .single();
+
+    const employerName = org?.company_name || 
+                        employerProfile.full_name || 
+                        employerProfile.username || 
+                        'An employer';
+
+    const reviewPreview = reviewText.length > 150 
+      ? reviewText.substring(0, 150) + '...' 
+      : reviewText;
+
+    await sendNewReviewEmail(professional.email, {
+      professionalName: professional.full_name || professional.username || 'User',
+      employerName,
+      rating,
+      reviewPreview,
+      professionalUsername: professional.username || professionalId
+    });
+  } catch (error) {
+    console.error('Error sending review email:', error);
   }
 }
