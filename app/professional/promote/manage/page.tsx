@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ const tierInfo = {
   featured: { name: 'Featured Promotion', badge: '⭐ Featured', color: 'gold', price: 99 }
 };
 
-export default function ManagePromotionPage() {
+function ManagePromotionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -397,5 +397,19 @@ export default function ManagePromotionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ManagePromotionPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="text-center">Loading promotion...</div>
+        </div>
+      </div>
+    }>
+      <ManagePromotionContent />
+    </Suspense>
   );
 }
