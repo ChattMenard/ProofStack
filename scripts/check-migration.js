@@ -12,7 +12,13 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Use service role key to bypass RLS
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
 async function checkTables() {
   const tablesToCheck = [
@@ -36,10 +42,12 @@ async function checkTables() {
   let missingCount = 0;
   
   for (const table of tablesToCheck) {
-    const { data, error } = await supabase.from(table).select('id').limit(1);
+    // Use different column for professional_ratings (it doesn't have 'id')
+    const selectColumn = table === 'professional_ratings' ? 'professional_id' : 'id';
+    const { data, error } = await supabase.from(table).select(selectColumn).limit(1);
     
     if (error) {
-      console.log(`❌ ${table}: NOT FOUND`);
+      console.log(`❌ ${table}: NOT FOUND (${error.message})`);
       missingCount++;
     } else {
       console.log(`✅ ${table}: exists`);
