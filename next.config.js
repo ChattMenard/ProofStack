@@ -3,6 +3,10 @@ import { withSentryConfig } from '@sentry/nextjs'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Allow warnings, only fail on errors
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
 }
 
 export default withSentryConfig(nextConfig, {
