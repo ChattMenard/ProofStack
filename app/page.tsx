@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import Link from 'next/link'
+import EmployerHero from '@/components/EmployerHero'
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -35,7 +36,10 @@ export default function Home() {
 
   return (
     <div className="space-y-20 min-h-screen">
-      {/* Hero Section - Enhanced */}
+      {/* Employer Hero - Stop Hiring Disappointments */}
+      <EmployerHero />
+
+      {/* Professional Hero Section */}
       <section className="text-center space-y-8 pt-12 pb-8 relative">
         {/* Animated Background Glow */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
@@ -50,7 +54,7 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-sage-500"></span>
             </span>
-            Now in Beta - Join Early Adopters
+            For Professionals - Build Your Verified Portfolio
           </div>
 
           {/* Main Headline */}
