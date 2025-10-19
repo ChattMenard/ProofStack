@@ -61,13 +61,6 @@ export default function PricingPage() {
           </div>
 
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage-900/30 border border-sage-700/50 rounded-full text-sm text-sage-300 backdrop-blur-sm mb-6">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            14-Day Money-Back Guarantee
-          </div>
-
           <h1 className="text-5xl md:text-6xl font-bold text-forest-50 mb-6">
             Simple, Transparent Pricing
           </h1>
@@ -265,7 +258,7 @@ export default function PricingPage() {
             </button>
             
             <p className="text-center text-xs text-forest-400 mt-4">
-              ✨ Cancel anytime • 💳 Secure payment • 🔒 Money-back guarantee
+              ✨ Cancel anytime • 💳 Secure payment
             </p>
           </div>
         </div>
@@ -410,18 +403,6 @@ export default function PricingPage() {
             </summary>
             <p className="mt-4 text-forest-300">
               We accept all major credit cards (Visa, Mastercard, Amex, Discover) through Stripe. Your payment information is secure and encrypted.
-            </p>
-          </details>
-
-          <details className="group bg-forest-900/50 border border-forest-800 rounded-xl p-6 hover:border-sage-700 transition-colors">
-            <summary className="cursor-pointer list-none flex items-center justify-between font-semibold text-forest-50">
-              <span>Is there a free trial for Pro?</span>
-              <svg className="w-5 h-5 text-forest-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </summary>
-            <p className="mt-4 text-forest-300">
-              We offer a 14-day money-back guarantee instead of a trial. Try Pro risk-free, and if you're not satisfied, we'll refund your payment in full.
             </p>
           </details>
 
