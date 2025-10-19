@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { supabase } from '../../../lib/supabaseClient'
+import PortfolioSamples from '../../../components/PortfolioSamples'
 
 interface Profile {
   id: string
@@ -50,11 +51,16 @@ export default function PortfolioPage({ params }: { params: { username: string }
   const [credentials, setCredentials] = useState<Credential[]>([])
   const [skills, setSkills] = useState<Record<string, { confidence: number; count: number }>>({})
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [isOwner, setIsOwner] = useState(false)
 
-  useEffect(() => {
-    async function loadPortfolio() {
+  const loadPortfolio = async () => {
       try {
         console.log('Loading portfolio for:', username)
+        
+        // Check if current user is viewing their own portfolio
+        const { data: { user } } = await supabase.auth.getUser()
+        setCurrentUser(user)
         
         // Try to get profile by email first (take most recent if duplicates exist)
         let profileData = null
@@ -97,6 +103,11 @@ export default function PortfolioPage({ params }: { params: { username: string }
         }
         
         setProfile(profileData)
+        
+        // Check if current user is the owner
+        if (user && profileData) {
+          setIsOwner(user.email === profileData.email || user.id === profileData.auth_uid)
+        }
 
         // Get samples with analyses
         const { data: samplesData, error: samplesError } = await supabase
@@ -155,8 +166,9 @@ export default function PortfolioPage({ params }: { params: { username: string }
       } finally {
         setLoading(false)
       }
-    }
+  }
 
+  useEffect(() => {
     if (username) {
       loadPortfolio()
     }
@@ -344,102 +356,16 @@ export default function PortfolioPage({ params }: { params: { username: string }
           <div className="lg:col-span-2">
             <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6">
               <h2 className="text-xl font-bold mb-6 text-forest-50">Work Samples</h2>
-
-              {samples.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">📁</div>
-                  <p className="text-forest-400">No samples uploaded yet</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {samples.map(sample => {
-                    const analysis = sample.analyses?.find(a => a.status === 'done')
-                    const aiScore = analysis?.metrics?.ai_detection_score || 0
-                    // ai_detection_score is 0-100 where higher = more AI-generated
-
-                    return (
-                      <div key={sample.id} className="border border-forest-700 bg-forest-800/30 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        {/* Type Badge */}
-                        <div className="flex items-start justify-between mb-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sage-900/50 text-sage-300 border border-sage-700 capitalize">
-                            {sample.type}
-                          </span>
-                          {analysis && (
-                            <div className="text-right">
-                              <div className="flex items-center gap-1 justify-end mb-1">
-                                <div className={`w-2 h-2 rounded-full ${
-                                  aiScore <= 20 ? 'bg-sage-500' :    // Low AI = good (human-written)
-                                  aiScore <= 50 ? 'bg-earth-500' :   // Medium AI = uncertain
-                                  'bg-red-500'                        // High AI = likely AI-generated
-                                }`} />
-                                <span 
-                                  className="text-xs font-medium text-forest-300 cursor-help" 
-                                  title={analysis.metrics?.ai_detection_reasoning || 'AI detection analysis'}
-                                >
-                                  {aiScore.toFixed(0)}% AI
-                                </span>
-                              </div>
-                              {analysis.metrics?.ai_detection_reasoning && (
-                                <p className="text-xs text-forest-400 text-right max-w-[180px] ml-auto">
-                                  {analysis.metrics.ai_detection_reasoning}
-                                </p>
-                              )}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Title */}
-                        <h3 className="font-semibold text-forest-50 mb-1">
-                          {sample.title}
-                        </h3>
-
-                        {/* Filename */}
-                        <p className="text-xs text-forest-400 mb-3">{sample.filename}</p>
-
-                        {/* Analysis Summary */}
-                        {analysis?.summary && (
-                          <p className="text-sm text-forest-200 mb-3 line-clamp-2">
-                            {analysis.summary}
-                          </p>
-                        )}
-
-                        {/* Skills from this sample */}
-                        {analysis?.skills && Object.keys(analysis.skills).length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {Object.keys(analysis.skills).slice(0, 4).map(skill => (
-                              <span key={skill} className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-sage-900/50 text-sage-300 border border-sage-800 capitalize">
-                                {skill}
-                              </span>
-                            ))}
-                            {Object.keys(analysis.skills).length > 4 && (
-                              <span className="text-xs text-forest-400">
-                                +{Object.keys(analysis.skills).length - 4} more
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Status */}
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-forest-400">
-                            {new Date(sample.created_at).toLocaleDateString()}
-                          </span>
-                          {sample.analyses?.[0] && (
-                            <span className={`px-2 py-1 rounded-full ${
-                              sample.analyses[0].status === 'done' ? 'bg-sage-900/50 text-sage-300 border border-sage-700' :
-                              sample.analyses[0].status === 'processing' ? 'bg-earth-900/50 text-earth-300 border border-earth-700' :
-                              sample.analyses[0].status === 'queued' ? 'bg-earth-900/50 text-earth-300 border border-earth-700' :
-                              'bg-forest-800 text-forest-300 border border-forest-700'
-                            }`}>
-                              {sample.analyses[0].status}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
+              <PortfolioSamples 
+                samples={samples} 
+                isOwner={isOwner}
+                onRefresh={() => {
+                  // Reload the portfolio
+                  if (username) {
+                    loadPortfolio()
+                  }
+                }}
+              />
             </div>
           </div>
         </div>

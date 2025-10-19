@@ -17,7 +17,11 @@ const EMPLOYER_KEYWORDS = [
   'employer', 'contract', 'nda', 'non-disclosure'
 ]
 
-export default function UploadForm() {
+interface UploadFormProps {
+  onSuccess?: () => void
+}
+
+export default function UploadForm({ onSuccess }: UploadFormProps = {}) {
   const [text, setText] = useState('')
   const [file, setFile] = useState<File|null>(null)
   const [message, setMessage] = useState('')
@@ -114,6 +118,11 @@ export default function UploadForm() {
     setMessage('Uploaded. Analysis queued.')
     setText('')
     setFile(null)
+    
+    // Call success callback if provided
+    if (onSuccess) {
+      setTimeout(() => onSuccess(), 1000) // Small delay to show success message
+    }
   }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
