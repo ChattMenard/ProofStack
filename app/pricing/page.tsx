@@ -3,15 +3,38 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements } from '@stripe/react-stripe-js'
 import { supabase } from '../../lib/supabaseClient'
+import ExpressCheckout from '../../components/ExpressCheckout'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export default function PricingPage() {
   const router = useRouter()
   const [loading, setLoading] = useState<string | null>(null)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly' | null>(null)
 
-  const handleUpgrade = async (plan: string) => {
-    setLoading(plan)
+  const monthlyPrice = 9.99
+  const yearlyPrice = 89.99 // 25% discount
+  const yearlySavings = Math.round((monthlyPrice * 12) - yearlyPrice)
+
+  const handleUpgrade = async (plan: 'monthly' | 'yearly') => {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    setSelectedPlan(plan)
+    setShowPaymentModal(true)
+  }
+
+  const handleFallbackCheckout = async () => {
+    setLoading(selectedPlan)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       
@@ -24,7 +47,7 @@ export default function PricingPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          plan,
+          plan: selectedPlan === 'monthly' ? 'pro-monthly' : 'pro-yearly',
           userId: user.id,
         }),
       })
@@ -47,9 +70,9 @@ export default function PricingPage() {
     }
   }
 
-  const monthlyPrice = 9
-  const yearlyPrice = 90 // $7.50/month billed yearly
-  const yearlySavings = (monthlyPrice * 12) - yearlyPrice
+  const getAmount = (plan: 'monthly' | 'yearly') => {
+    return plan === 'monthly' ? monthlyPrice : yearlyPrice
+  }
 
   return (
     <div className="min-h-screen bg-forest-950 py-12">
@@ -146,7 +169,7 @@ export default function PricingPage() {
               <h2 className="text-2xl font-bold text-forest-50 mb-2">Pro</h2>
               <div className="flex items-baseline gap-2">
                 <span className="text-4xl font-bold text-forest-50">
-                  ${billingCycle === 'monthly' ? monthlyPrice : Math.round(yearlyPrice / 12)}
+                  ${billingCycle === 'monthly' ? monthlyPrice.toFixed(2) : (yearlyPrice / 12).toFixed(2)}
                 </span>
                 <span className="text-forest-300">/month</span>
               </div>
@@ -197,11 +220,10 @@ export default function PricingPage() {
             </ul>
 
             <button
-              onClick={() => handleUpgrade(billingCycle === 'monthly' ? 'pro-monthly' : 'pro-yearly')}
-              disabled={loading !== null}
-              className="w-full px-6 py-3 bg-sage-600 hover:bg-sage-500 text-forest-50 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => handleUpgrade(billingCycle)}
+              className="w-full px-6 py-3 bg-sage-600 hover:bg-sage-500 text-forest-50 rounded-lg font-medium transition-colors"
             >
-              {loading ? 'Loading...' : 'Upgrade to Pro'}
+              Upgrade to Pro
             </button>
           </div>
         </div>
@@ -216,6 +238,88 @@ export default function PricingPage() {
           </p>
         </div>
       </div>
+
+      {/* Payment Modal with Express Checkout */}
+      {showPaymentModal && selectedPlan && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-forest-900 border border-forest-700 rounded-2xl p-8 max-w-md w-full">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-forest-50 mb-1">
+                  Complete Your Purchase
+                </h3>
+                <p className="text-forest-300">
+                  ProofStack Pro - {selectedPlan === 'monthly' ? 'Monthly' : 'Yearly'}
+                </p>
+                <p className="text-3xl font-bold text-sage-400 mt-2">
+                  ${getAmount(selectedPlan).toFixed(2)}
+                  <span className="text-base font-normal text-forest-400">
+                    {selectedPlan === 'monthly' ? '/month' : '/year'}
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="text-forest-400 hover:text-forest-200 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <Elements
+                stripe={stripePromise}
+                options={{
+                  mode: 'payment',
+                  amount: Math.round(getAmount(selectedPlan) * 100),
+                  currency: 'usd',
+                  appearance: {
+                    theme: 'night',
+                    variables: {
+                      colorPrimary: '#87a96b',
+                      colorBackground: '#1a2e1a',
+                      colorText: '#e6f0e6',
+                      borderRadius: '8px',
+                    },
+                  },
+                }}
+              >
+                <ExpressCheckout
+                  plan={selectedPlan}
+                  amount={getAmount(selectedPlan)}
+                  onSuccess={() => {
+                    setShowPaymentModal(false)
+                    router.push('/dashboard?payment=success')
+                  }}
+                />
+              </Elements>
+            </div>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-forest-700"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-forest-900 text-forest-400">or pay with card</span>
+              </div>
+            </div>
+
+            <button
+              onClick={handleFallbackCheckout}
+              disabled={loading !== null}
+              className="w-full px-6 py-3 bg-forest-800 hover:bg-forest-700 text-forest-50 rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {loading ? 'Loading...' : 'Pay with Card'}
+            </button>
+
+            <p className="text-xs text-forest-500 text-center mt-4">
+              Secure payment powered by Stripe
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
