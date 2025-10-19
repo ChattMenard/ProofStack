@@ -8,6 +8,7 @@ import ThemeToggle from '../components/ThemeToggle'
 import { PostHogProvider } from '../components/PostHogProvider'
 import BuiltWith from '../components/BuiltWith'
 import ScrollToTop from '../components/ScrollToTop'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata = {
   title: 'ProofStack - Verified Skills Portfolio',
@@ -161,6 +162,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
           {/* Scroll to Top Button */}
           <ScrollToTop />
+          
+          {/* Speed Insights */}
+          <SpeedInsights />
         </PostHogProvider>
       </body>
     </html>
