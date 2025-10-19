@@ -67,7 +67,7 @@ export default function UploadForm({ onSuccess }: UploadFormProps = {}) {
       if (!ALLOWED_TYPES.includes(type)) return setMessage('Invalid type selected')
 
       let uploadPayload: any = { user_id, type }
-      let filename = 'demo.txt'
+      let filename = 'sample.txt'
       let size_bytes = 0
       let content = ''
       let fileData: string | ArrayBuffer | null = null

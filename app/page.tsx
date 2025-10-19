@@ -247,17 +247,28 @@ export default function Home() {
             </div>
           </div>
           
-          {/* CTA Button */}
-          <div className="mt-8 text-center">
-            <Link 
-              href="/login" 
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-sage-600 to-sage-500 text-forest-50 font-semibold rounded-xl hover:from-sage-500 hover:to-sage-400 transition-all transform hover:scale-105 shadow-lg shadow-sage-500/20"
-            >
-              Get Started Now
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
+          {/* CTA Buttons */}
+          <div className="mt-8 text-center space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/pricing" 
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-sage-600 to-sage-500 text-forest-50 font-bold rounded-xl hover:from-sage-500 hover:to-sage-400 transition-all transform hover:scale-105 shadow-lg shadow-sage-500/20"
+              >
+                View Pricing
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+              <Link 
+                href="/login" 
+                className="inline-flex items-center gap-2 px-8 py-4 bg-forest-800 hover:bg-forest-700 text-forest-200 font-semibold rounded-xl border border-forest-700 transition-all transform hover:scale-105"
+              >
+                Sign In
+              </Link>
+            </div>
+            <p className="text-sm text-forest-400">
+              Start free • No credit card required • Upgrade anytime
+            </p>
           </div>
         </div>
       </section>
