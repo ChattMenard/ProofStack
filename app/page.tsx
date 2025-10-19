@@ -130,6 +130,116 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Two-Sided Platform Section - NEW */}
+      <section className="py-16 bg-gradient-to-br from-forest-900/30 to-sage-900/20 border border-forest-800/50 rounded-3xl backdrop-blur-sm">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-forest-50 mb-4">
+            Built For <span className="text-sage-400">Everyone</span>
+          </h2>
+          <p className="text-xl text-forest-300 max-w-2xl mx-auto">
+            Whether you're showcasing skills or finding talent, ProofStack connects the right people
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* For Professionals */}
+          <div className="group p-8 bg-forest-900/50 border-2 border-sage-700/30 rounded-2xl hover:border-sage-500 transition-all duration-300 hover:shadow-xl hover:shadow-sage-500/20 hover:-translate-y-2">
+            <div className="text-center mb-6">
+              <div className="inline-block p-4 bg-gradient-to-br from-sage-600 to-sage-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                <span className="text-5xl">👤</span>
+              </div>
+              <h3 className="text-2xl font-bold text-forest-50 mb-2">For Professionals</h3>
+              <p className="text-sage-400 font-medium">Showcase Your Skills</p>
+            </div>
+
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-sage-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <div className="font-semibold text-forest-50">Build Your Portfolio</div>
+                  <div className="text-sm text-forest-300">AI-powered skill extraction from your work</div>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-sage-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <div className="font-semibold text-forest-50">Get Discovered</div>
+                  <div className="text-sm text-forest-300">Employers find you based on verified skills</div>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-sage-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <div className="font-semibold text-forest-50">Boost Your Profile</div>
+                  <div className="text-sm text-forest-300">Promote your portfolio to stand out</div>
+                </div>
+              </li>
+            </ul>
+
+            <Link 
+              href="/login" 
+              className="block w-full text-center px-6 py-3 bg-gradient-to-r from-sage-600 to-sage-500 text-white font-semibold rounded-xl hover:from-sage-500 hover:to-sage-400 transition-all transform hover:scale-105 shadow-lg"
+            >
+              Create Your Portfolio →
+            </Link>
+          </div>
+
+          {/* For Employers */}
+          <div className="group p-8 bg-forest-900/50 border-2 border-earth-700/30 rounded-2xl hover:border-earth-500 transition-all duration-300 hover:shadow-xl hover:shadow-earth-500/20 hover:-translate-y-2">
+            <div className="text-center mb-6">
+              <div className="inline-block p-4 bg-gradient-to-br from-earth-600 to-earth-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                <span className="text-5xl">🏢</span>
+              </div>
+              <h3 className="text-2xl font-bold text-forest-50 mb-2">For Employers</h3>
+              <p className="text-earth-400 font-medium">Find Verified Talent</p>
+            </div>
+
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-earth-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <div className="font-semibold text-forest-50">Discover Professionals</div>
+                  <div className="text-sm text-forest-300">Advanced filters by skills, location, experience</div>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-earth-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <div className="font-semibold text-forest-50">Message Directly</div>
+                  <div className="text-sm text-forest-300">Real-time messaging with candidates</div>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-earth-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <div className="font-semibold text-forest-50">Verify Skills</div>
+                  <div className="text-sm text-forest-300">See cryptographically verified portfolios</div>
+                </div>
+              </li>
+            </ul>
+
+            <Link 
+              href="/employer/signup" 
+              className="block w-full text-center px-6 py-3 bg-gradient-to-r from-earth-600 to-earth-500 text-white font-semibold rounded-xl hover:from-earth-500 hover:to-earth-400 transition-all transform hover:scale-105 shadow-lg"
+            >
+              Start Hiring →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section - Enhanced */}
       <section className="grid md:grid-cols-3 gap-8">
         <div className="group p-8 bg-forest-900/50 border border-forest-800 rounded-2xl hover:border-sage-700 transition-all duration-300 hover:shadow-lg hover:shadow-sage-500/10 hover:-translate-y-1">

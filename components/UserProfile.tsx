@@ -7,6 +7,7 @@ export default function UserProfile() {
   const router = useRouter()
   const pathname = usePathname()
   const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -16,6 +17,20 @@ export default function UserProfile() {
       const { data } = await supabase.auth.getUser()
       if (!mounted) return
       setUser(data.user ?? null)
+      
+      // Fetch user profile to determine role
+      if (data.user) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('role, is_founder')
+          .eq('id', data.user.id)
+          .single()
+        
+        if (mounted && profileData) {
+          setProfile(profileData)
+        }
+      }
+      
       setLoading(false)
     }
     
@@ -24,6 +39,22 @@ export default function UserProfile() {
     const { data: listener } = supabase.auth.onAuthStateChange((event: string, session: any) => {
       if (!mounted) return
       setUser(session?.user ?? null)
+      
+      // Fetch profile on auth change
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('role, is_founder')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data: profileData }) => {
+            if (mounted && profileData) {
+              setProfile(profileData)
+            }
+          })
+      } else {
+        setProfile(null)
+      }
       
       // Auto-redirect after sign in from login page
       if (event === 'SIGNED_IN' && session && pathname === '/login') {
@@ -73,25 +104,101 @@ export default function UserProfile() {
   // Show user info and sign out if logged in
   if (user) {
     return (
-      <>
-        {pathname !== '/dashboard' && (
-          <a 
-            href="/dashboard" 
-            className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Dashboard
-          </a>
-        )}
-        <div className="flex items-center gap-3 px-3 py-1.5 bg-gray-100 rounded-lg">
-          <span className="text-sm text-gray-700">{user.email}</span>
-          <button 
-            onClick={handleSignOut} 
-            className="text-sm text-red-600 hover:text-red-700 hover:underline"
-          >
-            Sign out
+      <div className="flex items-center gap-3">
+        {/* Role-based Navigation Dropdown */}
+        <div className="relative group">
+          <button className="px-4 py-2 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors flex items-center gap-2">
+            {profile?.role === 'employer' && '🏢 Employer'}
+            {profile?.role === 'professional' && '👤 Professional'}
+            {profile?.role === 'admin' && '⚙️ Admin'}
+            {!profile?.role && '📊 Dashboard'}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
+          
+          <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div className="py-2">
+              {/* Employer Menu */}
+              {profile?.role === 'employer' && (
+                <>
+                  <a href="/employer/discover" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    🔍 Discover Professionals
+                  </a>
+                  <a href="/employer/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    💬 Messages
+                  </a>
+                  <a href="/employer/saved" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ⭐ Saved Professionals
+                  </a>
+                  <a href="/employer/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ⚙️ Settings
+                  </a>
+                </>
+              )}
+              
+              {/* Professional Menu */}
+              {profile?.role === 'professional' && (
+                <>
+                  <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📊 Dashboard
+                  </a>
+                  <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📁 My Portfolio
+                  </a>
+                  <a href="/professional/promote/manage" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    🚀 Manage Promotion
+                  </a>
+                  <a href="/professional/reviews" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ⭐ My Reviews
+                  </a>
+                </>
+              )}
+              
+              {/* Admin Menu */}
+              {profile?.role === 'admin' && (
+                <>
+                  <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📊 Admin Dashboard
+                  </a>
+                  <a href="/admin/users" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    👥 Manage Users
+                  </a>
+                  <a href="/admin/promotions" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    💎 Manage Promotions
+                  </a>
+                </>
+              )}
+              
+              {/* Default if no role */}
+              {!profile?.role && (
+                <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  📊 Dashboard
+                </a>
+              )}
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+              
+              {profile?.is_founder && (
+                <div className="px-4 py-2 text-xs text-amber-600 dark:text-amber-400 font-semibold">
+                  🏆 FOUNDING MEMBER
+                </div>
+              )}
+              
+              <div className="px-4 py-2 text-xs text-gray-500">
+                {user.email}
+              </div>
+            </div>
+          </div>
         </div>
-      </>
+        
+        <button 
+          onClick={handleSignOut} 
+          className="px-4 py-2 text-sm text-forest-300 hover:text-sage-400 transition-colors"
+        >
+          Sign out
+        </button>
+      </div>
     )
   }
 

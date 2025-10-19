@@ -67,6 +67,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <div className="flex items-center gap-6">
                   {/* Navigation Links */}
                   <nav className="hidden md:flex items-center gap-6">
+                    <Link href="/employer/signup" className="text-sm font-bold text-sage-400 hover:text-sage-300 transition-colors border border-sage-500/30 px-3 py-1.5 rounded-lg hover:border-sage-400/50">
+                      🏢 For Employers
+                    </Link>
                     <Link href="/pricing" className="text-sm font-medium text-forest-300 hover:text-sage-400 transition-colors">
                       Pricing
                     </Link>
