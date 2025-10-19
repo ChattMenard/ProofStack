@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { supabase } from '../../../lib/supabaseClient'
 import PortfolioSamples from '../../../components/PortfolioSamples'
+import ReviewsSection from '../../../components/ReviewsSection'
 
 interface Profile {
   id: string
@@ -246,19 +247,31 @@ export default function PortfolioPage({ params }: { params: { username: string }
                 <p className="text-forest-200 mb-4 max-w-2xl">{profile.bio}</p>
               )}
 
-              <div className="flex gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-forest-50">{completedSamples.length}</span>
-                  <span className="text-forest-300">Verified Samples</span>
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-forest-50">{completedSamples.length}</span>
+                    <span className="text-forest-300">Verified Samples</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-forest-50">{Object.keys(skills).length}</span>
+                    <span className="text-forest-300">Skills</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-forest-50">{credentials.length}</span>
+                    <span className="text-forest-300">Credentials</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-forest-50">{Object.keys(skills).length}</span>
-                  <span className="text-forest-300">Skills</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-forest-50">{credentials.length}</span>
-                  <span className="text-forest-300">Credentials</span>
-                </div>
+
+                {/* Write Review Button for Employers */}
+                {currentUser && !isOwner && (
+                  <a
+                    href={`/employer/reviews/new/${profile.id}`}
+                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Write Review
+                  </a>
+                )}
               </div>
 
               {/* AI Authenticity Score */}
@@ -368,6 +381,17 @@ export default function PortfolioPage({ params }: { params: { username: string }
               />
             </div>
           </div>
+        </div>
+
+        {/* Reviews Section - Full Width Below */}
+        <div className="mt-8">
+          {profile && (
+            <ReviewsSection
+              professionalId={profile.id}
+              professionalUsername={username}
+              isOwnProfile={isOwner}
+            />
+          )}
         </div>
       </div>
     </div>
