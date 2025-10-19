@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import { ReactNode } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import SupabaseWarning from '../components/SupabaseWarning'
 import UserProfile from '../components/UserProfile'
 import ThemeToggle from '../components/ThemeToggle'
@@ -36,7 +37,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="max-w-4xl mx-auto p-6">
             <header className="mb-6 flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <a href="/">
+                <Link href="/">
                   <Image 
                     src="/logo.svg" 
                     alt="ProofStack" 
@@ -44,7 +45,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     height={75}
                     priority
                   />
-                </a>
+                </Link>
                 <span className="text-sm text-forest-400">(Demo)</span>
               </div>
               <div className="flex items-center gap-4">

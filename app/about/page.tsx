@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function AboutPage() {
   const techStack = [
     {
@@ -200,12 +202,12 @@ export default function AboutPage() {
 
         {/* Back to Home */}
         <div className="mt-12 text-center">
-          <a
+          <Link
             href="/"
             className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
