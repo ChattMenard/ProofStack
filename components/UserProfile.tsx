@@ -146,6 +146,9 @@ export default function UserProfile() {
                   <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📁 My Portfolio
                   </a>
+                  <a href="/professional/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    💬 Messages
+                  </a>
                   <a href="/professional/promote/manage" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     🚀 Manage Promotion
                   </a>
