@@ -1,5 +1,3 @@
-import React from 'react'
-
 interface FounderBadgeProps {
   founderNumber: number
   className?: string

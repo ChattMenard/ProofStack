@@ -85,11 +85,17 @@ export default function DashboardPage() {
 
   if (loading) return <div className="p-8">Loading...</div>
 
-  const completedSamples = samples.filter(s => 
-    s.analyses?.some(a => a.status === 'done')
-  ).length
-
   const portfolioUrl = `/portfolio/${encodeURIComponent(user?.email || '')}`
+
+  // Optimize stats calculation - compute once
+  const { aiDetected, humanVerified } = samples.reduce((acc, sample) => {
+    const aiScore = sample.analyses?.[0]?.metrics?.ai_detection_score
+    if (aiScore !== undefined) {
+      if (aiScore > 50) acc.aiDetected++
+      else if (aiScore <= 20) acc.humanVerified++
+    }
+    return acc
+  }, { aiDetected: 0, humanVerified: 0 })
 
   const toggleSampleExpansion = (sampleId: string) => {
     setExpandedSamples(prev => {
@@ -142,14 +148,14 @@ export default function DashboardPage() {
             <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6 hover:shadow-lg hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.1s'}}>
               <div className="text-sm font-medium text-forest-300">AI Detected</div>
               <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text mt-2 animate-pulse-slow">
-                {samples.filter(s => s.analyses?.[0]?.metrics?.ai_detection_score && s.analyses[0].metrics.ai_detection_score > 50).length}
+                {aiDetected}
               </div>
               <div className="text-xs text-forest-400 mt-1">Likely AI-generated</div>
             </div>
             <div className="bg-forest-900 border border-forest-800 rounded-xl shadow-sm p-6 hover:shadow-lg hover:scale-105 transition-all duration-300 animate-fade-in" style={{animationDelay: '0.2s'}}>
               <div className="text-sm font-medium text-forest-300">Human Verified</div>
               <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-sage-400 to-earth-400 bg-clip-text mt-2 animate-pulse-slow">
-                {samples.filter(s => s.analyses?.[0]?.metrics?.ai_detection_score && s.analyses[0].metrics.ai_detection_score <= 20).length}
+                {humanVerified}
               </div>
               <div className="text-xs text-forest-400 mt-1">
                 {profile?.is_founder ? 'Unlimited forever' : 'Likely human-written'}

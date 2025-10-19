@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe, STRIPE_PRICES } from '../../../../lib/stripe'
+import { stripe, STRIPE_PRICES, STRIPE_COUPONS, checkFoundingMemberEligibility } from '../../../../lib/stripe'
 import { supabase } from '../../../../lib/supabaseClient'
 
 export async function POST(request: NextRequest) {
   try {
-    const { plan, userId, mode = 'hosted' } = await request.json()
+    const { plan, userId, mode = 'hosted', usFoundingDiscount = false } = await request.json()
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
@@ -13,12 +13,18 @@ export async function POST(request: NextRequest) {
     // Get user profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('email, full_name')
+      .select('email, full_name, is_founder')
       .eq('auth_uid', userId)
       .single()
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+    }
+
+    // Check if user qualifies for founding member discount
+    let applyFoundingDiscount = false
+    if (usFoundingDiscount && !profile.is_founder) {
+      applyFoundingDiscount = await checkFoundingMemberEligibility()
     }
 
     // Determine price ID
@@ -41,7 +47,15 @@ export async function POST(request: NextRequest) {
       metadata: {
         userId,
         plan,
+        foundingMember: applyFoundingDiscount ? 'true' : 'false',
       },
+    }
+
+    // Apply founding member discount if eligible
+    if (applyFoundingDiscount) {
+      sessionConfig.discounts = [{
+        coupon: STRIPE_COUPONS.FOUNDING_MEMBER,
+      }]
     }
 
     if (mode === 'embedded') {

@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function CheckoutReturnPage() {
+function CheckoutReturnContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
@@ -143,5 +143,20 @@ export default function CheckoutReturnPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function CheckoutReturnPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-forest-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-sage-500 mx-auto mb-4"></div>
+          <p className="text-forest-300">Verifying payment...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutReturnContent />
+    </Suspense>
   )
 }

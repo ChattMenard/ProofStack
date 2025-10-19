@@ -177,6 +177,15 @@ html.light .border-earth-700 {
   }
 }
 
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradient 8s ease infinite;
@@ -184,6 +193,14 @@ html.light .border-earth-700 {
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
 }
 
 .animate-pulse-slow {

@@ -91,10 +91,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <SupabaseWarning />
               {children}
             </main>
-            <main>
-              <SupabaseWarning />
-              {children}
-            </main>
 
             {/* Enhanced Footer */}
             <footer className="mt-16 pt-12 border-t border-forest-800/50">

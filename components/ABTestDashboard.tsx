@@ -46,6 +46,16 @@ export default function ABTestDashboard() {
     loadTests()
   }, [])
 
+  // Optimize filtering by computing once
+  const { activeTests, completedTests } = tests.reduce((acc, test) => {
+    if (test.is_active) {
+      acc.activeTests.push(test)
+    } else {
+      acc.completedTests.push(test)
+    }
+    return acc
+  }, { activeTests: [] as ABTest[], completedTests: [] as ABTest[] })
+
   async function loadTests() {
     setLoading(true)
     const { data, error } = await supabase
@@ -124,7 +134,7 @@ export default function ABTestDashboard() {
         <div className="lg:col-span-1">
           <h2 className="text-xl font-semibold mb-4">Active Tests</h2>
           <div className="space-y-2">
-            {tests.filter(t => t.is_active).map(test => (
+            {activeTests.map(test => (
               <TestCard
                 key={test.id}
                 test={test}
@@ -137,7 +147,7 @@ export default function ABTestDashboard() {
 
           <h2 className="text-xl font-semibold mt-8 mb-4">Completed Tests</h2>
           <div className="space-y-2">
-            {tests.filter(t => !t.is_active).map(test => (
+            {completedTests.map(test => (
               <TestCard
                 key={test.id}
                 test={test}

@@ -1,4 +1,5 @@
 import Stripe from 'stripe'
+import { supabase } from './supabaseClient'
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing STRIPE_SECRET_KEY environment variable')
@@ -13,6 +14,58 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export const STRIPE_PRICES = {
   PRO_MONTHLY: process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_xxx',
   PRO_YEARLY: process.env.STRIPE_PRO_YEARLY_PRICE_ID || 'price_yyy',
+}
+
+// Stripe coupon codes
+export const STRIPE_COUPONS = {
+  FOUNDING_MEMBER: 'FOUNDING100', // 100% off for first month for first 100 members
+}
+
+// Check if user qualifies for founding member discount
+export async function checkFoundingMemberEligibility(): Promise<boolean> {
+  try {
+    // Check how many founding members have been created
+    const { data } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('is_founder', true)
+    
+    return (data?.length || 0) < 100
+  } catch (error) {
+    console.error('Error checking founding member eligibility:', error)
+    return false
+  }
+}
+
+// Create Stripe checkout session with optional coupon
+export async function createCheckoutSession(
+  priceId: string,
+  userId: string,
+  couponCode?: string
+): Promise<string> {
+  const sessionConfig: any = {
+    payment_method_types: ['card'],
+    mode: 'subscription',
+    line_items: [{
+      price: priceId,
+      quantity: 1,
+    }],
+    success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing`,
+    metadata: {
+      userId,
+    },
+  }
+
+  // Add coupon if provided
+  if (couponCode) {
+    sessionConfig.discounts = [{
+      coupon: couponCode,
+    }]
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionConfig)
+  return session.id
 }
 
 // Plan features
