@@ -4,6 +4,17 @@ import { createClient } from '@supabase/supabase-js'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const error = requestUrl.searchParams.get('error')
+  const error_description = requestUrl.searchParams.get('error_description')
+
+  console.log('Auth callback:', { code: !!code, error, error_description })
+
+  // If there's an OAuth error, redirect to login with error message
+  if (error) {
+    const loginUrl = new URL('/login', requestUrl.origin)
+    loginUrl.searchParams.set('error', error_description || error)
+    return NextResponse.redirect(loginUrl)
+  }
 
   if (code) {
     const supabase = createClient(
@@ -11,9 +22,11 @@ export async function GET(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
     
-    if (!error && data.session) {
+    console.log('Code exchange:', { success: !!data?.session, error: exchangeError?.message })
+    
+    if (!exchangeError && data.session) {
       // Set cookie with session token
       const response = NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
       
@@ -34,6 +47,11 @@ export async function GET(request: NextRequest) {
       })
 
       return response
+    } else {
+      // Exchange failed
+      const loginUrl = new URL('/login', requestUrl.origin)
+      loginUrl.searchParams.set('error', exchangeError?.message || 'Failed to exchange code for session')
+      return NextResponse.redirect(loginUrl)
     }
   }
 
