@@ -115,7 +115,17 @@ export async function POST(request: Request) {
       // The user can still function without this update
     }
 
-    // 6. Send verification email (if enabled)
+    // 6. Check if this is a founding employer (query the org record again to get trigger results)
+    const { data: finalOrgData } = await supabase
+      .from('organizations')
+      .select('is_founding_employer, founding_employer_number, subscription_tier, pro_expires_at')
+      .eq('id', orgData.id)
+      .single();
+
+    const isFoundingEmployer = finalOrgData?.is_founding_employer || false;
+    const foundingNumber = finalOrgData?.founding_employer_number;
+
+    // 7. Send verification email (if enabled)
     // You can enable this by setting email_confirm: true above
     // await supabase.auth.admin.generateLink({
     //   type: 'signup',
@@ -124,11 +134,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Account created successfully',
+      message: isFoundingEmployer 
+        ? `🎉 Congratulations! You're Founding Employer #${foundingNumber}! You get 1 month of Pro tier FREE.`
+        : 'Account created successfully',
       data: {
         userId: userId,
         organizationId: orgData.id,
-        organizationSlug: slug
+        organizationSlug: slug,
+        isFoundingEmployer: isFoundingEmployer,
+        foundingNumber: foundingNumber,
+        subscriptionTier: finalOrgData?.subscription_tier
       }
     });
 

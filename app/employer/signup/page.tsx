@@ -79,8 +79,16 @@ export default function EmployerSignupPage() {
         throw new Error(data.error || 'Signup failed');
       }
 
-      // Success - redirect to verification page or dashboard
-      router.push('/employer/dashboard?welcome=true');
+      // Success - redirect to dashboard with founding employer status
+      const welcomeParams = new URLSearchParams({
+        welcome: 'true',
+        ...(data.data.isFoundingEmployer && { 
+          founding: 'true',
+          foundingNumber: data.data.foundingNumber.toString()
+        })
+      });
+      
+      router.push(`/employer/dashboard?${welcomeParams.toString()}`);
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup');
     } finally {
@@ -91,6 +99,31 @@ export default function EmployerSignupPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
+        {/* Founding Employer Banner */}
+        <div className="mb-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 shadow-xl border-2 border-amber-400">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                <span className="text-2xl">🏆</span>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-white mb-1">
+                Founding Employer Program
+              </h3>
+              <p className="text-amber-50 mb-3">
+                <strong>First 5 employers only:</strong> Get 1 month of Pro tier FREE! Premium features, priority support, and a founding member badge.
+              </p>
+              <div className="flex items-center gap-2 text-sm text-white font-semibold">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+                Limited time - Sign up now!
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
