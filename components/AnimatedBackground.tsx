@@ -36,16 +36,15 @@ export default function AnimatedBackground() {
     }
 
     const lines: Line[] = []
-    const lineCount = 120 // Lots of chaotic lines like Venom
+    const lineCount = 80 // Fewer, more elegant lines
 
-    // Color palette - green/brown theme
+    // Modern, muted color palette
     const colors = [
-      'rgba(34, 197, 94, ', // green-500
-      'rgba(16, 185, 129, ', // green-600
-      'rgba(5, 150, 105, ', // green-700
-      'rgba(139, 69, 19, ', // brown
-      'rgba(101, 163, 13, ', // lime
-      'rgba(30, 30, 30, ', // almost black
+      'rgba(34, 197, 94, ', // green-500 (primary accent)
+      'rgba(100, 116, 139, ', // slate-500 (modern neutral)
+      'rgba(71, 85, 105, ', // slate-600 (darker neutral)
+      'rgba(148, 163, 184, ', // slate-400 (light neutral)
+      'rgba(156, 163, 175, ', // gray-400 (subtle)
     ]
 
     // Initialize chaotic lines
@@ -62,11 +61,11 @@ export default function AnimatedBackground() {
           y1,
           x2: x1 + Math.cos(angle) * length,
           y2: y1 + Math.sin(angle) * length,
-          thickness: Math.random() * 2.5 + 0.5,
-          opacity: Math.random() * 0.27 + 0.045, // 10% more transparent (was 0.3 + 0.05)
-          speed: Math.random() * 0.2 + 0.05, // Half speed (was 0.4 + 0.1)
+          thickness: Math.random() * 1.2 + 0.3, // Thinner, sleeker lines
+          opacity: Math.random() * 0.2 + 0.03, // More subtle
+          speed: Math.random() * 0.2 + 0.05,
           angle,
-          rotationSpeed: (Math.random() - 0.5) * 0.0075, // Half rotation speed (was 0.015)
+          rotationSpeed: (Math.random() - 0.5) * 0.0075,
           color: colors[Math.floor(Math.random() * colors.length)]
         })
       }
@@ -113,14 +112,14 @@ export default function AnimatedBackground() {
         if (line.y2 < -100) line.y2 = canvas.height + 100
         if (line.y2 > canvas.height + 100) line.y2 = -100
 
-        // Draw the line with glow effect
+        // Draw the line with minimal, modern styling
         ctx.strokeStyle = line.color + line.opacity + ')'
         ctx.lineWidth = line.thickness
         ctx.lineCap = 'round'
         
-        // Outer glow
-        ctx.shadowBlur = 8
-        ctx.shadowColor = line.color + '0.4)'
+        // Subtle glow (less 90's)
+        ctx.shadowBlur = 3
+        ctx.shadowColor = line.color + '0.2)'
         
         ctx.beginPath()
         ctx.moveTo(line.x1, line.y1)
@@ -131,9 +130,9 @@ export default function AnimatedBackground() {
         ctx.shadowBlur = 0
       })
 
-      // Draw connections between nearby line endpoints (Venom web effect)
-      const maxDistance = 100
-      ctx.lineWidth = 0.5
+      // Draw minimal connections between nearby line endpoints
+      const maxDistance = 120
+      ctx.lineWidth = 0.3 // Thinner connection lines
 
       for (let i = 0; i < lines.length; i++) {
         for (let j = i + 1; j < lines.length; j++) {
@@ -146,8 +145,8 @@ export default function AnimatedBackground() {
           const distance = Math.sqrt(dx * dx + dy * dy)
 
           if (distance < maxDistance) {
-            const opacity = (1 - distance / maxDistance) * 0.135 // 10% more transparent (was 0.15)
-            ctx.strokeStyle = `rgba(34, 197, 94, ${opacity})`
+            const opacity = (1 - distance / maxDistance) * 0.08 // Much more subtle
+            ctx.strokeStyle = `rgba(100, 116, 139, ${opacity})` // Muted slate color
             ctx.beginPath()
             ctx.moveTo(line1.x2, line1.y2)
             ctx.lineTo(line2.x1, line2.y1)
