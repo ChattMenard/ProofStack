@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stripe Embedded Checkout - Example</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      height: 100vh;
+      width: 100vw;
+      background-color: #1a2e1a;
+    }
+    #checkout {
+      width: 100%;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    h1 {
+      color: #e6f0e6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Checkout</h1>
+    <div id="checkout">
+      <!-- Checkout will insert the payment form here -->
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    // This is your test publishable API key.
+    const stripe = Stripe("pk_test_51SJtU3ERo2cAVoF3Rg89YXokN9IECWwJpHo9Yrffc5orDJWaNHQV1po7qbDzsMl0optBi0vElhPskcVDungbvqfz00GCusF3Nl");
+
+    initialize();
+
+    // Create a Checkout Session
+    async function initialize() {
+      const fetchClientSecret = async () => {
+        const response = await fetch("/api/stripe/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            plan: "pro-monthly",
+            userId: "YOUR_USER_ID_HERE", // In practice, this comes from auth
+            mode: "embedded"
+          }),
+        });
+        const { clientSecret } = await response.json();
+        return clientSecret;
+      };
+
+      const checkout = await stripe.initEmbeddedCheckout({
+        fetchClientSecret,
+      });
+
+      // Mount Checkout
+      checkout.mount('#checkout');
+    }
+  </script>
+</body>
+</html>

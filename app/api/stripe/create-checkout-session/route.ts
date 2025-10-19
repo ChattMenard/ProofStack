@@ -4,7 +4,7 @@ import { supabase } from '../../../../lib/supabaseClient'
 
 export async function POST(request: NextRequest) {
   try {
-    const { plan, userId } = await request.json()
+    const { plan, userId, mode = 'hosted' } = await request.json()
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 })
@@ -26,8 +26,10 @@ export async function POST(request: NextRequest) {
       ? STRIPE_PRICES.PRO_YEARLY 
       : STRIPE_PRICES.PRO_MONTHLY
 
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin
+
+    // Create Stripe checkout session with support for both hosted and embedded modes
+    const sessionConfig: any = {
       customer_email: profile.email,
       line_items: [
         {
@@ -36,15 +38,30 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin}/dashboard?upgrade=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin}/dashboard?upgrade=cancelled`,
       metadata: {
         userId,
         plan,
       },
-    })
+    }
 
-    return NextResponse.json({ url: session.url })
+    if (mode === 'embedded') {
+      // For embedded checkout
+      sessionConfig.ui_mode = 'embedded'
+      sessionConfig.return_url = `${baseUrl}/checkout/return?session_id={CHECKOUT_SESSION_ID}`
+    } else {
+      // For hosted checkout (legacy)
+      sessionConfig.success_url = `${baseUrl}/dashboard?upgrade=success`
+      sessionConfig.cancel_url = `${baseUrl}/dashboard?upgrade=cancelled`
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig)
+
+    // Return different responses based on mode
+    if (mode === 'embedded') {
+      return NextResponse.json({ clientSecret: session.client_secret })
+    } else {
+      return NextResponse.json({ url: session.url })
+    }
   } catch (error: any) {
     console.error('Stripe checkout error:', error)
     return NextResponse.json(
