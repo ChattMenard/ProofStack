@@ -47,7 +47,7 @@ export default function UserProfile() {
           .select('role, is_founder')
           .eq('id', session.user.id)
           .single()
-          .then(({ data: profileData }) => {
+          .then(({ data: profileData }: { data: any }) => {
             if (mounted && profileData) {
               setProfile(profileData)
             }
