@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import ConversationList from '@/components/messages/ConversationList';
 import MessageThread from '@/components/messages/MessageThread';
+import { useSearchParams } from 'next/navigation';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,6 +12,7 @@ const supabase = createClient(
 );
 
 export default function MessagesPage() {
+  const searchParams = useSearchParams();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [recipientName, setRecipientName] = useState<string>('');
@@ -24,6 +26,24 @@ export default function MessagesPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       setCurrentUserId(user.id);
+      
+      // Check for conversation parameter
+      const conversationParam = searchParams?.get('conversation');
+      if (conversationParam) {
+        // Load recipient name for this conversation
+        const { data: participants } = await supabase
+          .from('conversation_participants')
+          .select('user_id, profiles!user_id(username)')
+          .eq('conversation_id', conversationParam)
+          .neq('user_id', user.id);
+        
+        if (participants && participants.length > 0) {
+          const recipient = participants[0] as any;
+          setSelectedConversationId(conversationParam);
+          setRecipientName(recipient.profiles?.username || 'User');
+          setShowList(false); // Show thread on mobile
+        }
+      }
     }
   };
 

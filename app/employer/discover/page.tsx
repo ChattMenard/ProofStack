@@ -99,6 +99,92 @@ export default function DiscoverPage() {
     }
   };
 
+  const handleMessage = async (professionalId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        window.location.href = '/auth/signin';
+        return;
+      }
+
+      // Check if conversation already exists
+      const { data: existingParticipants } = await supabase
+        .from('conversation_participants')
+        .select('conversation_id')
+        .eq('user_id', user.id);
+
+      if (existingParticipants && existingParticipants.length > 0) {
+        const conversationIds = existingParticipants.map((p: any) => p.conversation_id);
+        
+        // Check if professional is in any of these conversations
+        const { data: professionalParticipant } = await supabase
+          .from('conversation_participants')
+          .select('conversation_id')
+          .eq('user_id', professionalId)
+          .in('conversation_id', conversationIds)
+          .single();
+
+        if (professionalParticipant) {
+          // Conversation exists, redirect to it
+          window.location.href = `/employer/messages?conversation=${professionalParticipant.conversation_id}`;
+          return;
+        }
+      }
+
+      // Create new conversation
+      const { data: conversation, error: convError } = await supabase
+        .from('conversations')
+        .insert({
+          last_message_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+
+      if (convError || !conversation) {
+        console.error('Error creating conversation:', convError);
+        alert('Failed to create conversation');
+        return;
+      }
+
+      // Add both participants
+      const { error: participantsError } = await supabase
+        .from('conversation_participants')
+        .insert([
+          {
+            conversation_id: conversation.id,
+            user_id: user.id,
+            last_read_at: new Date().toISOString()
+          },
+          {
+            conversation_id: conversation.id,
+            user_id: professionalId,
+            last_read_at: new Date().toISOString()
+          }
+        ]);
+
+      if (participantsError) {
+        console.error('Error adding participants:', participantsError);
+        alert('Failed to create conversation');
+        return;
+      }
+
+      // Create connection record
+      await supabase
+        .from('connections')
+        .insert({
+          employer_id: user.id,
+          professional_id: professionalId,
+          status: 'pending'
+        });
+
+      // Redirect to messages with the new conversation
+      window.location.href = `/employer/messages?conversation=${conversation.id}`;
+    } catch (error) {
+      console.error('Message error:', error);
+      alert('Failed to start conversation');
+    }
+  };
+
   const toggleSave = async (professionalId: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -495,6 +581,7 @@ export default function DiscoverPage() {
                           View Profile
                         </Link>
                         <button
+                          onClick={() => handleMessage(prof.id)}
                           className="px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         >
                           Message
