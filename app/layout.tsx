@@ -43,15 +43,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <header className="sticky top-0 z-50 bg-forest-950/80 backdrop-blur-lg border-b border-forest-800/50 relative">
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex justify-between items-center">
-                {/* Logo Section - MUCH BIGGER */}
+                {/* Logo Section - Goldilocks Size */}
                 <Link href="/" className="flex items-center gap-4 group">
                   <div className="relative">
                     <div className="absolute inset-0 bg-sage-500/20 blur-xl rounded-full group-hover:bg-sage-500/30 transition-all duration-300"></div>
                     <Image 
                       src="/logo.svg" 
                       alt="ProofStack" 
-                      width={400} 
-                      height={144}
+                      width={280} 
+                      height={100}
                       priority
                       className="relative transition-transform duration-300 group-hover:scale-105"
                     />
@@ -106,8 +106,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <Image 
                     src="/logo.svg" 
                     alt="ProofStack" 
-                    width={180} 
-                    height={65}
+                    width={220} 
+                    height={80}
                   />
                   <p className="text-sm text-forest-400">
                     Build and share your verified skills portfolio with confidence.
