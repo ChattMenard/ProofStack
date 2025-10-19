@@ -89,3 +89,43 @@ BEGIN
   RETURN GREATEST(0, 5 - taken);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Enable RLS on all tables
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE samples ENABLE ROW LEVEL SECURITY;
+ALTER TABLE analyses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE proofs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE uploads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE usage_tracking ENABLE ROW LEVEL SECURITY;
+
+-- Profiles: Users can view and update their own profile
+CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Samples: Users can view and manage their own samples
+CREATE POLICY "Users can view own samples" ON samples FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own samples" ON samples FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own samples" ON samples FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own samples" ON samples FOR DELETE USING (auth.uid() = user_id);
+
+-- Analyses: Users can view and manage their own analyses
+CREATE POLICY "Users can view own analyses" ON analyses FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own analyses" ON analyses FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own analyses" ON analyses FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own analyses" ON analyses FOR DELETE USING (auth.uid() = user_id);
+
+-- Proofs: Users can view and manage their own proofs
+CREATE POLICY "Users can view own proofs" ON proofs FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own proofs" ON proofs FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own proofs" ON proofs FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own proofs" ON proofs FOR DELETE USING (auth.uid() = user_id);
+
+-- Uploads: Users can view and manage their own uploads
+CREATE POLICY "Users can view own uploads" ON uploads FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own uploads" ON uploads FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own uploads" ON uploads FOR DELETE USING (auth.uid() = user_id);
+
+-- Usage tracking: Users can view their own usage
+CREATE POLICY "Users can view own usage" ON usage_tracking FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "System can insert usage" ON usage_tracking FOR INSERT WITH CHECK (true);
+
