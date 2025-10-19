@@ -116,10 +116,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <div>
                   <h4 className="font-semibold text-forest-200 mb-4">Product</h4>
                   <ul className="space-y-2 text-sm">
-                    <li><a href="/pricing" className="text-forest-400 hover:text-sage-400 transition-colors">Pricing</a></li>
-                    <li><a href="/dashboard" className="text-forest-400 hover:text-sage-400 transition-colors">Dashboard</a></li>
-                    <li><a href="/upload" className="text-forest-400 hover:text-sage-400 transition-colors">Upload</a></li>
-                    <li><a href="/portfolio" className="text-forest-400 hover:text-sage-400 transition-colors">Portfolio</a></li>
+                    <li><Link href="/pricing" className="text-forest-400 hover:text-sage-400 transition-colors">Pricing</Link></li>
+                    <li><Link href="/dashboard" className="text-forest-400 hover:text-sage-400 transition-colors">Dashboard</Link></li>
+                    <li><Link href="/upload" className="text-forest-400 hover:text-sage-400 transition-colors">Upload</Link></li>
+                    <li><Link href="/portfolio" className="text-forest-400 hover:text-sage-400 transition-colors">Portfolio</Link></li>
                   </ul>
                 </div>
 
@@ -127,10 +127,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <div>
                   <h4 className="font-semibold text-forest-200 mb-4">Company</h4>
                   <ul className="space-y-2 text-sm">
-                    <li><a href="/about" className="text-forest-400 hover:text-sage-400 transition-colors">About</a></li>
-                    <li><a href="/contact" className="text-forest-400 hover:text-sage-400 transition-colors">Contact</a></li>
-                    <li><a href="/terms" className="text-forest-400 hover:text-sage-400 transition-colors">Terms</a></li>
-                    <li><a href="/privacy" className="text-forest-400 hover:text-sage-400 transition-colors">Privacy</a></li>
+                    <li><Link href="/about" className="text-forest-400 hover:text-sage-400 transition-colors">About</Link></li>
+                    <li><Link href="/contact" className="text-forest-400 hover:text-sage-400 transition-colors">Contact</Link></li>
+                    <li><Link href="/terms" className="text-forest-400 hover:text-sage-400 transition-colors">Terms</Link></li>
+                    <li><Link href="/privacy" className="text-forest-400 hover:text-sage-400 transition-colors">Privacy</Link></li>
                   </ul>
                 </div>
 
