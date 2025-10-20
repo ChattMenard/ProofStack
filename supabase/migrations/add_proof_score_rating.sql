@@ -191,7 +191,7 @@ CREATE TRIGGER trigger_auto_update_proof_score
 CREATE OR REPLACE VIEW professional_leaderboard AS
 SELECT 
   pr.professional_id,
-  p.username,
+  p.full_name,
   p.headline,
   pr.proof_score,
   pr.total_projects_completed,
@@ -211,7 +211,7 @@ SELECT
     ELSE 'Needs Improvement'
   END as tier
 FROM professional_ratings pr
-JOIN profiles p ON p.id = pr.professional_id
+LEFT JOIN profiles p ON p.id = pr.professional_id
 WHERE pr.total_projects_completed > 0
 ORDER BY pr.proof_score DESC;
 
