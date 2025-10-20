@@ -300,3 +300,20 @@ COMMENT ON FUNCTION get_audit_trail IS 'Get complete audit trail for a specific 
 -- WHERE timestamp > now() - interval '24 hours'
 -- GROUP BY ip_address, user_email
 -- HAVING COUNT(*) > 50;
+
+-- Copy and paste: supabase/migrations/add_admin_role.sql
+-- But FIRST, edit line 32 to use YOUR email address:
+SELECT make_user_admin('your-actual-email@example.com');
+
+-- Copy and paste: supabase/migrations/add_security_audit_logging.sql
+-- This will now work because the role column exists!
+
+-- Copy and paste: supabase/migrations/harden_work_samples_security.sql
+
+-- Replace with YOUR email
+UPDATE profiles 
+SET role = 'admin' 
+WHERE email = 'mattchenard2009@gmail.com';
+
+-- Verify it worked
+SELECT id, email, role FROM profiles WHERE role = 'admin';

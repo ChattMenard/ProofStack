@@ -5,10 +5,17 @@
 ALTER TABLE profiles 
 ADD COLUMN IF NOT EXISTS role varchar(20) DEFAULT 'user';
 
--- Add check constraint for valid roles
-ALTER TABLE profiles
-ADD CONSTRAINT profiles_role_check 
-CHECK (role IN ('user', 'professional', 'employer', 'admin'));
+-- Add check constraint for valid roles (skip if exists)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'profiles_role_check'
+  ) THEN
+    ALTER TABLE profiles
+    ADD CONSTRAINT profiles_role_check 
+    CHECK (role IN ('user', 'professional', 'employer', 'admin'));
+  END IF;
+END $$;
 
 -- Create index for role lookups
 CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
@@ -27,7 +34,14 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Make yourself an admin!
 -- Replace with your actual email address
-SELECT make_user_admin('your-email@example.com');
+SELECT make_user_admin('mattchenard2009@gmail.com');
+
+UPDATE profiles 
+SET role = 'admin' 
+WHERE email = 'mattchenard2009@gmail.com';
+
+-- Verify
+SELECT id, email, role FROM profiles WHERE role = 'admin';
 
 -- Or if you want to do it directly (replace with your user ID):
 -- UPDATE profiles SET role = 'admin' WHERE email = 'your-email@example.com';
