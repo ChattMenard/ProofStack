@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import HireLimitGuard from '@/components/HireLimitGuard';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -41,6 +42,8 @@ export default function DiscoverPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(true);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [employerOrg, setEmployerOrg] = useState<any>(null);
   
   const [filters, setFilters] = useState<SearchFilters>({
     skills: [],
@@ -61,9 +64,33 @@ export default function DiscoverPage() {
   ]);
 
   useEffect(() => {
+    loadUserAndOrg();
     loadSavedCandidates();
     searchProfessionals();
   }, []);
+
+  const loadUserAndOrg = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    
+    setCurrentUser(user);
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.organization_id) {
+      const { data: org } = await supabase
+        .from('employer_organizations')
+        .select('*')
+        .eq('id', profile.organization_id)
+        .single();
+      
+      setEmployerOrg(org);
+    }
+  };
 
   const loadSavedCandidates = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -613,12 +640,29 @@ export default function DiscoverPage() {
                         >
                           View Profile
                         </Link>
-                        <button
-                          onClick={() => handleMessage(prof.id)}
-                          className="px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                        >
-                          Message
-                        </button>
+                        {/* Step 3: Hire button wrapped with limit guard */}
+                        {currentUser && employerOrg ? (
+                          <HireLimitGuard
+                            employerOrgId={employerOrg.id}
+                            employerUserId={currentUser.id}
+                            professionalId={prof.id}
+                            attemptType="message"
+                          >
+                            <button
+                              onClick={() => handleMessage(prof.id)}
+                              className="px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                            >
+                              Message
+                            </button>
+                          </HireLimitGuard>
+                        ) : (
+                          <button
+                            onClick={() => handleMessage(prof.id)}
+                            className="px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          >
+                            Message
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

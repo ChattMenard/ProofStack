@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabaseServerClient';
 import Link from 'next/link';
+import HireAttemptsRemaining from '@/components/HireAttemptsRemaining';
 
 export default async function EmployerDashboardPage({
   searchParams,
@@ -17,7 +18,7 @@ export default async function EmployerDashboardPage({
     .single();
 
   const { data: organization } = await supabase
-    .from('organizations')
+    .from('employer_organizations')
     .select('*, is_founding_employer, founding_employer_number, pro_expires_at, subscription_tier')
     .eq('id', profile?.organization_id)
     .single();
@@ -105,6 +106,11 @@ export default async function EmployerDashboardPage({
             Discover Professionals →
           </Link>
         </div>
+      )}
+
+      {/* Hire Attempts Widget - Step 2 Complete! */}
+      {organization && (
+        <HireAttemptsRemaining employerOrgId={organization.id} />
       )}
 
       {/* Organization Info */}
