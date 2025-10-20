@@ -52,6 +52,7 @@ CREATE INDEX idx_audit_ip ON security_audit_log(ip_address);
 -- RLS: Only admins and system can read audit logs
 ALTER TABLE security_audit_log ENABLE ROW LEVEL SECURITY;
 
+-- Admins can see all audit logs (run add_admin_role.sql first!)
 CREATE POLICY audit_log_admin_select ON security_audit_log
   FOR SELECT
   TO authenticated
@@ -62,6 +63,12 @@ CREATE POLICY audit_log_admin_select ON security_audit_log
       AND role = 'admin'
     )
   );
+
+-- Users can see their own audit logs
+CREATE POLICY audit_log_user_select ON security_audit_log
+  FOR SELECT
+  TO authenticated
+  USING (user_id = auth.uid());
 
 -- No UPDATE or DELETE - audit logs are immutable
 CREATE POLICY audit_log_no_update ON security_audit_log
