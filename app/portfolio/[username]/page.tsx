@@ -211,46 +211,46 @@ export default function PortfolioPage({ params }: { params: { username: string }
     <div className="min-h-screen bg-forest-950">
       {/* Header */}
       <div className="bg-forest-900 border-b border-forest-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-start gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
             {/* Avatar */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 mx-auto sm:mx-0">
               {profile.avatar_url ? (
                 <Image
                   src={profile.avatar_url}
                   alt={profile.full_name || 'Profile'}
                   width={120}
                   height={120}
-                  className="rounded-full border-4 border-forest-700"
+                  className="rounded-full border-4 border-forest-700 w-24 h-24 sm:w-32 sm:h-32"
                 />
               ) : (
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-sage-600 to-sage-700 flex items-center justify-center text-forest-50 text-4xl font-bold border-2 border-sage-500">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-sage-600 to-sage-700 flex items-center justify-center text-forest-50 text-3xl sm:text-4xl font-bold border-2 border-sage-500">
                   {profile.full_name?.[0] || profile.email[0].toUpperCase()}
                 </div>
               )}
             </div>
 
             {/* Info */}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-forest-50">
+            <div className="flex-1 text-center sm:text-left w-full">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 mb-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-forest-50">
                   {profile.full_name || profile.email.split('@')[0]}
                 </h1>
                 {profile.is_founder && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-earth-600 to-earth-500 text-forest-50 shadow-sm">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-gradient-to-r from-earth-600 to-earth-500 text-forest-50 shadow-sm">
                     🎯 Founder #{profile.founder_number}
                   </span>
                 )}
               </div>
 
-              <p className="text-forest-300 mb-3">{profile.email}</p>
+              <p className="text-forest-300 mb-3 text-sm sm:text-base break-all sm:break-normal">{profile.email}</p>
 
               {profile.bio && (
-                <p className="text-forest-200 mb-4 max-w-2xl">{profile.bio}</p>
+                <p className="text-forest-200 mb-4 max-w-2xl text-sm sm:text-base">{profile.bio}</p>
               )}
 
               {/* ProofScore V2 */}
-              <div className="mb-6 max-w-md">
+              <div className="mb-6 max-w-md mx-auto sm:mx-0">
                 <ProofScoreV2 
                   professionalId={profile.id} 
                   size="medium" 
@@ -258,8 +258,8 @@ export default function PortfolioPage({ params }: { params: { username: string }
                 />
               </div>
 
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex gap-4 text-sm">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4 text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-forest-50">{completedSamples.length}</span>
                     <span className="text-forest-300">Verified Samples</span>
@@ -276,21 +276,21 @@ export default function PortfolioPage({ params }: { params: { username: string }
 
                 {/* Action Buttons for Employers */}
                 {currentUser && !isOwner && (
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <a
                       href={`/employer/messages?to=${profile.id}`}
-                      className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                       Send Message
                     </a>
                     <a
                       href={`/employer/reviews/new/${profile.id}`}
-                      className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                      className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                       </svg>
                       Write Review
@@ -300,16 +300,16 @@ export default function PortfolioPage({ params }: { params: { username: string }
                 
                 {/* Sign In CTA for Non-Logged In Users */}
                 {!currentUser && (
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <a
                       href="/login"
-                      className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                      className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center text-sm sm:text-base"
                     >
                       Sign In to Contact
                     </a>
                     <a
                       href="/employer/signup"
-                      className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+                      className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-center text-sm sm:text-base"
                     >
                       Hire Talent
                     </a>

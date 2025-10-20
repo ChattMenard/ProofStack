@@ -323,9 +323,9 @@ export default function DiscoverPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 mb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               Discover Professionals
             </h1>
             <div className="flex items-center gap-3">
@@ -550,36 +550,36 @@ export default function DiscoverPage() {
                   >
                     {getPromotionBadge(prof.promotion_tier)}
 
-                    <div className="p-6">
+                    <div className="p-4 sm:p-6">
                       {/* Header */}
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center">
-                          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
+                      <div className="flex items-start justify-between mb-4 gap-3">
+                        <div className="flex items-start sm:items-center flex-col sm:flex-row gap-2 sm:gap-0 flex-1 min-w-0">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold sm:mr-4 flex-shrink-0">
                             {prof.username?.[0]?.toUpperCase() || '?'}
                           </div>
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white break-words">
                               {prof.username}
                               {prof.is_pro && (
-                                <span className="ml-2 text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded">
+                                <span className="ml-2 text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded whitespace-nowrap">
                                   PRO
                                 </span>
                               )}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{prof.headline}</p>
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-words">{prof.headline}</p>
                           </div>
                         </div>
 
                         {/* Save Button */}
                         <button
                           onClick={() => toggleSave(prof.id)}
-                          className={`p-2 rounded-full transition-colors ${
+                          className={`p-2 rounded-full transition-colors flex-shrink-0 ${
                             savedIds.has(prof.id)
                               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
                               : 'bg-gray-100 dark:bg-gray-700 text-gray-400 hover:text-blue-600'
                           }`}
                         >
-                          <svg className="w-6 h-6" fill={savedIds.has(prof.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill={savedIds.has(prof.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                           </svg>
                         </button>
@@ -642,11 +642,11 @@ export default function DiscoverPage() {
                       )}
 
                       {/* Actions */}
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Link
                           href={`/portfolio/${prof.username}`}
                           onClick={() => trackView(prof.id)}
-                          className="flex-1 text-center bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                          className="flex-1 text-center bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                         >
                           View Profile
                         </Link>
@@ -660,7 +660,7 @@ export default function DiscoverPage() {
                           >
                             <button
                               onClick={() => handleMessage(prof.id)}
-                              className="px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                              className="w-full sm:w-auto px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm sm:text-base"
                             >
                               Message
                             </button>
@@ -668,7 +668,7 @@ export default function DiscoverPage() {
                         ) : (
                           <button
                             onClick={() => handleMessage(prof.id)}
-                            className="px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                            className="w-full sm:w-auto px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm sm:text-base"
                           >
                             Message
                           </button>
