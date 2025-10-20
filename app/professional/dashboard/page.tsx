@@ -173,19 +173,19 @@ export default function ProfessionalDashboard() {
 
         {/* Active Promotion Banner */}
         {activePromotion && (
-          <div className="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold mb-1">
+          <div className="mb-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-4 sm:p-6 text-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
                   Your {activePromotion.tier.charAt(0).toUpperCase() + activePromotion.tier.slice(1)} Promotion is Active! 🚀
                 </h3>
-                <p className="text-blue-100">
+                <p className="text-blue-100 text-sm sm:text-base">
                   {activePromotion.views_count || 0} views • {activePromotion.saves_count || 0} saves • {activePromotion.messages_count || 0} messages this period
                 </p>
               </div>
               <Link
                 href="/professional/promote/manage"
-                className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+                className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors w-full sm:w-auto text-center text-sm sm:text-base"
               >
                 View Analytics
               </Link>
@@ -195,25 +195,25 @@ export default function ProfessionalDashboard() {
 
         {/* No Promotion CTA */}
         {!activePromotion && (
-          <div className="mb-6 bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6">
-            <div className="flex items-start justify-between">
+          <div className="mb-6 bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
                   🚀 Boost Your Profile Visibility
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4">
                   Get discovered by more employers. Promote your profile to appear first in search results.
                 </p>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Link
                     href="/professional/promote"
-                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-center text-sm sm:text-base"
                   >
                     Browse Plans
                   </Link>
                   <a
                     href="#benefits"
-                    className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center text-sm sm:text-base"
                   >
                     Learn More
                   </a>
