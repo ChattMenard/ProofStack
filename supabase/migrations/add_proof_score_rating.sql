@@ -254,3 +254,15 @@ GRANT SELECT ON professional_leaderboard TO authenticated;
 GRANT EXECUTE ON FUNCTION calculate_proof_score(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION update_professional_proof_score(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION get_professional_percentile(uuid) TO authenticated;
+
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name = 'professional_ratings' 
+  AND column_name LIKE '%proof%'
+ORDER BY column_name;
+
+SELECT * FROM professional_leaderboard LIMIT 5;
+
+SELECT tgname, tgenabled 
+FROM pg_trigger 
+WHERE tgname = 'trigger_auto_update_proof_score';
