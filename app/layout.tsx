@@ -8,7 +8,6 @@ import ThemeToggle from '../components/ThemeToggle'
 import { PostHogProvider } from '../components/PostHogProvider'
 import BuiltWith from '../components/BuiltWith'
 import ScrollToTop from '../components/ScrollToTop'
-import AnimatedBackground from '../components/AnimatedBackground'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata = {
@@ -37,8 +36,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className="bg-forest-950 text-forest-50 relative">
         <PostHogProvider>
-          {/* Animated Background */}
-          <AnimatedBackground />
           {/* Sticky Header with Backdrop Blur */}
           <header className="sticky top-0 z-50 bg-forest-950/80 backdrop-blur-lg border-b border-forest-800/50 relative">
             <div className="max-w-7xl mx-auto px-6 py-4">
