@@ -26,7 +26,14 @@ export default function NewReviewPage() {
     position_title: '',
     work_start_date: '',
     work_end_date: '',
-    skills_demonstrated: [] as string[]
+    skills_demonstrated: [] as string[],
+    // Work sample fields
+    work_sample: '',
+    sample_title: '',
+    sample_description: '',
+    sample_type: 'code' as 'code' | 'writing' | 'design_doc' | 'technical_spec',
+    sample_language: '',
+    confidentiality_level: 'public' as 'public' | 'encrypted' | 'redacted'
   });
 
   const [skillInput, setSkillInput] = useState('');
@@ -324,6 +331,183 @@ export default function NewReviewPage() {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Work Sample Section */}
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              📦 Submit Work Sample (Optional but Recommended)
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Submit a 500-2000 character sample of what they delivered. This helps verify quality and boosts their ProofScore by up to 20 points!
+            </p>
+
+            {/* Sample Type */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Sample Type
+              </label>
+              <select
+                value={formData.sample_type}
+                onChange={(e) => setFormData(prev => ({ ...prev, sample_type: e.target.value as any }))}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              >
+                <option value="code">Code (function, component, algorithm)</option>
+                <option value="writing">Writing (documentation, article)</option>
+                <option value="design_doc">Design Document</option>
+                <option value="technical_spec">Technical Specification</option>
+              </select>
+            </div>
+
+            {/* Language (for code) */}
+            {formData.sample_type === 'code' && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Programming Language
+                </label>
+                <input
+                  type="text"
+                  value={formData.sample_language}
+                  onChange={(e) => setFormData(prev => ({ ...prev, sample_language: e.target.value }))}
+                  placeholder="e.g., JavaScript, Python, Java"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                />
+              </div>
+            )}
+
+            {/* Sample Title */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Sample Title
+              </label>
+              <input
+                type="text"
+                value={formData.sample_title}
+                onChange={(e) => setFormData(prev => ({ ...prev, sample_title: e.target.value }))}
+                placeholder="e.g., 'User Authentication API' or 'Dashboard Component'"
+                maxLength={200}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            {/* Sample Description */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                What Problem Did This Solve?
+              </label>
+              <textarea
+                value={formData.sample_description}
+                onChange={(e) => setFormData(prev => ({ ...prev, sample_description: e.target.value }))}
+                placeholder="Brief context about what this deliverable accomplished..."
+                rows={2}
+                maxLength={500}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            {/* Work Sample Content */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Work Sample * 
+                <span className="text-gray-500 text-xs ml-2">
+                  ({formData.work_sample.length}/2000 characters, min 500)
+                </span>
+              </label>
+              <textarea
+                value={formData.work_sample}
+                onChange={(e) => setFormData(prev => ({ ...prev, work_sample: e.target.value }))}
+                placeholder={formData.sample_type === 'code' 
+                  ? "Paste a function, component, or algorithm they wrote...\n\nfunction calculateDiscount(price, tier) {\n  // Implementation here\n}"
+                  : "Paste 2-5 paragraphs of their writing or documentation..."
+                }
+                rows={12}
+                minLength={500}
+                maxLength={2000}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white font-mono text-sm"
+              />
+              {formData.work_sample.length > 0 && formData.work_sample.length < 500 && (
+                <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+                  ⚠️ Need {500 - formData.work_sample.length} more characters for AI analysis
+                </p>
+              )}
+              {formData.work_sample.length >= 500 && (
+                <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                  ✓ Sample ready for AI quality analysis
+                </p>
+              )}
+            </div>
+
+            {/* Confidentiality Level */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Confidentiality Level
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-start space-x-3 cursor-pointer p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <input
+                    type="radio"
+                    name="confidentiality"
+                    value="public"
+                    checked={formData.confidentiality_level === 'public'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, confidentiality_level: 'public' }))}
+                    className="mt-1"
+                  />
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">🌐 Public</span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Visible on their portfolio. Best for building credibility.
+                    </p>
+                  </div>
+                </label>
+
+                <label className="flex items-start space-x-3 cursor-pointer p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <input
+                    type="radio"
+                    name="confidentiality"
+                    value="redacted"
+                    checked={formData.confidentiality_level === 'redacted'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, confidentiality_level: 'redacted' }))}
+                    className="mt-1"
+                  />
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">📝 Redacted</span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      You can sanitize the sample (remove sensitive business logic). Sanitized version shows on portfolio.
+                    </p>
+                  </div>
+                </label>
+
+                <label className="flex items-start space-x-3 cursor-pointer p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
+                  <input
+                    type="radio"
+                    name="confidentiality"
+                    value="encrypted"
+                    checked={formData.confidentiality_level === 'encrypted'}
+                    onChange={(e) => setFormData(prev => ({ ...prev, confidentiality_level: 'encrypted' }))}
+                    className="mt-1"
+                  />
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">🔒 Encrypted</span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Sample is encrypted. Only AI scores and metadata visible. Shows as "Confidential Work" on portfolio.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">
+                💡 Why Submit a Work Sample?
+              </h4>
+              <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+                <li>✓ AI analyzes code quality, technical depth, and best practices</li>
+                <li>✓ Boosts their ProofScore "Task Correctness" by up to 20 points</li>
+                <li>✓ Provides verifiable proof of work quality</li>
+                <li>✓ Helps other employers make informed decisions</li>
+                <li>✓ Builds professional's portfolio with real examples</li>
+              </ul>
+            </div>
           </div>
 
           {/* Submit Button */}

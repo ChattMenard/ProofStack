@@ -130,6 +130,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <li><Link href="/contact" className="text-forest-400 hover:text-sage-400 transition-colors">Contact</Link></li>
                     <li><Link href="/terms" className="text-forest-400 hover:text-sage-400 transition-colors">Terms</Link></li>
                     <li><Link href="/privacy" className="text-forest-400 hover:text-sage-400 transition-colors">Privacy</Link></li>
+                    <li><Link href="/sitemap" className="text-forest-400 hover:text-sage-400 transition-colors">Sitemap</Link></li>
                   </ul>
                 </div>
 

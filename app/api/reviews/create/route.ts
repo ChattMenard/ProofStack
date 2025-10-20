@@ -25,7 +25,14 @@ export async function POST(request: NextRequest) {
       position_title,
       work_start_date,
       work_end_date,
-      skills_demonstrated
+      skills_demonstrated,
+      // Work sample fields (optional)
+      work_sample,
+      sample_title,
+      sample_description,
+      sample_type,
+      sample_language,
+      confidentiality_level
     } = body;
 
     // Validation
@@ -55,6 +62,30 @@ export async function POST(request: NextRequest) {
         { error: 'Review text must be 500 characters or less' },
         { status: 400 }
       );
+    }
+
+    // Validate work sample if provided
+    if (work_sample) {
+      if (work_sample.length < 500 || work_sample.length > 2000) {
+        return NextResponse.json(
+          { error: 'Work sample must be between 500 and 2000 characters' },
+          { status: 400 }
+        );
+      }
+
+      if (!sample_type || !['code', 'writing', 'design_doc', 'technical_spec'].includes(sample_type)) {
+        return NextResponse.json(
+          { error: 'Invalid work sample type' },
+          { status: 400 }
+        );
+      }
+
+      if (!confidentiality_level || !['public', 'encrypted', 'redacted'].includes(confidentiality_level)) {
+        return NextResponse.json(
+          { error: 'Invalid confidentiality level' },
+          { status: 400 }
+        );
+      }
     }
 
     if (!position_title || position_title.trim().length === 0) {
@@ -142,13 +173,50 @@ export async function POST(request: NextRequest) {
     // Update professional_ratings aggregate
     await updateProfessionalRatings(professional_id);
 
+    // Insert work sample if provided
+    let workSampleId = null;
+    if (work_sample && work_sample.length >= 500) {
+      const { data: sampleData, error: sampleError } = await supabase
+        .from('work_samples')
+        .insert({
+          professional_id,
+          employer_id,
+          review_id: review.id,
+          content: work_sample.trim(),
+          content_type: sample_type || 'code',
+          language: sample_language || null,
+          title: sample_title?.trim() || null,
+          description: sample_description?.trim() || null,
+          project_context: sample_description?.trim() || null,
+          confidentiality_level: confidentiality_level || 'public',
+          verified: false // Will be verified after AI analysis
+        })
+        .select('id')
+        .single();
+
+      if (sampleError) {
+        console.error('Work sample insert error:', sampleError);
+        // Don't fail the review creation if work sample fails
+      } else if (sampleData) {
+        workSampleId = sampleData.id;
+
+        // Trigger AI analysis in background (fire and forget)
+        fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/work-samples/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ work_sample_id: sampleData.id })
+        }).catch((err: any) => console.error('Failed to trigger work sample analysis:', err));
+      }
+    }
+
     // Send email notification to professional (fire and forget)
     sendReviewEmailNotification(professional_id, employer_id, rating, review_text.trim())
       .catch((err: any) => console.error('Failed to send review notification:', err));
 
     return NextResponse.json({
       success: true,
-      review
+      review,
+      work_sample_id: workSampleId
     });
   } catch (error: any) {
     console.error('Review creation error:', error);

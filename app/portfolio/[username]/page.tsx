@@ -5,6 +5,7 @@ import { supabase } from '../../../lib/supabaseClient'
 import PortfolioSamples from '../../../components/PortfolioSamples'
 import ReviewsSection from '../../../components/ReviewsSection'
 import ProofScoreV2 from '../../../components/ProofScoreV2'
+import WorkSamplesSection from '../../../components/WorkSamplesSection'
 
 interface Profile {
   id: string
@@ -427,6 +428,15 @@ export default function PortfolioPage({ params }: { params: { username: string }
 
         {/* Reviews Section - Full Width Below */}
         <div className="mt-8">
+          {/* Work Samples from Reviews */}
+          {profile && (
+            <WorkSamplesSection
+              professionalId={profile.id}
+              isOwner={isOwner}
+            />
+          )}
+
+          {/* Reviews */}
           {profile && (
             <ReviewsSection
               professionalId={profile.id}
