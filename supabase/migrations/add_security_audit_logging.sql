@@ -185,7 +185,7 @@ CREATE OR REPLACE FUNCTION get_audit_trail(
   p_limit int DEFAULT 100
 )
 RETURNS TABLE (
-  timestamp timestamptz,
+  event_timestamp timestamptz,
   user_email text,
   action varchar(100),
   success boolean,
