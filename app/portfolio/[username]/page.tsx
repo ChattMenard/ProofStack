@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { supabase } from '../../../lib/supabaseClient'
 import PortfolioSamples from '../../../components/PortfolioSamples'
 import ReviewsSection from '../../../components/ReviewsSection'
+import ProofScoreV2 from '../../../components/ProofScoreV2'
 
 interface Profile {
   id: string
@@ -246,6 +247,15 @@ export default function PortfolioPage({ params }: { params: { username: string }
               {profile.bio && (
                 <p className="text-forest-200 mb-4 max-w-2xl">{profile.bio}</p>
               )}
+
+              {/* ProofScore V2 */}
+              <div className="mb-6 max-w-md">
+                <ProofScoreV2 
+                  professionalId={profile.id} 
+                  size="medium" 
+                  showBreakdown={true}
+                />
+              </div>
 
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div className="flex gap-4 text-sm">
