@@ -63,7 +63,7 @@ export default function AnimatedBackground() {
           x2: x1 + Math.cos(angle) * length,
           y2: y1 + Math.sin(angle) * length,
           thickness: Math.random() * 1.8 + 0.4, // Varied thickness like the image
-          opacity: Math.random() * 0.25 + 0.05, // More visible
+          opacity: (Math.random() * 0.25 + 0.05) * 0.9, // 10% more transparent
           speed: Math.random() * 0.2 + 0.05,
           angle,
           rotationSpeed: (Math.random() - 0.5) * 0.0075,
@@ -146,7 +146,7 @@ export default function AnimatedBackground() {
           const distance = Math.sqrt(dx * dx + dy * dy)
 
           if (distance < maxDistance) {
-            const opacity = (1 - distance / maxDistance) * 0.12
+            const opacity = (1 - distance / maxDistance) * 0.108 // 10% more transparent
             ctx.strokeStyle = `rgba(34, 197, 94, ${opacity})` // Green connections
             ctx.beginPath()
             ctx.moveTo(line1.x2, line1.y2)
