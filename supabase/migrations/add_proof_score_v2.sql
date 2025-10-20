@@ -271,11 +271,19 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger to auto-update ProofScore V2
+CREATE OR REPLACE FUNCTION trigger_update_proof_score_v2()
+RETURNS TRIGGER AS $$
+BEGIN
+  PERFORM update_professional_proof_score_v2(NEW.professional_id);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 DROP TRIGGER IF EXISTS trigger_auto_update_proof_score_v2 ON professional_ratings;
 CREATE TRIGGER trigger_auto_update_proof_score_v2
   AFTER INSERT OR UPDATE ON professional_ratings
   FOR EACH ROW
-  EXECUTE FUNCTION update_professional_proof_score_v2(NEW.professional_id);
+  EXECUTE FUNCTION trigger_update_proof_score_v2();
 
 -- Trigger to recalculate when profile quality is updated
 CREATE OR REPLACE FUNCTION trigger_profile_quality_update()
