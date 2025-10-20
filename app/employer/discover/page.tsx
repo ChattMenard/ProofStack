@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import HireLimitGuard from '@/components/HireLimitGuard';
+import ProofScoreV2 from '@/components/ProofScoreV2';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -610,6 +611,15 @@ export default function DiscoverPage() {
                             {prof.average_rating.toFixed(1)} ({prof.total_reviews} reviews)
                           </div>
                         )}
+                      </div>
+
+                      {/* ProofScore V2 */}
+                      <div className="mb-4">
+                        <ProofScoreV2 
+                          professionalId={prof.id} 
+                          size="small" 
+                          showBreakdown={false}
+                        />
                       </div>
 
                       {/* Skills */}

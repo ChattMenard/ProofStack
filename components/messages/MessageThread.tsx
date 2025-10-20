@@ -153,6 +153,9 @@ export default function MessageThread({ conversationId, currentUserId, recipient
         throw new Error('Failed to send message');
       }
 
+      const result = await response.json();
+      const messageId = result.message_id;
+
       setNewMessage('');
       
       // Update last_message_at for conversation
@@ -160,6 +163,18 @@ export default function MessageThread({ conversationId, currentUserId, recipient
         .from('conversations')
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId);
+
+      // Trigger AI message analysis in background (for professionals only)
+      // This analyzes communication quality for ProofScore
+      if (messageId && messages.length === 0) {
+        // This is the first message from this professional
+        fetch('/api/professional/analyze-message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message_id: messageId })
+        }).catch(err => console.log('Message analysis failed:', err));
+        // Don't await - run in background
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       alert('Failed to send message');
