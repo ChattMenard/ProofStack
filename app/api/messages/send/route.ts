@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendNewMessageEmail } from '@/lib/email/notifications';
+import { withRateLimit } from '@/lib/security/rateLimiting';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,6 +10,17 @@ const supabase = createClient(
 
 export async function POST(req: NextRequest) {
   try {
+    // SECURITY: Rate limiting to prevent spam
+    const getUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      return user?.id || null;
+    };
+    
+    const rateLimitResponse = await withRateLimit(req, 'apiGeneral', getUserId);
+    if (rateLimitResponse) {
+      return rateLimitResponse; // Rate limit exceeded (100 requests/min)
+    }
+
     const { conversation_id, sender_id, content } = await req.json();
 
     if (!conversation_id || !sender_id || !content) {

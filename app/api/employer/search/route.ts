@@ -1,11 +1,24 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withRateLimit } from '@/lib/security/rateLimiting';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function POST(request: Request) {
   try {
+    // SECURITY: Rate limiting to prevent scraping
+    const getUserId = async () => {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      const { data: { user } } = await supabase.auth.getUser();
+      return user?.id || null;
+    };
+    
+    const rateLimitResponse = await withRateLimit(request, 'apiGeneral', getUserId);
+    if (rateLimitResponse) {
+      return rateLimitResponse; // Rate limit exceeded (100 requests/min)
+    }
+
     const filters = await request.json();
     const {
       skills = [],
