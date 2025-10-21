@@ -1,17 +1,6 @@
 import { Resend } from 'resend';
 
-// Lazy initialization to avoid errors during build
-let resend: Resend | null = null;
-function getResend() {
-  if (!resend) {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      throw new Error('RESEND_API_KEY environment variable is not set');
-    }
-    resend = new Resend(apiKey);
-  }
-  return resend;
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'ProofStack <notifications@proofstack.com>';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://proofstack.com';
@@ -23,7 +12,7 @@ export async function sendNewMessageEmail(to: string, data: {
   conversationId: string;
 }) {
   try {
-    await getResend().emails.send({
+    await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: `New message from ${data.senderName}`,
@@ -90,7 +79,7 @@ export async function sendNewReviewEmail(to: string, data: {
   const stars = '⭐'.repeat(data.rating);
   
   try {
-    await getResend().emails.send({
+    await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: `${data.employerName} left you a ${data.rating}-star review`,
@@ -171,7 +160,7 @@ export async function sendPromotionExpiringEmail(to: string, data: {
   const info = tierInfo[data.tier] || tierInfo.standard;
   
   try {
-    await getResend().emails.send({
+    await resend.emails.send({
       from: FROM_EMAIL,
       to,
       subject: `Your ${info.name} promotion expires in ${data.daysRemaining} days`,

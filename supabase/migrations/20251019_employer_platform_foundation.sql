@@ -440,7 +440,7 @@ BEGIN
   RETURN EXISTS (
     SELECT 1 FROM organization_members
     WHERE organization_id = org_id
-      AND organization_members.user_id = is_organization_member.user_id
+      AND organization_members.user_id = user_id
       AND is_active = true
   );
 END;

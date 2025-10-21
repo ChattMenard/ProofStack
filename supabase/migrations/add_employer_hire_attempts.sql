@@ -2,19 +2,19 @@
 -- Employers can browse freely but only attempt to hire 3 professionals before upgrading
 
 -- Add columns to track hire attempts
-ALTER TABLE employer_organizations 
+ALTER TABLE organizations 
 ADD COLUMN IF NOT EXISTS hire_attempts_count integer DEFAULT 0,
 ADD COLUMN IF NOT EXISTS hire_attempts_limit integer DEFAULT 3,
 ADD COLUMN IF NOT EXISTS last_hire_attempt_at timestamptz;
 
-COMMENT ON COLUMN employer_organizations.hire_attempts_count IS 'Number of times employer has attempted to hire (failed attempts)';
-COMMENT ON COLUMN employer_organizations.hire_attempts_limit IS 'Maximum free hire attempts allowed (default 3)';
-COMMENT ON COLUMN employer_organizations.last_hire_attempt_at IS 'Timestamp of most recent hire attempt';
+COMMENT ON COLUMN organizations.hire_attempts_count IS 'Number of times employer has attempted to hire (failed attempts)';
+COMMENT ON COLUMN organizations.hire_attempts_limit IS 'Maximum free hire attempts allowed (default 3)';
+COMMENT ON COLUMN organizations.last_hire_attempt_at IS 'Timestamp of most recent hire attempt';
 
 -- Create hire_attempts tracking table for detailed history
 CREATE TABLE IF NOT EXISTS hire_attempts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  employer_org_id uuid NOT NULL REFERENCES employer_organizations(id) ON DELETE CASCADE,
+  organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   employer_user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   professional_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   attempted_at timestamptz NOT NULL DEFAULT now(),
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS hire_attempts (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_hire_attempts_employer ON hire_attempts(employer_org_id, attempted_at DESC);
+CREATE INDEX idx_hire_attempts_employer ON hire_attempts(organization_id, attempted_at DESC);
 CREATE INDEX idx_hire_attempts_professional ON hire_attempts(professional_id, attempted_at DESC);
 CREATE INDEX idx_hire_attempts_successful ON hire_attempts(was_successful, attempted_at DESC);
 
@@ -36,7 +36,7 @@ COMMENT ON COLUMN hire_attempts.blocked_reason IS 'Why attempt was blocked if un
 COMMENT ON COLUMN hire_attempts.upgraded_after IS 'Whether employer upgraded their plan after this attempt';
 
 -- Function to check if employer can attempt to hire
-CREATE OR REPLACE FUNCTION can_employer_hire(p_employer_org_id uuid)
+CREATE OR REPLACE FUNCTION can_employer_hire(p_organization_id uuid)
 RETURNS jsonb AS $$
 DECLARE
   org_record RECORD;
@@ -51,8 +51,8 @@ BEGIN
     hire_attempts_limit,
     is_founding_employer
   INTO org_record
-  FROM employer_organizations
-  WHERE id = p_employer_org_id;
+  FROM organizations
+  WHERE id = p_organization_id;
 
   -- If not found
   IF NOT FOUND THEN
@@ -76,7 +76,7 @@ BEGIN
   -- Count failed attempts (unsuccessful attempts)
   SELECT COUNT(*) INTO failed_attempts
   FROM hire_attempts
-  WHERE employer_org_id = p_employer_org_id
+  WHERE organization_id = p_organization_id
     AND was_successful = false;
 
   -- Check if under limit
@@ -102,7 +102,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to record a hire attempt
 CREATE OR REPLACE FUNCTION record_hire_attempt(
-  p_employer_org_id uuid,
+  p_organization_id uuid,
   p_employer_user_id uuid,
   p_professional_id uuid,
   p_attempt_type text,
@@ -116,14 +116,14 @@ DECLARE
 BEGIN
   -- Insert the attempt record
   INSERT INTO hire_attempts (
-    employer_org_id,
+    organization_id,
     employer_user_id,
     professional_id,
     attempt_type,
     was_successful,
     blocked_reason
   ) VALUES (
-    p_employer_org_id,
+    p_organization_id,
     p_employer_user_id,
     p_professional_id,
     p_attempt_type,
@@ -134,11 +134,11 @@ BEGIN
 
   -- Update organization's attempt count (only count failed attempts)
   IF p_was_successful = false THEN
-    UPDATE employer_organizations
+    UPDATE organizations
     SET 
       hire_attempts_count = hire_attempts_count + 1,
       last_hire_attempt_at = now()
-    WHERE id = p_employer_org_id
+    WHERE id = p_organization_id
     RETURNING hire_attempts_count INTO new_count;
   END IF;
 
@@ -152,7 +152,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to check and enforce hire limits (call this before allowing contact)
 CREATE OR REPLACE FUNCTION check_hire_limit_and_record(
-  p_employer_org_id uuid,
+  p_organization_id uuid,
   p_employer_user_id uuid,
   p_professional_id uuid,
   p_attempt_type text
@@ -164,13 +164,13 @@ DECLARE
   attempt_result jsonb;
 BEGIN
   -- Check if they can hire
-  eligibility := can_employer_hire(p_employer_org_id);
+  eligibility := can_employer_hire(p_organization_id);
   can_proceed := (eligibility->>'can_hire')::boolean;
 
   -- If they can't hire, record the failed attempt
   IF NOT can_proceed THEN
     attempt_result := record_hire_attempt(
-      p_employer_org_id,
+      p_organization_id,
       p_employer_user_id,
       p_professional_id,
       p_attempt_type,
@@ -189,7 +189,7 @@ BEGIN
 
   -- They can proceed - record successful attempt
   attempt_result := record_hire_attempt(
-    p_employer_org_id,
+    p_organization_id,
     p_employer_user_id,
     p_professional_id,
     p_attempt_type,
@@ -217,8 +217,8 @@ CREATE POLICY "Employers can view their hire attempts"
   USING (
     employer_user_id = auth.uid()
     OR 
-    employer_org_id IN (
-      SELECT id FROM employer_organizations WHERE owner_id = auth.uid()
+    organization_id IN (
+      SELECT id FROM organizations WHERE created_by = auth.uid()
     )
   );
 
