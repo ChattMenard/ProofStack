@@ -1,0 +1,5 @@
+# Python dependencies for ProofStack utilities
+# Install with: pip install -r requirements.txt
+
+# Cryptography library for secure encryption and signing
+cryptography>=42.0.0

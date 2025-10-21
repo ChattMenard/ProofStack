@@ -11,7 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "check-tasks": "python tools/check_tasks.py",
-    "worker": "npx tsx workers/analyzeSample.ts"
+    "worker": "npx tsx workers/analyzeSample.ts",
+    "test:encrypted-blob": "python tools/test_encrypted_blob.py",
+    "demo:encrypted-blob": "python tools/encrypted_blob.py"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.19.0",

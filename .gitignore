@@ -16,3 +16,8 @@ playwright-report/
 test-results/
 supabase/.temp/
 .venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/

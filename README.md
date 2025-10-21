@@ -11,6 +11,7 @@ What this scaffold includes:
 - Supabase schema SQL to create initial tables
 - **Cloudinary Integration**: Automatic image upload, optimization, and display with CldImage component
 - **Optimized Image Display**: Portfolio images are automatically formatted, cropped, and quality-optimized
+- **Encrypted Blob Utility**: Python utility for secure data encryption with AES-GCM and Ed25519 signatures
 
 Getting started (PowerShell)
 
@@ -30,6 +31,27 @@ cp .env.example .env.local
 # 3) Run the dev server
 npm run dev
 ```
+
+## Python Utilities
+
+ProofStack includes Python utilities for enhanced security and functionality:
+
+### Encrypted Blob Utility
+
+Secure data encryption using AES-GCM and Ed25519 signatures. Perfect for encrypting sensitive data before storage or transmission.
+
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run example demonstration
+npm run demo:encrypted-blob
+
+# Run comprehensive test suite
+npm run test:encrypted-blob
+```
+
+See [ENCRYPTED_BLOB_GUIDE.md](ENCRYPTED_BLOB_GUIDE.md) for complete documentation and usage examples.
 
 ## Deployment
 
