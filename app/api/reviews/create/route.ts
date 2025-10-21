@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { sendNewReviewEmail } from '@/lib/email/notifications';
+import { validateWorkSampleSecurity } from '@/lib/security/secretDetection';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -85,6 +86,35 @@ export async function POST(request: NextRequest) {
           { error: 'Invalid confidentiality level' },
           { status: 400 }
         );
+      }
+
+      // SECURITY: Check for secrets in work sample
+      const securityValidation = await validateWorkSampleSecurity(work_sample);
+      
+      if (!securityValidation.safe) {
+        console.error('Secret detection blocked work sample:', {
+          employer_id,
+          professional_id,
+          errors: securityValidation.errors
+        });
+        
+        return NextResponse.json(
+          { 
+            error: 'Work sample contains sensitive information that cannot be stored',
+            details: securityValidation.errors,
+            type: 'security_validation_failed'
+          },
+          { status: 400 }
+        );
+      }
+
+      // Log warnings but allow submission
+      if (securityValidation.warnings && securityValidation.warnings.length > 0) {
+        console.warn('Work sample security warnings:', {
+          employer_id,
+          professional_id,
+          warnings: securityValidation.warnings
+        });
       }
     }
 
