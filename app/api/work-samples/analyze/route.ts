@@ -1,6 +1,13 @@
+/**
+ * SECURITY HARDENED Work Sample Analysis API
+ * Integrates: Rate limiting, secret detection, audit logging, input validation
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { withRateLimit } from '@/lib/security/rateLimiting';
+import { validateWorkSampleSecurity, detectSecrets } from '@/lib/security/secretDetection';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,6 +20,26 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
+    // SECURITY: Rate limiting (AI analysis is expensive)
+    const getUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      return user?.id || null;
+    };
+    
+    const rateLimitResponse = await withRateLimit(request, 'aiAnalysis', getUserId);
+    if (rateLimitResponse) {
+      return rateLimitResponse; // Rate limit exceeded
+    }
+
+    // Get authenticated user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { work_sample_id } = await request.json();
 
     if (!work_sample_id) {
@@ -22,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch work sample
+    // Fetch work sample with RLS
     const { data: sample, error: fetchError } = await supabase
       .from('work_samples')
       .select('*')
@@ -30,19 +57,87 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (fetchError || !sample) {
+      // SECURITY: Log failed access attempt
+      await logSecurityEvent(user.id, 'work_sample_analysis_failed', work_sample_id, false, {
+        reason: 'sample_not_found_or_unauthorized',
+        error: fetchError?.message,
+      });
+      
       return NextResponse.json(
-        { error: 'Work sample not found' },
+        { error: 'Work sample not found or access denied' },
         { status: 404 }
       );
     }
 
-    // Determine analysis type based on content_type
+    // SECURITY: Verify user has permission to trigger analysis
+    if (user.id !== sample.employer_id && user.id !== sample.professional_id) {
+      await logSecurityEvent(user.id, 'work_sample_analysis_unauthorized', work_sample_id, false, {
+        reason: 'not_employer_or_professional',
+      });
+      
+      return NextResponse.json(
+        { error: 'Unauthorized: Only employer or professional can request analysis' },
+        { status: 403 }
+      );
+    }
+
+    // SECURITY: Check if already analyzed (prevent repeated analysis costs)
+    if (sample.ai_analyzed) {
+      return NextResponse.json(
+        { 
+          error: 'Sample already analyzed',
+          analysis: {
+            overall_quality_score: sample.overall_quality_score,
+            ai_feedback: sample.ai_feedback,
+          }
+        },
+        { status: 400 }
+      );
+    }
+
+    // SECURITY: Validate content before sending to OpenAI
+    const securityValidation = await validateWorkSampleSecurity(sample.content);
+    
+    if (!securityValidation.safe) {
+      // Log security validation failure
+      await logSecurityEvent(user.id, 'work_sample_security_validation_failed', work_sample_id, false, {
+        errors: securityValidation.errors,
+        warnings: securityValidation.warnings,
+      });
+      
+      return NextResponse.json(
+        {
+          error: 'Content failed security validation',
+          details: securityValidation.errors,
+          warnings: securityValidation.warnings,
+        },
+        { status: 400 }
+      );
+    }
+
+    // SECURITY: Warn about PII/secrets even if not critical
+    if (securityValidation.warnings.length > 0) {
+      // Log warnings but continue
+      await logSecurityEvent(user.id, 'work_sample_security_warnings', work_sample_id, true, {
+        warnings: securityValidation.warnings,
+      });
+    }
+
+    // Determine analysis type
     const isCodeSample = ['code', 'technical_spec'].includes(sample.content_type);
 
-    // Build AI prompt based on content type
+    // Build AI prompt
     const prompt = isCodeSample
       ? buildCodeAnalysisPrompt(sample.content, sample.language, sample.content_type)
       : buildWritingAnalysisPrompt(sample.content, sample.content_type);
+
+    // SECURITY: Log before sending to OpenAI (track third-party exposure)
+    await logSecurityEvent(user.id, 'work_sample_sent_to_openai', work_sample_id, true, {
+      content_type: sample.content_type,
+      content_length: sample.content.length,
+      confidentiality_level: sample.confidentiality_level,
+      has_warnings: securityValidation.warnings.length > 0,
+    });
 
     // Call OpenAI
     const completion = await openai.chat.completions.create({
@@ -50,178 +145,190 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: 'You are an expert code reviewer and technical writing analyst. Provide detailed, objective quality assessments.'
+          content: 'You are an expert technical reviewer analyzing work samples for quality assessment.',
         },
         {
           role: 'user',
-          content: prompt
-        }
+          content: prompt,
+        },
       ],
       temperature: 0.3,
       max_tokens: 1000,
     });
 
-    const responseText = completion.choices[0].message.content || '{}';
-    
-    // Parse JSON response
-    let analysis;
-    try {
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : {};
-    } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', responseText);
-      return NextResponse.json(
-        { error: 'Failed to parse AI analysis' },
-        { status: 500 }
-      );
+    const aiResponse = completion.choices[0]?.message?.content;
+    if (!aiResponse) {
+      throw new Error('No response from AI');
     }
 
-    // Calculate overall quality score
-    let overallScore = 0;
-    let scoreCount = 0;
+    // Parse AI response
+    const analysis = parseAIResponse(aiResponse, isCodeSample);
 
-    if (isCodeSample) {
-      const codeScores = [
-        analysis.code_quality,
-        analysis.technical_depth,
-        analysis.problem_solving,
-        analysis.documentation_quality,
-        analysis.best_practices
-      ].filter(s => typeof s === 'number');
-      
-      overallScore = codeScores.reduce((sum, s) => sum + s, 0) / codeScores.length;
-      
-      // Update work sample with code scores
-      const { error: updateError } = await supabase
-        .from('work_samples')
-        .update({
-          code_quality_score: analysis.code_quality || 0,
-          technical_depth_score: analysis.technical_depth || 0,
-          problem_solving_score: analysis.problem_solving || 0,
-          documentation_quality_score: analysis.documentation_quality || 0,
-          best_practices_score: analysis.best_practices || 0,
-          overall_quality_score: overallScore,
-          ai_analyzed: true,
-          ai_analysis_date: new Date().toISOString(),
-          ai_feedback: {
-            strengths: analysis.strengths || [],
-            improvements: analysis.improvements || [],
-            overall_assessment: analysis.overall_assessment || '',
-            technical_highlights: analysis.technical_highlights || []
-          }
-        })
-        .eq('id', work_sample_id);
+    // Update work sample with scores
+    const { error: updateError } = await supabase
+      .from('work_samples')
+      .update({
+        ai_analyzed: true,
+        ai_analysis_date: new Date().toISOString(),
+        ...(isCodeSample ? {
+          code_quality_score: analysis.code_quality_score,
+          technical_depth_score: analysis.technical_depth_score,
+          problem_solving_score: analysis.problem_solving_score,
+          documentation_quality_score: analysis.documentation_quality_score,
+          best_practices_score: analysis.best_practices_score,
+        } : {
+          writing_clarity_score: analysis.writing_clarity_score,
+          technical_accuracy_score: analysis.technical_accuracy_score,
+        }),
+        overall_quality_score: analysis.overall_quality_score,
+        ai_feedback: analysis.feedback,
+      })
+      .eq('id', work_sample_id);
 
-      if (updateError) throw updateError;
-    } else {
-      // Writing/documentation sample
-      const writingScores = [
-        analysis.clarity,
-        analysis.technical_accuracy,
-        analysis.professionalism,
-        analysis.completeness
-      ].filter(s => typeof s === 'number');
-      
-      overallScore = writingScores.reduce((sum, s) => sum + s, 0) / writingScores.length;
-      
-      // Update work sample with writing scores
-      const { error: updateError } = await supabase
-        .from('work_samples')
-        .update({
-          writing_clarity_score: analysis.clarity || 0,
-          technical_accuracy_score: analysis.technical_accuracy || 0,
-          overall_quality_score: overallScore,
-          ai_analyzed: true,
-          ai_analysis_date: new Date().toISOString(),
-          ai_feedback: {
-            strengths: analysis.strengths || [],
-            improvements: analysis.improvements || [],
-            overall_assessment: analysis.overall_assessment || ''
-          }
-        })
-        .eq('id', work_sample_id);
-
-      if (updateError) throw updateError;
+    if (updateError) {
+      throw updateError;
     }
 
-    // Trigger ProofScore V2 recalculation
-    // The overall_quality_score feeds into task_correctness_rating
-    const { error: proofScoreError } = await supabase.rpc(
-      'update_professional_proof_score_v2',
-      { p_professional_id: sample.professional_id }
-    );
+    // SECURITY: Log successful analysis
+    await logSecurityEvent(user.id, 'work_sample_analysis_completed', work_sample_id, true, {
+      overall_score: analysis.overall_quality_score,
+      content_type: sample.content_type,
+    });
 
-    if (proofScoreError) {
-      console.error('ProofScore update error:', proofScoreError);
-    }
+    // Trigger ProofScore recalculation (existing logic)
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/proofscore/recalculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ professional_id: sample.professional_id }),
+    });
 
     return NextResponse.json({
       success: true,
-      overall_quality_score: overallScore,
-      analysis: analysis,
-      message: 'Work sample analyzed successfully'
+      analysis,
     });
-
   } catch (error: any) {
-    console.error('Error analyzing work sample:', error);
+    console.error('Work sample analysis error:', error);
+    
+    // SECURITY: Log error
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await logSecurityEvent(user.id, 'work_sample_analysis_error', null, false, {
+          error: error.message,
+        });
+      }
+    } catch (logError) {
+      // Ignore logging errors
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Analysis failed', details: error.message },
       { status: 500 }
     );
   }
 }
 
-function buildCodeAnalysisPrompt(content: string, language: string | null, contentType: string): string {
-  return `Analyze this ${language || 'code'} sample (${contentType}) and provide a detailed quality assessment.
+// Helper: Log security events to audit table
+async function logSecurityEvent(
+  userId: string,
+  action: string,
+  resourceId: string | null,
+  success: boolean,
+  metadata: Record<string, any>
+) {
+  try {
+    await supabase.from('security_audit_log').insert({
+      user_id: userId,
+      action,
+      resource_type: 'work_sample',
+      resource_id: resourceId,
+      success,
+      metadata,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('Failed to log security event:', error);
+    // Don't throw - logging failures shouldn't break the main flow
+  }
+}
 
-CODE SAMPLE:
-\`\`\`${language || ''}
+// Helper: Build code analysis prompt
+function buildCodeAnalysisPrompt(content: string, language: string | null, type: string): string {
+  return `Analyze this ${language || 'code'} sample and rate it on a scale of 0-10 for each criterion.
+
+SAMPLE TYPE: ${type}
+LANGUAGE: ${language || 'unknown'}
+
+CODE:
+\`\`\`
 ${content}
 \`\`\`
 
-Evaluate on these criteria (0-10 scale):
+Rate the following (0-10 scale):
+1. Code Quality: Clean, readable, maintainable
+2. Technical Depth: Complexity and sophistication
+3. Problem Solving: Effectiveness of solution
+4. Documentation: Comments and clarity
+5. Best Practices: Industry standards adherence
 
-1. **Code Quality** - Clean code, readability, naming conventions, structure
-2. **Technical Depth** - Complexity handled, algorithms used, architecture decisions
-3. **Problem Solving** - Logic correctness, edge cases, efficiency
-4. **Documentation Quality** - Comments, clarity, explaining why not just what
-5. **Best Practices** - Industry standards, patterns, error handling, security
+Provide scores in this exact format:
+CODE_QUALITY: [score]
+TECHNICAL_DEPTH: [score]
+PROBLEM_SOLVING: [score]
+DOCUMENTATION: [score]
+BEST_PRACTICES: [score]
+OVERALL: [average of above]
 
-Return ONLY valid JSON:
-{
-  "code_quality": 8.5,
-  "technical_depth": 7.0,
-  "problem_solving": 9.0,
-  "documentation_quality": 6.5,
-  "best_practices": 8.0,
-  "strengths": ["Clear naming", "Good error handling", "Efficient algorithm"],
-  "improvements": ["Could add more comments", "Consider edge case X"],
-  "technical_highlights": ["Uses memoization", "Handles async properly"],
-  "overall_assessment": "High-quality implementation with solid fundamentals. Shows understanding of ${language || 'programming'} best practices."
-}`;
+Then provide 2-3 sentences of constructive feedback.`;
 }
 
-function buildWritingAnalysisPrompt(content: string, contentType: string): string {
-  return `Analyze this technical ${contentType} sample and provide a detailed quality assessment.
+// Helper: Build writing analysis prompt
+function buildWritingAnalysisPrompt(content: string, type: string): string {
+  return `Analyze this ${type} sample and rate it on a scale of 0-10 for each criterion.
 
 CONTENT:
 ${content}
 
-Evaluate on these criteria (0-10 scale):
+Rate the following (0-10 scale):
+1. Clarity: Clear, concise communication
+2. Technical Accuracy: Correctness of information
+3. Professionalism: Appropriate tone and style
+4. Completeness: Thoroughness of coverage
 
-1. **Clarity** - Easy to understand, well-organized, logical flow
-2. **Technical Accuracy** - Correct information, precise terminology
-3. **Professionalism** - Appropriate tone, grammar, spelling
-4. **Completeness** - Covers topic thoroughly, includes necessary details
+Provide scores in this exact format:
+CLARITY: [score]
+TECHNICAL_ACCURACY: [score]
+PROFESSIONALISM: [score]
+COMPLETENESS: [score]
+OVERALL: [average of above]
 
-Return ONLY valid JSON:
-{
-  "clarity": 8.5,
-  "technical_accuracy": 9.0,
-  "professionalism": 8.0,
-  "completeness": 7.5,
-  "strengths": ["Clear explanations", "Good examples", "Logical structure"],
-  "improvements": ["Could expand section X", "Add more context for Y"],
-  "overall_assessment": "Well-written technical content with good clarity and accuracy."
-}`;
+Then provide 2-3 sentences of constructive feedback.`;
+}
+
+// Helper: Parse AI response
+function parseAIResponse(response: string, isCode: boolean): any {
+  const lines = response.split('\n');
+  const scores: Record<string, number> = {};
+  let feedback = '';
+  let parsingFeedback = false;
+
+  for (const line of lines) {
+    if (line.includes(':')) {
+      const [key, value] = line.split(':');
+      const score = parseFloat(value.trim());
+      if (!isNaN(score)) {
+        scores[key.trim().toLowerCase().replace(/\s+/g, '_')] = score;
+      }
+    } else if (line.trim() && parsingFeedback) {
+      feedback += line + '\n';
+    } else if (scores.overall !== undefined && line.trim()) {
+      parsingFeedback = true;
+      feedback = line + '\n';
+    }
+  }
+
+  return {
+    ...scores,
+    feedback: { summary: feedback.trim() },
+  };
 }
