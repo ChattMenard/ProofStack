@@ -6,22 +6,33 @@ import { requireAuth } from '../../../lib/requireAuth'
 // Mock external dependencies
 jest.mock('../../../lib/supabaseServer')
 jest.mock('../../../lib/requireAuth')
+// Prevent importing Upstash/Redis during tests (ESM module parsing issues)
+jest.mock('../../../lib/rateLimitRedis', () => ({
+  withRateLimit: (handler: any) => handler,
+}))
 jest.mock('node-fetch', () => jest.fn())
 
 const mockSupabase = supabaseServer as jest.Mocked<typeof supabaseServer>
 const mockRequireAuth = requireAuth as jest.MockedFunction<any>
 const mockFetch = require('node-fetch') as jest.MockedFunction<any>
 
-describe('/api/github/repos', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-    ;(mockSupabase as any).auth = {
-      admin: {
-        getUserById: jest.fn()
-      }
+beforeEach(() => {
+  jest.clearAllMocks()
+  ;(mockSupabase as any).auth = {
+    admin: {
+      getUserById: jest.fn()
     }
-  })
+  }
+  // Ensure global.fetch is available to the handler (use mocked node-fetch)
+  ;(global as any).fetch = mockFetch
+})
 
+afterEach(() => {
+  // Clean up global.fetch after each test to avoid cross-test leakage
+  delete (global as any).fetch
+})
+
+describe('/api/github/repos', () => {
   it('should reject non-GET requests', async () => {
     const { req, res } = createMocks({
       method: 'POST',
@@ -102,7 +113,17 @@ describe('/api/github/repos', () => {
 
     const mockResponse = {
       ok: true,
-      json: jest.fn().mockResolvedValue(mockRepos)
+      status: 200,
+      json: jest.fn().mockResolvedValue(mockRepos),
+      headers: {
+        get: jest.fn((name: string) => {
+          if (name === 'x-ratelimit-remaining') return '60'
+          if (name === 'x-ratelimit-reset') return String(Math.floor(Date.now() / 1000) + 3600)
+          if (name === 'etag') return '"etag-value"'
+          return null
+        })
+      },
+      text: jest.fn().mockResolvedValue(JSON.stringify(mockRepos))
     }
     mockFetch.mockResolvedValue(mockResponse)
 
@@ -112,9 +133,10 @@ describe('/api/github/repos', () => {
 
     await handler(req, res)
 
-    expect(mockFetch).toHaveBeenCalledWith('https://api.github.com/user/repos?sort=updated&per_page=100', {
-      headers: { Authorization: 'token github-token-123' }
-    })
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api.github.com/user/repos?sort=updated&per_page=100',
+      expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'token github-token-123' }) })
+    )
     expect(res._getStatusCode()).toBe(200)
     expect(JSON.parse(res._getData())).toEqual(mockRepos)
   })
@@ -136,7 +158,9 @@ describe('/api/github/repos', () => {
     const mockResponse = {
       ok: false,
       status: 401,
-      text: jest.fn().mockResolvedValue('Unauthorized')
+      json: jest.fn().mockResolvedValue({ message: 'Unauthorized' }),
+      text: jest.fn().mockResolvedValue('Unauthorized'),
+      headers: { get: jest.fn().mockReturnValue(null) }
     }
     mockFetch.mockResolvedValue(mockResponse)
 
