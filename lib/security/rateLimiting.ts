@@ -20,72 +20,72 @@ export const RATE_LIMITS = {
   // Work samples - most sensitive (potential scraping target)
   WORK_SAMPLE_VIEW: {
     requests: 50, // 50 requests
-    window: '1 h', // per hour
+    window: '60 m' as const, // per hour
     message: 'Too many work sample views. Please wait before viewing more.',
   },
   WORK_SAMPLE_CREATE: {
     requests: 10,
-    window: '1 h',
+    window: '60 m' as const,
     message: 'Too many work sample submissions. Please wait before submitting more.',
   },
   
   // AI analysis - expensive operations
   AI_ANALYSIS: {
     requests: 20,
-    window: '1 h',
+    window: '60 m' as const,
     message: 'Too many AI analysis requests. Please wait before requesting more analysis.',
   },
   
   // Authentication - brute force protection
   AUTH_LOGIN: {
     requests: 5,
-    window: '15 m',
+    window: '15 m' as const,
     message: 'Too many login attempts. Please wait 15 minutes before trying again.',
   },
   AUTH_SIGNUP: {
     requests: 3,
-    window: '1 h',
+    window: '60 m' as const,
     message: 'Too many signup attempts. Please wait before creating another account.',
   },
   
   // API endpoints - general protection
   API_GENERAL: {
     requests: 100,
-    window: '1 m',
+    window: '1 m' as const,
     message: 'Too many requests. Please slow down.',
   },
   API_SEARCH: {
     requests: 30,
-    window: '1 m',
+    window: '1 m' as const,
     message: 'Too many search requests. Please wait before searching again.',
   },
   
   // Profile views - scraping protection
   PROFILE_VIEW: {
     requests: 100,
-    window: '1 h',
+    window: '60 m' as const,
     message: 'Too many profile views. Please wait before viewing more profiles.',
   },
   
   // Messaging - spam protection
   MESSAGE_SEND: {
     requests: 20,
-    window: '1 h',
+    window: '60 m' as const,
     message: 'Too many messages sent. Please wait before sending more.',
   },
   
   // Upload - resource intensive
   UPLOAD: {
     requests: 10,
-    window: '1 h',
+    window: '60 m' as const,
     message: 'Too many uploads. Please wait before uploading more files.',
   },
-};
+} as const;
 
 /**
  * Create rate limiter for specific endpoint
  */
-export function createRateLimiter(config: typeof RATE_LIMITS.API_GENERAL) {
+export function createRateLimiter(config: { requests: number; window: `${number} ${'ms' | 's' | 'm' | 'h' | 'd'}`; message: string }) {
   return new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(
@@ -280,7 +280,7 @@ export async function isUserBlocked(userId: string): Promise<{
   
   return {
     blocked: reason !== null,
-    reason: reason || undefined,
+    reason: reason ? String(reason) : undefined,
   };
 }
 

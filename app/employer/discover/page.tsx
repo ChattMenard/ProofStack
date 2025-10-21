@@ -84,11 +84,11 @@ export default function DiscoverPage() {
 
     if (profile?.organization_id) {
       const { data: org } = await supabase
-        .from('employer_organizations')
+        .from('organizations')
         .select('*')
         .eq('id', profile.organization_id)
         .single();
-      
+
       setEmployerOrg(org);
     }
   };

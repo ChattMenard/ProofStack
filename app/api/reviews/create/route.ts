@@ -254,18 +254,18 @@ async function updateProfessionalRatings(professionalId: string) {
       '1': reviews.filter((r: any) => r.rating === 1).length
     };
 
-    // Upsert professional_ratings
+    // Upsert professional_ratings using current DB column names
     const { error: upsertError } = await supabase
       .from('professional_ratings')
       .upsert({
         professional_id: professionalId,
         average_rating: parseFloat(averageRating.toFixed(2)),
         total_reviews: totalReviews,
-        rating_5_count: ratingCounts['5'],
-        rating_4_count: ratingCounts['4'],
-        rating_3_count: ratingCounts['3'],
-        rating_2_count: ratingCounts['2'],
-        rating_1_count: ratingCounts['1'],
+        five_star_count: ratingCounts['5'],
+        four_star_count: ratingCounts['4'],
+        three_star_count: ratingCounts['3'],
+        two_star_count: ratingCounts['2'],
+        one_star_count: ratingCounts['1'],
         would_hire_again_percentage: parseFloat(wouldHireAgainPercentage.toFixed(2))
       }, {
         onConflict: 'professional_id'
@@ -308,17 +308,40 @@ async function sendReviewEmailNotification(
       return;
     }
 
-    // Get organization name if employer has one
-    const { data: org } = await supabase
-      .from('employer_organizations')
-      .select('company_name')
-      .eq('employer_id', employerId)
+    // Resolve employer organization name using the new 'organizations' table.
+    let employerName: string | null = null;
+
+    // First, check if employer created an organization
+    const { data: orgByCreator } = await supabase
+      .from('organizations')
+      .select('name')
+      .eq('created_by', employerId)
       .single();
 
-    const employerName = org?.company_name || 
-                        employerProfile.full_name || 
-                        employerProfile.username || 
-                        'An employer';
+    if (orgByCreator?.name) {
+      employerName = orgByCreator.name;
+    } else {
+      // Otherwise, check organization membership
+      const { data: memberRecord } = await supabase
+        .from('organization_members')
+        .select('organization_id')
+        .eq('user_id', employerId)
+        .single();
+
+      if (memberRecord?.organization_id) {
+        const { data: orgByMember } = await supabase
+          .from('organizations')
+          .select('name')
+          .eq('id', memberRecord.organization_id)
+          .single();
+        employerName = orgByMember?.name || null;
+      }
+    }
+
+    const resolvedEmployerName = employerName ||
+      employerProfile.full_name ||
+      employerProfile.username ||
+      'An employer';
 
     const reviewPreview = reviewText.length > 150 
       ? reviewText.substring(0, 150) + '...' 
@@ -326,7 +349,7 @@ async function sendReviewEmailNotification(
 
     await sendNewReviewEmail(professional.email, {
       professionalName: professional.full_name || professional.username || 'User',
-      employerName,
+      employerName: resolvedEmployerName,
       rating,
       reviewPreview,
       professionalUsername: professional.username || professionalId

@@ -31,11 +31,11 @@ interface Review {
 interface RatingStats {
   average_rating: number;
   total_reviews: number;
-  rating_5_count: number;
-  rating_4_count: number;
-  rating_3_count: number;
-  rating_2_count: number;
-  rating_1_count: number;
+  five_star_count: number;
+  four_star_count: number;
+  three_star_count: number;
+  two_star_count: number;
+  one_star_count: number;
   would_hire_again_percentage: number;
 }
 
@@ -188,7 +188,14 @@ export default function ReviewsSection({
             {/* Right: Rating Distribution */}
             <div className="space-y-2">
               {[5, 4, 3, 2, 1].map((star) => {
-                const count = (stats as any)[`rating_${star}_count`] || 0;
+                const countsMap: Record<number, number> = {
+                  5: stats.five_star_count || 0,
+                  4: stats.four_star_count || 0,
+                  3: stats.three_star_count || 0,
+                  2: stats.two_star_count || 0,
+                  1: stats.one_star_count || 0
+                };
+                const count = countsMap[star] || 0;
                 const percentage = stats.total_reviews > 0 ? (count / stats.total_reviews) * 100 : 0;
                 return (
                   <div key={star} className="flex items-center gap-3">

@@ -21,7 +21,7 @@ interface SavedCandidate {
     location?: string;
   };
   professional_ratings?: {
-    overall_rating: number;
+    average_rating: number;
     total_reviews: number;
   };
 }
@@ -66,7 +66,7 @@ export default function SavedCandidatesPage() {
           location
         ),
         professional_ratings!professional_id (
-          overall_rating,
+          average_rating,
           total_reviews
         )
       `)
@@ -179,7 +179,7 @@ export default function SavedCandidatesPage() {
                           <div className="flex items-center gap-1">
                             <span className="text-yellow-400">⭐</span>
                             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                              {ratings.overall_rating.toFixed(1)}
+                              {ratings.average_rating.toFixed(1)}
                             </span>
                             <span className="text-sm text-gray-500 dark:text-gray-400">
                               ({ratings.total_reviews})

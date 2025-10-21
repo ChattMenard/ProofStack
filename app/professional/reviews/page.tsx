@@ -21,10 +21,10 @@ interface Review {
 }
 
 interface AggregateRatings {
-  overall_rating: number;
+  average_rating: number;
   total_reviews: number;
   communication_rating: number;
-  skill_rating: number;
+  quality_rating: number;
   professionalism_rating: number;
 }
 
@@ -58,14 +58,14 @@ export default function ProfessionalReviewsPage() {
 
     setLoading(true);
     let query = supabase
-      .from('reviews')
+      .from('employer_reviews')
       .select(`
         id,
         employer_id,
         rating,
         review_text,
         created_at,
-        organizations!employer_id (
+        organizations!organization_id (
           name,
           industry
         )
@@ -144,9 +144,9 @@ export default function ProfessionalReviewsPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-2 border-blue-500">
               <div className="text-center">
                 <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                  {aggregateRatings.overall_rating.toFixed(1)}
+                  {aggregateRatings.average_rating.toFixed(1)}
                 </div>
-                <div className="mt-2">{renderStars(Math.round(aggregateRatings.overall_rating))}</div>
+                <div className="mt-2">{renderStars(Math.round(aggregateRatings.average_rating))}</div>
                 <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                   {aggregateRatings.total_reviews} {aggregateRatings.total_reviews === 1 ? 'review' : 'reviews'}
                 </div>
@@ -164,9 +164,9 @@ export default function ProfessionalReviewsPage() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
               <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">Skills</div>
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {aggregateRatings.skill_rating.toFixed(1)}
+                {aggregateRatings.quality_rating.toFixed(1)}
               </div>
-              <div className="mt-2">{renderStars(Math.round(aggregateRatings.skill_rating))}</div>
+              <div className="mt-2">{renderStars(Math.round(aggregateRatings.quality_rating))}</div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">

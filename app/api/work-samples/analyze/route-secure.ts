@@ -306,7 +306,7 @@ Then provide 2-3 sentences of constructive feedback.`;
 }
 
 // Helper: Parse AI response
-function parseAIResponse(response: string, isCode: boolean) {
+function parseAIResponse(response: string, isCode: boolean): any {
   const lines = response.split('\n');
   const scores: Record<string, number> = {};
   let feedback = '';

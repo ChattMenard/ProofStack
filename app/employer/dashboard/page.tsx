@@ -18,7 +18,7 @@ export default async function EmployerDashboardPage({
     .single();
 
   const { data: organization } = await supabase
-    .from('employer_organizations')
+    .from('organizations')
     .select('*, is_founding_employer, founding_employer_number, pro_expires_at, subscription_tier')
     .eq('id', profile?.organization_id)
     .single();
