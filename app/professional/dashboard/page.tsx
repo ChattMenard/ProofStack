@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ProofScoreModal from '@/components/ProofScoreModal';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,6 +26,7 @@ export default function ProfessionalDashboard() {
   });
   const [activePromotion, setActivePromotion] = useState<any>(null);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [showProofScoreModal, setShowProofScoreModal] = useState(false);
 
   useEffect(() => {
     loadDashboard();
@@ -280,13 +282,19 @@ export default function ProfessionalDashboard() {
           </div>
 
           {/* Rating */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => setShowProofScoreModal(true)}
+          >
             <div className="flex items-center justify-between mb-3">
               <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
                 <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
               </div>
+              <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                Click for details →
+              </span>
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
               {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : '—'}
@@ -399,6 +407,15 @@ export default function ProfessionalDashboard() {
           )}
         </div>
       </div>
+
+      {/* ProofScore Breakdown Modal */}
+      {user && (
+        <ProofScoreModal 
+          isOpen={showProofScoreModal}
+          onClose={() => setShowProofScoreModal(false)}
+          professionalId={user.id}
+        />
+      )}
     </div>
   );
 }
