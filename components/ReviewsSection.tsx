@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import ReviewDetailModal from './ReviewDetailModal';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -54,6 +55,8 @@ export default function ReviewsSection({
   const [stats, setStats] = useState<RatingStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest'>('recent');
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     loadReviews();
@@ -267,7 +270,11 @@ export default function ReviewsSection({
             {getSortedReviews().map((review) => (
               <div
                 key={review.id}
-                className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0"
+                className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg p-4 -m-4 transition-colors"
+                onClick={() => {
+                  setSelectedReview(review);
+                  setShowDetailModal(true);
+                }}
               >
                 {/* Review Header */}
                 <div className="flex justify-between items-start mb-3">
@@ -342,6 +349,12 @@ export default function ReviewsSection({
           </div>
         )}
       </div>
+
+      <ReviewDetailModal 
+        isOpen={showDetailModal}
+        onClose={() => setShowDetailModal(false)}
+        review={selectedReview}
+      />
     </div>
   );
 }
