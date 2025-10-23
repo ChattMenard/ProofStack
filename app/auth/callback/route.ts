@@ -6,14 +6,15 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code')
   const error = requestUrl.searchParams.get('error')
   const error_description = requestUrl.searchParams.get('error_description')
+  const next = requestUrl.searchParams.get('next') || '/professional/dashboard'
 
-  console.log('Auth callback:', { code: !!code, error, error_description })
+  console.log('Auth callback:', { code: !!code, error, error_description, next })
 
-  // If there's an OAuth error, redirect to login with error message
+  // If there's an OAuth error, redirect to home with error message
   if (error) {
-    const loginUrl = new URL('/login', requestUrl.origin)
-    loginUrl.searchParams.set('error', error_description || error)
-    return NextResponse.redirect(loginUrl)
+    const homeUrl = new URL('/', requestUrl.origin)
+    homeUrl.searchParams.set('error', error_description || error)
+    return NextResponse.redirect(homeUrl)
   }
 
   if (code) {
@@ -27,8 +28,9 @@ export async function GET(request: NextRequest) {
     console.log('Code exchange:', { success: !!data?.session, error: exchangeError?.message })
     
     if (!exchangeError && data.session) {
-      // Set cookie with session token
-      const response = NextResponse.redirect(new URL('/dashboard', requestUrl.origin))
+      // Redirect to the requested page or dashboard
+      const redirectUrl = next.startsWith('/') ? next : '/professional/dashboard'
+      const response = NextResponse.redirect(new URL(redirectUrl, requestUrl.origin))
       
       response.cookies.set('sb-access-token', data.session.access_token, {
         path: '/',
@@ -49,12 +51,12 @@ export async function GET(request: NextRequest) {
       return response
     } else {
       // Exchange failed
-      const loginUrl = new URL('/login', requestUrl.origin)
-      loginUrl.searchParams.set('error', exchangeError?.message || 'Failed to exchange code for session')
-      return NextResponse.redirect(loginUrl)
+      const homeUrl = new URL('/', requestUrl.origin)
+      homeUrl.searchParams.set('error', exchangeError?.message || 'Failed to exchange code for session')
+      return NextResponse.redirect(homeUrl)
     }
   }
 
-  // If no code or error, redirect to login
-  return NextResponse.redirect(new URL('/login', requestUrl.origin))
+  // If no code or error, redirect home
+  return NextResponse.redirect(new URL('/', requestUrl.origin))
 }

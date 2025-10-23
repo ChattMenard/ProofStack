@@ -37,11 +37,11 @@ export default function EmployerHero() {
         </div>
 
         {/* Killer Headline */}
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-green-100 to-emerald-400 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-white via-green-100 to-emerald-400 bg-clip-text text-transparent px-4">
           Stop Hiring Disappointments.
         </h1>
         
-        <p className="text-2xl md:text-4xl text-gray-300 mb-8 font-light">
+        <p className="text-xl md:text-2xl text-gray-300 mb-8 font-light px-4">
           The professional you need is on <span className="text-green-400 font-semibold">ProofStack</span>.
         </p>
 
@@ -50,10 +50,10 @@ export default function EmployerHero() {
           <div className="flex items-start gap-4 mb-6">
             <div className="text-4xl">⚡</div>
             <div className="text-left">
-              <h3 className="text-2xl font-bold text-white mb-3">
+              <h3 className="text-xl font-bold text-white mb-3">
                 Founding Employer Program
               </h3>
-              <p className="text-gray-300 text-lg leading-relaxed">
+              <p className="text-gray-300 text-base leading-relaxed">
                 Be among the <span className="text-amber-400 font-bold">first 10 employers</span> to hire verified talent and get:
               </p>
             </div>

@@ -58,7 +58,7 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-forest-50 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-forest-50 leading-tight px-4">
             Turn Your Skills Into
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-400 to-earth-400 block mt-2 animate-gradient">
               Verified Proof
@@ -66,7 +66,7 @@ export default function Home() {
           </h1>
           
           {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-forest-200 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-forest-200 max-w-3xl mx-auto leading-relaxed px-4">
             Upload your code, projects, or achievements and get <span className="text-sage-400 font-semibold">AI-powered skill extraction</span> with cryptographic verification. Build a portfolio that employers can <span className="text-sage-400 font-semibold">trust</span>.
           </p>
 

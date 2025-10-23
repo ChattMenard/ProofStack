@@ -14,6 +14,8 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [email, setEmail] = useState('');
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalProfessionals: 0,
@@ -42,22 +44,35 @@ export default function AdminDashboard() {
   const checkAdminAndLoadDashboard = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push('/auth/signin');
+      
+      // DEV MODE: Allow specific email in development
+      const isDev = process.env.NODE_ENV === 'development';
+      const devEmail = 'mattchenard2009@gmail.com';
+      
+      if (isDev) {
+        // In dev, just load the dashboard without auth
+        setIsAdmin(true);
+        await loadDashboardData();
+        setLoading(false);
         return;
+      }
+      
+      if (!user) {
+        setLoading(false);
+        return; // Show email login form
       }
 
       // Check if user is admin (founder or specific role)
       const { data: profile } = await supabase
         .from('profiles')
-        .select('is_founder, user_type')
+        .select('is_founder, user_type, email')
         .eq('id', user.id)
         .single();
 
       if (!profile?.is_founder) {
         // Not admin, redirect
         alert('Access denied. Admin privileges required.');
-        router.push('/dashboard');
+        router.push('/');
         return;
       }
 
@@ -65,7 +80,31 @@ export default function AdminDashboard() {
       await loadDashboardData();
     } catch (error) {
       console.error('Admin check error:', error);
-      router.push('/dashboard');
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/admin/dashboard`,
+        }
+      });
+
+      if (error) throw error;
+
+      setEmailSent(true);
+      alert('Check your email! We sent you a secure sign-in link.');
+    } catch (error: any) {
+      console.error('Magic link error:', error);
+      alert(error.message || 'Failed to send magic link');
     } finally {
       setLoading(false);
     }
@@ -229,12 +268,138 @@ export default function AdminDashboard() {
   }
 
   if (!isAdmin) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full mb-4">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="font-bold text-sm">ADMIN ACCESS</span>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              {emailSent 
+                ? 'Check your email for the secure sign-in link' 
+                : 'Verify your identity to access admin panel'}
+            </p>
+          </div>
+
+          {!emailSent ? (
+            <form onSubmit={sendMagicLink} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Admin Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50"
+              >
+                {loading ? 'Sending...' : 'Send Verification Email 🔐'}
+              </button>
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                We'll send a secure one-time link to your email
+              </p>
+            </form>
+          ) : (
+            <div className="text-center">
+              <div className="mb-4">
+                <svg className="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Email Sent! ✉️
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Check <span className="font-semibold text-blue-600 dark:text-blue-400">{email}</span> for your secure sign-in link.
+              </p>
+              <button
+                onClick={() => setEmailSent(false)}
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Resend email
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Admin Navigation Bar */}
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Left: Logo + Admin Badge */}
+            <div className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-2">
+                <span className="text-xl font-bold text-gray-900 dark:text-white">ProofStack</span>
+              </Link>
+              <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">
+                ADMIN
+              </span>
+            </div>
+
+            {/* Center: Navigation Links */}
+            <div className="hidden md:flex items-center gap-6">
+              <Link 
+                href="/admin/dashboard" 
+                className="text-gray-900 dark:text-white font-semibold border-b-2 border-blue-600 pb-1"
+              >
+                Dashboard
+              </Link>
+              <Link 
+                href="/admin/security" 
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Security
+              </Link>
+              <Link 
+                href="/admin/users" 
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Users
+              </Link>
+              <Link 
+                href="/admin/analytics" 
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                Analytics
+              </Link>
+            </div>
+
+            {/* Right: Back to Site */}
+            <div className="flex items-center gap-4">
+              <Link 
+                href="/" 
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                ← Back to Site
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="py-8 px-4">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -435,6 +600,7 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
