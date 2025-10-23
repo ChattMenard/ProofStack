@@ -23,7 +23,7 @@ export default function UserProfile() {
       if (data.user) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('role, is_founder, user_type')
+          .select('role, is_founder, user_type, is_admin')
           .eq('id', data.user.id)
           .single()
         
@@ -47,7 +47,7 @@ export default function UserProfile() {
       if (session?.user) {
         supabase
           .from('profiles')
-          .select('role, is_founder, user_type')
+          .select('role, is_founder, user_type, is_admin')
           .eq('id', session.user.id)
           .single()
           .then(({ data: profileData }: { data: any }) => {
@@ -216,8 +216,8 @@ export default function UserProfile() {
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               
-              {/* Admin Dashboard - Only for Matt */}
-              {user.email === 'mattchenard2009@gmail.com' && (
+              {/* Admin Dashboard - Only for admin users */}
+              {profile?.is_admin && (
                 <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
                   ⚙️ Admin Dashboard
                 </a>

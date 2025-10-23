@@ -17,6 +17,7 @@ export const metadata = {
     icon: '/favicon.svg',
     apple: '/logo-icon.svg',
   },
+  manifest: '/manifest.json',
   openGraph: {
     title: 'ProofStack - Verified Skills Portfolio',
     description: 'Build and share your verified skills portfolio with ProofStack',
@@ -29,11 +30,30 @@ export const metadata = {
     description: 'Build and share your verified skills portfolio',
     images: ['/og-image.svg'],
   },
+  themeColor: '#8fb569',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ProofStack',
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="ProofStack" />
+      </head>
       <body className="bg-forest-950 text-forest-50 relative">
         <PostHogProvider>
           {/* Sticky Header with Backdrop Blur */}

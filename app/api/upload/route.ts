@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServer } from '../../../lib/supabaseServer'
 import { checkRateLimit } from '../../../lib/rateLimit'
+import { detectSecrets, sanitizeContent, validateFileUpload, isContentSafe } from '../../../lib/security'
 import { v2 as cloudinary } from 'cloudinary'
 
 // Configure Cloudinary
@@ -53,14 +54,42 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { type, filename, size_bytes, content, fileData } = body
 
-    // Validate type
-    if (!ALLOWED_TYPES.includes(type)) {
-      return NextResponse.json({ error: 'Invalid sample type' }, { status: 400 })
+    // Validate file upload metadata
+    const fileValidation = validateFileUpload({ type, size: size_bytes, filename })
+    if (!fileValidation.valid) {
+      return NextResponse.json({ error: fileValidation.reason }, { status: 400 })
     }
 
-    // Validate size
-    if (size_bytes > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: 'File too large (max 20MB)' }, { status: 400 })
+    // Security check: Detect secrets in content
+    if (content) {
+      const secretCheck = detectSecrets(content)
+      if (secretCheck.found) {
+        const criticalSecrets = secretCheck.secrets.filter(s => s.severity === 'critical')
+        if (criticalSecrets.length > 0) {
+          console.warn('Secret detection triggered:', {
+            userId: user.id,
+            secretTypes: secretCheck.secrets.map(s => s.type)
+          })
+          return NextResponse.json({
+            error: 'Security Alert',
+            message: 'Your content contains potential API keys or credentials. Please remove all sensitive information before uploading.',
+            details: secretCheck.secrets.map(s => s.type)
+          }, { status: 400 })
+        }
+      }
+
+      // Check for malicious content
+      const safetyCheck = isContentSafe(content)
+      if (!safetyCheck.safe) {
+        console.warn('Malicious content detected:', {
+          userId: user.id,
+          reason: safetyCheck.reason
+        })
+        return NextResponse.json({
+          error: 'Invalid Content',
+          message: safetyCheck.reason
+        }, { status: 400 })
+      }
     }
 
     let storage_url = ''
@@ -86,6 +115,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Sanitize content before storage
+    const sanitizedContent = content ? sanitizeContent(content) : ''
+
     // Create sample record
     const { data: sample, error: sampleError } = await supabaseServer
       .from('samples')
@@ -93,7 +125,7 @@ export async function POST(req: NextRequest) {
         owner_id: profile.id,
         type,
         title: filename || 'Untitled',
-        content: content || '',
+        content: sanitizedContent,
         storage_url,
         filename: filename || 'sample.txt',
         size_bytes,
