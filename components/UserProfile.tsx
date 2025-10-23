@@ -9,6 +9,7 @@ export default function UserProfile() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -22,9 +23,11 @@ export default function UserProfile() {
       if (data.user) {
         const { data: profileData } = await supabase
           .from('profiles')
-          .select('role, is_founder')
+          .select('role, is_founder, user_type')
           .eq('id', data.user.id)
           .single()
+        
+        console.log('Profile data loaded:', profileData)
         
         if (mounted && profileData) {
           setProfile(profileData)
@@ -44,7 +47,7 @@ export default function UserProfile() {
       if (session?.user) {
         supabase
           .from('profiles')
-          .select('role, is_founder')
+          .select('role, is_founder, user_type')
           .eq('id', session.user.id)
           .single()
           .then(({ data: profileData }: { data: any }) => {
@@ -64,9 +67,20 @@ export default function UserProfile() {
       }
     })
 
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('.user-profile-dropdown')) {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+
     return () => {
       mounted = false
       listener?.subscription.unsubscribe()
+      document.removeEventListener('click', handleClickOutside)
     }
   }, [router, pathname])
 
@@ -79,20 +93,20 @@ export default function UserProfile() {
   // Show sign in link if not on login/signup pages and not logged in
   if (!user && pathname !== '/login' && pathname !== '/signup') {
     return (
-      <>
+      <div className="flex items-center gap-3">
         <a 
-          href="/login" 
-          className="text-sm text-gray-600 hover:text-blue-600 hover:underline"
+          href="/professional/signup" 
+          className="text-sm font-medium text-forest-300 hover:text-sage-400 transition-colors"
         >
-          Sign In
+          For Professionals
         </a>
         <a 
-          href="/dashboard" 
-          className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+          href="/employer/signup" 
+          className="px-3 py-1.5 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors"
         >
-          Dashboard
+          For Employers
         </a>
-      </>
+      </div>
     )
   }
 
@@ -106,19 +120,23 @@ export default function UserProfile() {
     return (
       <div className="flex items-center gap-3">
         {/* Role-based Navigation Dropdown */}
-        <div className="relative group">
-          <button className="px-4 py-2 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors flex items-center gap-2">
+        <div className="relative user-profile-dropdown">
+          <button 
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="px-4 py-2 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors flex items-center gap-2"
+          >
             {profile?.role === 'employer' && '🏢 Employer'}
             {profile?.role === 'professional' && '👤 Professional'}
             {profile?.role === 'admin' && '⚙️ Admin'}
             {!profile?.role && '📊 Dashboard'}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
           
-          <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-            <div className="py-2">
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 animate-fadeIn">
+              <div className="py-2">
               {/* Employer Menu */}
               {profile?.role === 'employer' && (
                 <>
@@ -173,14 +191,37 @@ export default function UserProfile() {
                 </>
               )}
               
-              {/* Default if no role */}
+              {/* Default if no role - show all options */}
               {!profile?.role && (
-                <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  📊 Dashboard
-                </a>
+                <>
+                  <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📊 Professional Dashboard
+                  </a>
+                  <a href="/employer/discover" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    🔍 Discover Professionals
+                  </a>
+                  <a href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📁 My Portfolio
+                  </a>
+                  <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📤 Upload Work
+                  </a>
+                  {profile?.is_founder && (
+                    <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      ⚙️ Admin Dashboard
+                    </a>
+                  )}
+                </>
               )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+              
+              {/* Admin Dashboard - Only for Matt */}
+              {user.email === 'mattchenard2009@gmail.com' && (
+                <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
+                  ⚙️ Admin Dashboard
+                </a>
+              )}
               
               {profile?.is_founder && (
                 <div className="px-4 py-2 text-xs text-amber-600 dark:text-amber-400 font-semibold">
@@ -193,6 +234,7 @@ export default function UserProfile() {
               </div>
             </div>
           </div>
+          )}
         </div>
         
         <button 
