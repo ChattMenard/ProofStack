@@ -80,7 +80,7 @@ export default function ProofScoreModal({ isOpen, onClose, professionalId }: Pro
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-gray-500 mt-4">Calculating your ProofScore...</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-4">Calculating your ProofScore...</p>
             </div>
           ) : breakdown ? (
             <>
@@ -184,7 +184,7 @@ export default function ProofScoreModal({ isOpen, onClose, professionalId }: Pro
             </>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500">Failed to load ProofScore breakdown</p>
+              <p className="text-gray-500 dark:text-gray-400">Failed to load ProofScore breakdown</p>
               <button
                 onClick={loadBreakdown}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
