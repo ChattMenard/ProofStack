@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import Link from 'next/link';
 
 interface WorkSample {
   id: string;
@@ -259,7 +260,7 @@ export default function WorkSamplesSection({ professionalId, isOwner = false }: 
         {filteredSamples.map((sample) => (
           <div
             key={sample.id}
-            className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+            className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow group"
           >
             {/* Header */}
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
@@ -267,9 +268,12 @@ export default function WorkSamplesSection({ professionalId, isOwner = false }: 
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-2xl">{getTypeIcon(sample.content_type)}</span>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <Link 
+                      href={`/work-samples/${sample.id}`}
+                      className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                    >
                       {sample.title || `${sample.content_type.replace('_', ' ')} Sample`}
-                    </h3>
+                    </Link>
                     {getConfidentialityBadge(sample.confidentiality_level)}
                   </div>
                   {sample.description && (
