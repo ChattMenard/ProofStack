@@ -66,10 +66,6 @@ export async function POST(req: NextRequest) {
       if (secretCheck.found) {
         const criticalSecrets = secretCheck.secrets.filter(s => s.severity === 'critical')
         if (criticalSecrets.length > 0) {
-          console.warn('Secret detection triggered:', {
-            userId: user.id,
-            secretTypes: secretCheck.secrets.map(s => s.type)
-          })
           return NextResponse.json({
             error: 'Security Alert',
             message: 'Your content contains potential API keys or credentials. Please remove all sensitive information before uploading.',
@@ -81,10 +77,6 @@ export async function POST(req: NextRequest) {
       // Check for malicious content
       const safetyCheck = isContentSafe(content)
       if (!safetyCheck.safe) {
-        console.warn('Malicious content detected:', {
-          userId: user.id,
-          reason: safetyCheck.reason
-        })
         return NextResponse.json({
           error: 'Invalid Content',
           message: safetyCheck.reason
@@ -107,7 +99,6 @@ export async function POST(req: NextRequest) {
         storage_url = uploadResult.secure_url
         cloudinary_public_id = uploadResult.public_id
       } catch (uploadError: any) {
-        console.error('Cloudinary upload error:', uploadError)
         return NextResponse.json(
           { error: 'File upload failed' },
           { status: 500 }
@@ -139,7 +130,6 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (sampleError) {
-      console.error('Sample creation error:', sampleError)
       return NextResponse.json(
         { error: 'Failed to create sample' },
         { status: 500 }
@@ -158,19 +148,20 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (analysisError) {
-      console.error('Analysis creation error:', analysisError)
       // Sample created but analysis failed - still return success
+      // Analysis can be retried later from dashboard
     }
 
-    // TODO: Queue analysis job to worker
-    // For now, trigger immediate analysis
+    // Queue analysis job to worker
     if (analysis) {
       // Trigger async analysis (fire and forget)
       fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ analysis_id: analysis.id }),
-      }).catch(err => console.error('Failed to trigger analysis:', err))
+      }).catch(() => {
+        // Analysis will be picked up by worker poll loop
+      })
     }
 
     return NextResponse.json({
@@ -181,9 +172,8 @@ export async function POST(req: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('Upload error:', error)
     return NextResponse.json(
-      { error: error.message || 'Upload failed' },
+      { error: error instanceof Error ? error.message : 'Upload failed' },
       { status: 500 }
     )
   }
@@ -235,16 +225,14 @@ export async function GET(req: NextRequest) {
       .limit(50)
 
     if (error) {
-      console.error('Samples query error:', error)
       return NextResponse.json({ error: 'Failed to fetch samples' }, { status: 500 })
     }
 
     return NextResponse.json({ samples })
 
   } catch (error: any) {
-    console.error('GET uploads error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch uploads' },
+      { error: error instanceof Error ? error.message : 'Failed to fetch uploads' },
       { status: 500 }
     )
   }

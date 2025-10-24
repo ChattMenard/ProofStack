@@ -27,8 +27,6 @@ export default function UserProfile() {
           .eq('id', data.user.id)
           .single()
         
-        console.log('Profile data loaded:', profileData)
-        
         if (mounted && profileData) {
           setProfile(profileData)
         }
