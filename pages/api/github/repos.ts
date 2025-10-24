@@ -39,7 +39,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(repos)
   } catch (err: any) {
     console.error(err)
-    res.status(500).json({ error: err.message })
+    // Normalize GitHub API errors to a stable client-facing message for tests
+    if (err && typeof err.message === 'string' && err.message.startsWith('GitHub API error')) {
+      res.status(500).json({ error: 'Failed to fetch repos' })
+    } else {
+      res.status(500).json({ error: err.message })
+    }
   }
 }
 
