@@ -5,6 +5,10 @@ import { withRateLimit } from '@/lib/security/rateLimiting';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
+// Mark this route as dynamic to prevent static generation
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     // SECURITY: Rate limiting to prevent scraping
