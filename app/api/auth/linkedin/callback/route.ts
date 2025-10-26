@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: linkedInClientId,
         client_secret: linkedInClientSecret,
-        redirect_uri: `${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace('supabase.co', '')}${request.nextUrl.origin}/api/auth/linkedin/callback`,
+        redirect_uri: `${request.nextUrl.origin}/api/auth/linkedin/callback`,
       }),
     });
 
