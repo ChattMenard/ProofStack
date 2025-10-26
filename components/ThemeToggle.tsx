@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
 
   // Load theme from localStorage on mount
@@ -11,10 +11,14 @@ export default function ThemeToggle() {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
     if (savedTheme) {
       setTheme(savedTheme)
-      document.documentElement.classList.toggle('light', savedTheme === 'light')
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
     } else {
-      // Default to dark
-      document.documentElement.classList.remove('light')
+      // Default to light
+      document.documentElement.classList.remove('dark')
     }
   }, [])
 
@@ -22,7 +26,11 @@ export default function ThemeToggle() {
     const newTheme = theme === 'dark' ? 'light' : 'dark'
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('light', newTheme === 'light')
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
   }
 
   // Avoid hydration mismatch by not rendering until mounted

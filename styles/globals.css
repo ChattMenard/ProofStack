@@ -3,7 +3,27 @@
 @tailwind utilities;
 
 :root {
-  /* Dark, natural color palette (default) */
+  /* Default light theme colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f4f6;
+  --bg-tertiary: #e5e7eb;
+  --bg-accent: #f9fafb;
+  
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #9ca3af;
+  
+  --accent-sage: #4a6b4d;
+  --accent-moss: #6b8e6e;
+  --accent-forest: #2d4a2f;
+  --accent-earth: #8b6546;
+  
+  --border-color: #d1d5db;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme overrides */
+html.dark {
   --bg-primary: #1a1f1e;
   --bg-secondary: #242928;
   --bg-tertiary: #2d3331;
@@ -20,26 +40,6 @@
   
   --border-color: #3a4340;
   --shadow: rgba(0, 0, 0, 0.3);
-}
-
-/* Light theme overrides */
-html.light {
-  --bg-primary: #ebe9e4;
-  --bg-secondary: #f5f3ee;
-  --bg-tertiary: #f0ede8;
-  --bg-accent: #e3e0db;
-  
-  --text-primary: #1a1f1e;
-  --text-secondary: #4a5250;
-  --text-muted: #7f8a84;
-  
-  --accent-sage: #4a6b4d;
-  --accent-moss: #6b8e6e;
-  --accent-forest: #8ba888;
-  --accent-earth: #8b6546;
-  
-  --border-color: #d4d0c8;
-  --shadow: rgba(0, 0, 0, 0.08);
 }
 
 html, body, #__next {
@@ -97,138 +97,6 @@ main, header, footer, nav {
 }
 
 /* Light theme utility classes - Improved contrast */
-html.light .bg-forest-950 {
-  background-color: #f5f3ee; /* Warm off-white instead of pure white */
-}
-
-html.light .bg-forest-900 {
-  background-color: #ebe9e4; /* Warm light gray */
-}
-
-html.light .bg-forest-800 {
-  background-color: #e3e0db; /* Warm medium gray */
-}
-
-html.light .bg-sage-900 {
-  background-color: #eff5ef; /* Warmer light sage */
-}
-
-html.light .bg-earth-900 {
-  background-color: #f5f1ed; /* Warmer light earth */
-}
-
-html.light .text-forest-50 {
-  color: #0f1413; /* Very dark green (almost black) */
-}
-
-html.light .text-forest-200 {
-  color: #1a2321; /* Dark green */
-}
-
-html.light .text-forest-300 {
-  color: #2d3e3a; /* Medium-dark green */
-}
-
-html.light .text-forest-400 {
-  color: #4a5e58; /* Medium green */
-}
-
-html.light .text-sage-400 {
-  color: #2d4a2f; /* Deep sage */
-}
-
-html.light .text-sage-300 {
-  color: #3d5a3f; /* Medium sage */
-}
-
-html.light .text-earth-300 {
-  color: #6b4528; /* Deep brown */
-}
-
-html.light .text-earth-400 {
-  color: #8b5a3c; /* Medium brown */
-}
-
-/* Light mode gray text fixes for readability */
-html.light .text-gray-200 {
-  color: #1f2937; /* Very dark gray for high contrast */
-}
-
-html.light .text-gray-300 {
-  color: #374151; /* Dark gray */
-}
-
-html.light .text-gray-400 {
-  color: #4b5563; /* Medium-dark gray */
-}
-
-html.light .text-gray-500 {
-  color: #6b7280; /* Medium gray */
-}
-
-html.light .text-gray-600 {
-  color: #374151; /* Dark gray for body text */
-}
-
-html.light .text-gray-700 {
-  color: #1f2937; /* Very dark for main text */
-}
-
-html.light .text-gray-800 {
-  color: #111827; /* Almost black */
-}
-
-html.light .text-gray-900 {
-  color: #030712; /* Near black */
-}
-
-html.light .bg-gray-50 {
-  background-color: #f9fafb;
-}
-
-html.light .bg-gray-100 {
-  background-color: #f3f4f6;
-}
-
-html.light .bg-gray-700 {
-  background-color: #374151;
-}
-
-html.light .bg-gray-800 {
-  background-color: #1f2937;
-}
-
-html.light .bg-gray-900 {
-  background-color: #111827;
-}
-
-html.light .border-gray-300 {
-  border-color: #d1d5db;
-}
-
-html.light .border-gray-700 {
-  border-color: #374151;
-}
-
-html.light .border-forest-800 {
-  border-color: #ccc8c3;
-}
-
-html.light .border-forest-700 {
-  border-color: #d8d4cf;
-}
-
-html.light .border-sage-800 {
-  border-color: #bcc8bc;
-}
-
-html.light .border-sage-700 {
-  border-color: #d0dcd0;
-}
-
-html.light .border-earth-700 {
-  border-color: #e0d5cc;
-}
 
 /* Custom Animations */
 @keyframes gradient {

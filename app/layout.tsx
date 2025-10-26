@@ -54,10 +54,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="ProofStack" />
       </head>
-      <body className="bg-forest-950 text-forest-50 light:bg-white light:text-gray-900 relative">
+      <body className="bg-white text-gray-900 dark:bg-forest-950 dark:text-forest-50 relative">
         <PostHogProvider>
           {/* Sticky Header with Backdrop Blur */}
-          <header className="sticky top-0 z-50 bg-forest-950/80 light:bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-forest-800/50 light:border-gray-200 dark:border-gray-700/50 relative">
+          <header className="sticky top-0 z-50 bg-white/80 dark:bg-forest-950/80 backdrop-blur-lg border-b border-gray-200 dark:border-forest-800/50 relative">
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex justify-between items-center">
                 {/* Logo Section - Goldilocks Size */}
