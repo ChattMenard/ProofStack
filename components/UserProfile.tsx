@@ -24,7 +24,7 @@ export default function UserProfile() {
         const { data: profileData } = await supabase
           .from('profiles')
           .select('role, is_founder, user_type, is_admin')
-          .eq('id', data.user.id)
+          .eq('auth_uid', data.user.id)
           .single()
         
         if (mounted && profileData) {
@@ -46,7 +46,7 @@ export default function UserProfile() {
         supabase
           .from('profiles')
           .select('role, is_founder, user_type, is_admin')
-          .eq('id', session.user.id)
+          .eq('auth_uid', session.user.id)
           .single()
           .then(({ data: profileData }: { data: any }) => {
             if (mounted && profileData) {
