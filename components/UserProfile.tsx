@@ -123,10 +123,11 @@ export default function UserProfile() {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="px-4 py-2 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors flex items-center gap-2"
           >
-            {profile?.role === 'employer' && '🏢 Employer'}
-            {profile?.role === 'professional' && '👤 Professional'}
-            {profile?.role === 'admin' && '⚙️ Admin'}
-            {!profile?.role && '📊 Dashboard'}
+            {pathname === '/' && '🏠 Welcome'}
+            {pathname !== '/' && profile?.role === 'employer' && '🏢 Employer'}
+            {pathname !== '/' && profile?.role === 'professional' && '👤 Professional'}
+            {pathname !== '/' && profile?.role === 'admin' && '⚙️ Admin'}
+            {pathname !== '/' && !profile?.role && '📊 Dashboard'}
             <svg className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>

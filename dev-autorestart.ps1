@@ -10,13 +10,10 @@ while ($restartCount -lt $maxRestarts) {
     $restartCount++
     Write-Host "[$restartCount/$maxRestarts] Starting dev server..." -ForegroundColor Cyan
     
-    # Start npm run dev
-    $process = Start-Process -FilePath "npm" -ArgumentList "run", "dev" -NoNewWindow -PassThru -WorkingDirectory $PSScriptRoot
+    # Start npm run dev using cmd
+    & npm run dev
     
-    # Wait for process to exit
-    $process.WaitForExit()
-    
-    $exitCode = $process.ExitCode
+    $exitCode = $LASTEXITCODE
     
     if ($exitCode -eq 0) {
         Write-Host "Dev server stopped normally." -ForegroundColor Green
