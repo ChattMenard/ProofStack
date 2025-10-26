@@ -21,11 +21,15 @@ export default function UserProfile() {
       
       // Fetch user profile to determine role
       if (data.user) {
-        const { data: profileData } = await supabase
+        const { data: profileData, error } = await supabase
           .from('profiles')
           .select('role, is_founder, user_type, is_admin')
           .eq('auth_uid', data.user.id)
           .single()
+        
+        console.log('🔍 UserProfile load - auth_uid:', data.user.id)
+        console.log('🔍 UserProfile load - profileData:', profileData)
+        console.log('🔍 UserProfile load - error:', error)
         
         if (mounted && profileData) {
           setProfile(profileData)
@@ -48,7 +52,11 @@ export default function UserProfile() {
           .select('role, is_founder, user_type, is_admin')
           .eq('auth_uid', session.user.id)
           .single()
-          .then(({ data: profileData }: { data: any }) => {
+          .then(({ data: profileData, error }: { data: any, error: any }) => {
+            console.log('🔍 UserProfile auth change - auth_uid:', session.user.id)
+            console.log('🔍 UserProfile auth change - profileData:', profileData)
+            console.log('🔍 UserProfile auth change - error:', error)
+            
             if (mounted && profileData) {
               setProfile(profileData)
             }
