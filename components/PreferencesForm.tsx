@@ -30,6 +30,7 @@ interface Preferences {
   max_travel_percent: number
   visa_sponsorship_required: boolean
   show_preferences_to_employers: boolean
+  anonymous_mode: boolean
 }
 
 export default function PreferencesForm() {
@@ -58,6 +59,7 @@ export default function PreferencesForm() {
     max_travel_percent: 0,
     visa_sponsorship_required: false,
     show_preferences_to_employers: true,
+    anonymous_mode: false,
   })
 
   const [techInput, setTechInput] = useState({ excluded: '', required: '' })
@@ -388,18 +390,39 @@ export default function PreferencesForm() {
       {/* Visibility */}
       <section className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h2 className="text-xl font-semibold mb-4">👁️ Visibility</h2>
-        <label className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={preferences.show_preferences_to_employers}
-            onChange={(e) => setPreferences({ ...preferences, show_preferences_to_employers: e.target.checked })}
-            className="w-5 h-5"
-          />
-          <span>Show my preferences to employers (recommended)</span>
-        </label>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-          When enabled, employers see your dealbreakers before contacting you. This saves everyone time.
-        </p>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={preferences.show_preferences_to_employers}
+                onChange={(e) => setPreferences({ ...preferences, show_preferences_to_employers: e.target.checked })}
+                className="w-5 h-5"
+              />
+              <span>Show my preferences to employers (recommended)</span>
+            </label>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 ml-8">
+              When enabled, employers see your dealbreakers before contacting you. This saves everyone time.
+            </p>
+          </div>
+
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={preferences.anonymous_mode}
+                onChange={(e) => setPreferences({ ...preferences, anonymous_mode: e.target.checked })}
+                className="w-5 h-5"
+              />
+              <span className="font-semibold">👻 Ghost Mode (Hide my identity)</span>
+            </label>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 ml-8">
+              Hide your name, avatar, and contact info until an employer unlocks your profile with credits. 
+              Your skills, experience, and preferences remain visible. Great for passive job seekers who want privacy.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Save Button */}

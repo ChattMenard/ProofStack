@@ -113,13 +113,93 @@ export async function POST(request: Request) {
       });
     }
 
-    // Enrich profiles with promotion data and apply filters
-    let enrichedProfiles = profiles.map((profile: any) => ({
-      ...profile,
-      promotion_tier: promotionMap.get(profile.id),
-      average_rating: profile.professional_ratings?.[0]?.average_rating || null,
-      total_reviews: profile.professional_ratings?.[0]?.total_reviews || 0
-    }));
+    // Get current user's employer ID for unlock check
+    let employerId: string | null = null;
+    const authHeader = request.headers.get('authorization');
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user } } = await supabase.auth.getUser(token);
+      
+      if (user) {
+        const { data: employerProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('auth_uid', user.id)
+          .single();
+        
+        if (employerProfile) {
+          employerId = employerProfile.id;
+        }
+      }
+    }
+
+    // Get anonymous mode preferences for all professionals
+    const { data: preferences } = await supabase
+      .from('professional_preferences')
+      .select('profile_id, anonymous_mode')
+      .in('profile_id', profiles.map((p: any) => p.id));
+
+    // Create anonymous mode map
+    const anonymousMap = new Map();
+    if (preferences) {
+      preferences.forEach((pref: any) => {
+        anonymousMap.set(pref.profile_id, pref.anonymous_mode === true);
+      });
+    }
+
+    // Get unlocked profiles for this employer
+    let unlockedMap = new Map();
+    if (employerId) {
+      const { data: unlocks } = await supabase
+        .from('profile_unlocks')
+        .select('professional_id')
+        .eq('employer_id', employerId);
+
+      if (unlocks) {
+        unlocks.forEach((unlock: any) => {
+          unlockedMap.set(unlock.professional_id, true);
+        });
+      }
+    }
+
+    // Helper to generate anonymous display name
+    const generateAnonymousName = (headline?: string, location?: string, yearsExp?: number): string => {
+      let name = '';
+      if (headline) {
+        name = headline;
+      } else if (yearsExp !== undefined) {
+        const level = yearsExp < 2 ? 'Junior' : yearsExp < 5 ? 'Mid-Level' : 'Senior';
+        name = `${level} Developer`;
+      } else {
+        name = 'Professional Developer';
+      }
+      if (location) {
+        if (location.toLowerCase().includes('remote')) {
+          name += ' (Remote)';
+        } else {
+          name += ` in ${location}`;
+        }
+      }
+      return name;
+    };
+
+    // Enrich profiles with promotion data, anonymous mode, and unlock status
+    let enrichedProfiles = profiles.map((profile: any) => {
+      const isAnonymous = anonymousMap.get(profile.id) === true;
+      const isUnlocked = unlockedMap.get(profile.id) === true;
+
+      return {
+        ...profile,
+        promotion_tier: promotionMap.get(profile.id),
+        average_rating: profile.professional_ratings?.[0]?.average_rating || null,
+        total_reviews: profile.professional_ratings?.[0]?.total_reviews || 0,
+        is_anonymous: isAnonymous,
+        is_unlocked: isUnlocked,
+        display_name: isAnonymous && !isUnlocked 
+          ? generateAnonymousName(profile.headline, profile.location, profile.years_experience)
+          : profile.username
+      };
+    });
 
     // Filter by skills (if any)
     if (skills.length > 0) {
@@ -170,7 +250,6 @@ export async function POST(request: Request) {
     });
 
     // Log search for analytics
-    const authHeader = request.headers.get('authorization');
     if (authHeader) {
       const token = authHeader.replace('Bearer ', '');
       const { data: { user } } = await supabase.auth.getUser(token);
