@@ -11,24 +11,38 @@ export const runtime = 'nodejs';
 
 export async function POST(request: Request) {
   try {
+    // Parse request body first
+    const { github_username } = await request.json();
+
+    if (!github_username) {
+      return NextResponse.json({ error: 'GitHub username required' }, { status: 400 });
+    }
+
+    // Get auth from cookies
+    const cookieHeader = request.headers.get('cookie') || '';
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      global: {
+        headers: {
+          cookie: cookieHeader
+        }
+      }
+    });
+
+    // Get authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error('Auth error:', authError);
+      return NextResponse.json({ 
+        error: 'Unauthorized - Please log in',
+        details: authError?.message 
+      }, { status: 401 });
+    }
+
     // Rate limiting
-    const getUserId = async () => {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-      const { data: { user } } = await supabase.auth.getUser();
-      return user?.id || null;
-    };
-    
+    const getUserId = async () => user?.id || null;
     const rateLimitResponse = await withRateLimit(request, 'apiGeneral', getUserId);
     if (rateLimitResponse) {
       return rateLimitResponse;
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Get authenticated user
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get profile
@@ -40,12 +54,6 @@ export async function POST(request: Request) {
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
-    }
-
-    const { github_username } = await request.json();
-
-    if (!github_username) {
-      return NextResponse.json({ error: 'GitHub username required' }, { status: 400 });
     }
 
     // Verify GitHub account exists and check commit activity
@@ -125,7 +133,11 @@ export async function POST(request: Request) {
 
     if (verificationError) {
       console.error('Error saving verification:', verificationError);
-      return NextResponse.json({ error: 'Failed to save verification' }, { status: 500 });
+      return NextResponse.json({ 
+        error: 'Failed to save verification',
+        details: verificationError.message,
+        hint: 'Make sure the profile_verifications table exists'
+      }, { status: 500 });
     }
 
     // Also update profile with github_username
@@ -147,8 +159,10 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('GitHub verification error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json({ 
       error: 'Internal server error',
+      details: errorMessage,
       verified: false 
     }, { status: 500 });
   }

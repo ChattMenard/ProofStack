@@ -96,7 +96,10 @@ export default function VerificationPage() {
         setGithubMessage(`✅ ${data.message}`);
         await loadData(); // Reload to show new badge
       } else {
-        setGithubMessage(`⚠️ ${data.message || data.error}`);
+        const errorMsg = data.details 
+          ? `${data.error || data.message}: ${data.details}`
+          : (data.message || data.error);
+        setGithubMessage(`⚠️ ${errorMsg}`);
       }
     } catch (error) {
       setGithubMessage('❌ Failed to verify GitHub account');
