@@ -47,218 +47,152 @@ export default function PricingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Founding Members Banner */}
-          <div className="mb-6 animate-bounce-subtle">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 border border-yellow-500/30 rounded-full text-sm font-semibold text-yellow-200 backdrop-blur-sm shadow-lg">
-              <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              First 100 Founding Members Get 1 Month Pro FREE!
-              <span className="px-2 py-1 bg-red-500/30 text-red-200 text-xs rounded-full border border-red-400/30">
-                🔥 Limited Time
-              </span>
-            </div>
-          </div>
-
-          {/* Badge */}
           <h1 className="text-5xl md:text-6xl font-bold text-forest-50 mb-6">
             Simple, Transparent Pricing
           </h1>
           <p className="text-xl text-forest-300 max-w-3xl mx-auto mb-8">
-            Start free and upgrade when you're ready. No credit card required to get started.
+            ProofStack is <strong>free for professionals</strong>. Upgrade anytime with profile boosts to stand out.
           </p>
-
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <span className={`text-sm font-medium transition-colors ${billingCycle === 'monthly' ? 'text-forest-50' : 'text-forest-400'}`}>
-              Monthly
-            </span>
-            <button
-              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className="relative inline-flex h-7 w-14 items-center rounded-full bg-forest-800 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2 focus:ring-offset-forest-950"
-              aria-label="Toggle billing cycle"
-            >
-              <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-sage-500 transition-transform ${
-                  billingCycle === 'yearly' ? 'translate-x-8' : 'translate-x-1'
-                }`}
-              />
-            </button>
-            <span className={`text-sm font-medium transition-colors ${billingCycle === 'yearly' ? 'text-forest-50' : 'text-forest-400'}`}>
-              Yearly
-              {billingCycle === 'yearly' && (
-                <span className="ml-2 px-2 py-0.5 bg-sage-900/50 text-sage-400 rounded-full text-xs font-semibold">
-                  Save ${yearlySavings}
-                </span>
-              )}
-            </span>
-          </div>
         </div>
       </section>
 
       {/* Pricing Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Free Plan */}
-          <div className="bg-forest-900/50 border-2 border-forest-800 rounded-2xl p-8 hover:border-forest-700 transition-all duration-300">
+          {/* Free Plan - Always Free for Professionals */}
+          <div className="relative bg-gradient-to-br from-sage-900/40 to-earth-900/40 border-2 border-sage-600 rounded-2xl p-8 hover:shadow-2xl hover:shadow-sage-500/20 transition-all duration-300">
+            {/* Popular Badge */}
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+              <span className="px-4 py-1 bg-gradient-to-r from-sage-600 to-sage-500 text-forest-50 text-sm font-bold rounded-full shadow-lg">
+                ⭐ FREE FOREVER
+              </span>
+            </div>
+
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-forest-50 mb-2">Free</h2>
+              <h2 className="text-2xl font-bold text-forest-50 mb-2">Professional</h2>
               <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-5xl font-bold text-forest-50">$0</span>
-                <span className="text-forest-400 text-lg">/forever</span>
+                <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sage-400 to-earth-400">$0</span>
+                <span className="text-forest-300 text-lg">/forever</span>
               </div>
-              <p className="text-forest-400">Perfect for trying out ProofStack</p>
+              <p className="text-forest-300">All features, completely free</p>
             </div>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-200"><strong className="text-forest-50">5 samples per month</strong></span>
+                <span className="text-forest-100"><strong className="text-forest-50">Unlimited work samples</strong></span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-200">Basic AI analysis</span>
+                <span className="text-forest-100"><strong className="text-forest-50">AI-powered skill analysis</strong></span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-200">Public portfolio</span>
+                <span className="text-forest-100"><strong className="text-forest-50">Public portfolio</strong> with custom URL</span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-200">Standard support</span>
+                <span className="text-forest-100"><strong className="text-forest-50">GitHub integration</strong></span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-200">GitHub integration</span>
+                <span className="text-forest-100"><strong className="text-forest-50">Cryptographic verification</strong></span>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-forest-100"><strong className="text-forest-50">Portfolio analytics</strong></span>
+              </li>
+              <li className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-forest-100">Direct employer contact</span>
               </li>
             </ul>
 
             <button
               onClick={() => handleGetStarted('free')}
-              className="w-full px-6 py-4 bg-forest-800 hover:bg-forest-700 text-forest-50 rounded-xl font-semibold transition-all transform hover:scale-105"
+              className="w-full px-6 py-4 bg-gradient-to-r from-sage-600 to-sage-500 hover:from-sage-500 hover:to-sage-400 text-forest-50 rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-sage-500/30"
             >
-              Get Started Free
+              Get Started Free →
             </button>
+            
+            <p className="text-center text-xs text-forest-400 mt-4">
+              ✨ No credit card required • 🚀 Start instantly
+            </p>
           </div>
 
-          {/* Pro Plan */}
-          <div className="relative bg-gradient-to-br from-sage-900/40 to-earth-900/40 border-2 border-sage-600 rounded-2xl p-8 hover:shadow-2xl hover:shadow-sage-500/20 transition-all duration-300">
-            {/* Popular Badge */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <span className="px-4 py-1 bg-gradient-to-r from-sage-600 to-sage-500 text-forest-50 text-sm font-bold rounded-full shadow-lg">
-                ⭐ MOST POPULAR
-              </span>
-            </div>
-
+          {/* Profile Boosts */}
+          <div className="bg-forest-900/50 border-2 border-forest-800 rounded-2xl p-8 hover:border-forest-700 transition-all duration-300">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-forest-50 mb-2">Pro</h2>
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sage-400 to-earth-400">
-                  ${billingCycle === 'monthly' ? monthlyPrice.toFixed(2) : (yearlyPrice / 12).toFixed(2)}
-                </span>
-                <span className="text-forest-300 text-lg">/month</span>
+              <h2 className="text-2xl font-bold text-forest-50 mb-2">Profile Boosts</h2>
+              <div className="flex items-baseline gap-2 mb-4">
+                <span className="text-5xl font-bold text-forest-50">$5</span>
+                <span className="text-forest-400 text-lg">/boost</span>
               </div>
-              {billingCycle === 'yearly' && (
-                <p className="text-sm text-sage-400 mb-2">
-                  ${yearlyPrice} billed annually (save ${yearlySavings})
-                </p>
-              )}
-              <p className="text-forest-300">For serious professionals</p>
+              <p className="text-forest-400">Stand out in search results</p>
             </div>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-100"><strong className="text-forest-50">Unlimited samples</strong> per month</span>
+                <span className="text-forest-200"><strong className="text-forest-50">Featured placement</strong> for 30 days</span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-100"><strong className="text-forest-50">Advanced AI analysis</strong> with detailed insights</span>
+                <span className="text-forest-200"><strong className="text-forest-50">Priority ranking</strong> in search</span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-100"><strong className="text-forest-50">Custom domain</strong> for your portfolio</span>
+                <span className="text-forest-200"><strong className="text-forest-50">Profile badge</strong> "⚡ Featured"</span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-100"><strong className="text-forest-50">Priority support</strong> (24h response)</span>
+                <span className="text-forest-200">Increased employer visibility</span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-100"><strong className="text-forest-50">Detailed analytics</strong> & insights</span>
+                <span className="text-forest-200">Stackable (buy multiple)</span>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-sage-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="text-forest-100"><strong className="text-forest-50">Portfolio themes</strong> & customization</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-sage-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="text-forest-100">Everything in Free, plus more</span>
+                <span className="text-forest-200">Use when you need it</span>
               </li>
             </ul>
 
-            {/* Founding Member Special Offer */}
-            <div className="mb-4 p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl">
-              <div className="flex items-center gap-2 mb-2">
-                <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span className="text-yellow-200 text-sm font-semibold">Founding Member Special</span>
-              </div>
-              <p className="text-yellow-100 text-sm mb-3">First 100 members get 1 month FREE!</p>
-              <button
-                onClick={() => handleGetStarted('pro', true)}
-                disabled={loading === 'pro'}
-                className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-black rounded-lg font-bold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {loading === 'pro' ? 'Processing...' : '🔥 Claim Founding Member Offer'}
-              </button>
-            </div>
-
             <button
-              onClick={() => handleGetStarted('pro')}
-              disabled={loading === 'pro'}
-              className="w-full px-6 py-4 bg-gradient-to-r from-sage-600 to-sage-500 hover:from-sage-500 hover:to-sage-400 text-forest-50 rounded-xl font-bold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-sage-500/30"
+              onClick={() => router.push('/professional/promote/manage')}
+              className="w-full px-6 py-4 bg-forest-800 hover:bg-forest-700 text-forest-50 rounded-xl font-semibold transition-all transform hover:scale-105"
             >
-              {loading === 'pro' ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                `Upgrade to Pro ${billingCycle === 'yearly' ? '(Save $' + yearlySavings + ')' : ''} →`
-              )}
+              Buy Profile Boost →
             </button>
             
             <p className="text-center text-xs text-forest-400 mt-4">
-              ✨ Cancel anytime • 💳 Secure payment
+              💳 One-time payment • ⚡ Activate instantly
             </p>
           </div>
         </div>

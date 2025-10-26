@@ -45,60 +45,80 @@ export default function EmployerHero() {
           Find the perfect professional with proven skills on <span className="text-green-600 dark:text-green-400 font-semibold">ProofStack</span>.
         </p>
 
-        {/* The Hook - Contest Rules */}
-        <div className="max-w-3xl mx-auto bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-green-500/20 rounded-2xl p-8 mb-10 shadow-2xl">
-          <div className="flex items-start gap-4 mb-6">
-            <div className="text-4xl">⚡</div>
-            <div className="text-left">
-              <h3 className="text-xl font-bold text-white mb-3">
-                Founding Employer Program
-              </h3>
-              <p className="text-gray-300 text-base leading-relaxed">
-                Be among the <span className="text-amber-400 font-bold">first 10 employers</span> to hire verified talent and get:
-              </p>
-            </div>
+        {/* Pricing Tiers */}
+        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mb-10">
+          {/* Free Tier */}
+          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-gray-500/20 rounded-2xl p-6 text-left">
+            <div className="text-2xl mb-3">🎯</div>
+            <h3 className="text-xl font-bold text-white mb-2">Free</h3>
+            <div className="text-3xl font-bold text-white mb-4">$0<span className="text-sm text-gray-400 font-normal">/month</span></div>
+            <ul className="space-y-2 text-sm text-gray-300 mb-6">
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>5 talent searches/month</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>Basic filters</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>View verified portfolios</span>
+              </li>
+            </ul>
           </div>
 
-          {/* Benefits Grid */}
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-left">
-              <div className="text-2xl mb-2">💎</div>
-              <div className="text-green-400 font-semibold mb-1">1 Month Pro Tier FREE</div>
-              <div className="text-gray-400 text-sm">Unlimited searches, priority support, advanced filters</div>
+          {/* Pro Tier */}
+          <div className="bg-gradient-to-br from-green-800/50 to-emerald-900/50 backdrop-blur-sm border-2 border-green-500/40 rounded-2xl p-6 text-left relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+              POPULAR
             </div>
-            
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-left">
-              <div className="text-2xl mb-2">🏅</div>
-              <div className="text-amber-400 font-semibold mb-1">Lifetime Founding Badge</div>
-              <div className="text-gray-400 text-sm">Exclusive recognition as platform pioneer #1-10</div>
-            </div>
+            <div className="text-2xl mb-3">⚡</div>
+            <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
+            <div className="text-3xl font-bold text-white mb-4">$49<span className="text-sm text-gray-400 font-normal">/month</span></div>
+            <ul className="space-y-2 text-sm text-gray-300 mb-6">
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span><strong>Unlimited</strong> talent searches</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>Advanced filters & AI matching</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>Priority support</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>Analytics dashboard</span>
+              </li>
+            </ul>
           </div>
 
-          {/* The Requirement */}
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-            <p className="text-white font-medium mb-2">
-              <span className="text-blue-400">✓</span> How to qualify:
-            </p>
-            <ol className="text-gray-300 text-sm space-y-2 text-left ml-6 list-decimal">
-              <li>Sign up and discover verified professionals</li>
-              <li>Hire someone and receive their deliverables</li>
-              <li>Post an honest review of the work completed</li>
-              <li><span className="text-green-400 font-semibold">Boom! Pro tier unlocked automatically</span></li>
-            </ol>
-          </div>
-
-          {/* Urgency Indicator */}
-          <div className="mt-6 flex items-center justify-center gap-3 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-gray-400">
-                <span className="text-white font-bold">
-                  {spotsRemaining !== null ? spotsRemaining : '...'} 
-                </span> {spotsRemaining === 1 ? 'spot' : 'spots'} remaining
-              </span>
-            </div>
-            <span className="text-gray-600">•</span>
-            <span className="text-gray-400">No credit card required</span>
+          {/* Enterprise Tier */}
+          <div className="bg-gradient-to-br from-amber-800/50 to-orange-900/50 backdrop-blur-sm border border-amber-500/20 rounded-2xl p-6 text-left">
+            <div className="text-2xl mb-3">🏢</div>
+            <h3 className="text-xl font-bold text-white mb-2">Enterprise</h3>
+            <div className="text-3xl font-bold text-white mb-4">$199<span className="text-sm text-gray-400 font-normal">/month</span></div>
+            <ul className="space-y-2 text-sm text-gray-300 mb-6">
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 mt-0.5">✓</span>
+                <span>Everything in Pro</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 mt-0.5">✓</span>
+                <span>Team collaboration tools</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 mt-0.5">✓</span>
+                <span>Dedicated account manager</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 mt-0.5">✓</span>
+                <span>Custom integrations</span>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -108,7 +128,7 @@ export default function EmployerHero() {
             href="/employer/signup"
             className="px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-lg text-lg shadow-lg shadow-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/60 hover:-translate-y-0.5"
           >
-            Claim Your Founding Spot →
+            Get Started Free →
           </Link>
           
           <Link 
