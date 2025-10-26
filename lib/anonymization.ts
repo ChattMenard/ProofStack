@@ -1,7 +1,8 @@
 /**
- * Anonymization utilities for Ghost Mode
- * Masks professional identity while preserving key information
- * Identity hidden at professional's discretion - cannot be bypassed
+ * Anonymization utilities for Anti-Discrimination
+ * Hides identifying information that can lead to bias
+ * (name, photo, location, social profiles)
+ * while keeping work samples, skills, and experience visible
  */
 
 export interface AnonymizedProfile {
@@ -13,40 +14,30 @@ export interface AnonymizedProfile {
 }
 
 /**
- * Generate anonymous display name based on headline and location
+ * Generate anonymous display name based on headline only
+ * Location is hidden to prevent discrimination
  * Examples:
- * - "Senior React Developer in Austin, TX"
- * - "Full Stack Engineer (Remote)"
- * - "Mobile Developer in California"
+ * - "Senior React Developer"
+ * - "Full Stack Engineer"
+ * - "Mobile Developer"
  */
 export function generateAnonymousName(
   headline?: string,
   location?: string,
   yearsExperience?: number
 ): string {
-  let name = ''
-
-  // If we have a headline, use it
+  // Use headline if available
   if (headline) {
-    name = headline
-  } else if (yearsExperience !== undefined) {
-    // Fallback to experience level
+    return headline
+  }
+  
+  // Fallback to experience level
+  if (yearsExperience !== undefined) {
     const level = yearsExperience < 2 ? 'Junior' : yearsExperience < 5 ? 'Mid-Level' : 'Senior'
-    name = `${level} Developer`
-  } else {
-    name = 'Professional Developer'
+    return `${level} Developer`
   }
-
-  // Add location if available
-  if (location) {
-    if (location.toLowerCase().includes('remote')) {
-      name += ' (Remote)'
-    } else {
-      name += ` in ${location}`
-    }
-  }
-
-  return name
+  
+  return 'Professional Developer'
 }
 
 /**

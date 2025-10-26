@@ -1,6 +1,7 @@
--- Anonymous Profiles (Ghost Mode) - Privacy Feature Only
--- Allows professionals to hide identity at their discretion
--- Employers CANNOT pay to reveal identity - it's purely professional's choice
+-- Hide Identifying Information - Anti-Discrimination Feature
+-- Allows professionals to hide discriminatory data (name, location, photo, social profiles)
+-- while keeping work samples, skills, and experience fully visible
+-- Prevents bias based on gender, ethnicity, age, location, etc.
 
 -- Add anonymous_mode to professional_preferences
 ALTER TABLE professional_preferences 

@@ -415,11 +415,12 @@ export default function PreferencesForm() {
                 onChange={(e) => setPreferences({ ...preferences, anonymous_mode: e.target.checked })}
                 className="w-5 h-5"
               />
-              <span className="font-semibold">👻 Ghost Mode (Hide my identity)</span>
+              <span className="font-semibold">🎭 Hide Identifying Information</span>
             </label>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 ml-8">
-              Hide your name, avatar, and contact info until an employer unlocks your profile with credits. 
-              Your skills, experience, and preferences remain visible. Great for passive job seekers who want privacy.
+              Hide your name, photo, location, and linked accounts to prevent discrimination. 
+              Your work samples, skills, experience, and ProofScore remain fully visible. 
+              Employers evaluate you based on your work, not your identity.
             </p>
           </div>
         </div>
