@@ -32,7 +32,7 @@ export default function EmployerHero() {
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-8 animate-pulse">
           <span className="text-2xl">🏆</span>
           <span className="text-amber-600 dark:text-amber-400 font-bold text-sm uppercase tracking-wider">
-            Limited Offer: First 10 Employers Only
+            Limited Offer: {spotsRemaining} Founding Employer Spots Left
           </span>
         </div>
 
