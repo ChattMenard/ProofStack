@@ -162,6 +162,9 @@ export default function UserProfile() {
                   <a href="/professional/verify" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     ✓ Verify Accounts
                   </a>
+                  <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ⚙️ Account Settings
+                  </a>
                 </>
               )}
               
@@ -190,6 +193,9 @@ export default function UserProfile() {
                   </a>
                   <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📤 Upload Work
+                  </a>
+                  <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ⚙️ Account Settings
                   </a>
                 </>
               )}
