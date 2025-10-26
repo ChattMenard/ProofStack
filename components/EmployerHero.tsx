@@ -31,18 +31,18 @@ export default function EmployerHero() {
         {/* Attention-Grabbing Badge */}
         <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-8 animate-pulse">
           <span className="text-2xl">🏆</span>
-          <span className="text-amber-400 font-bold text-sm uppercase tracking-wider">
+          <span className="text-amber-600 dark:text-amber-400 font-bold text-sm uppercase tracking-wider">
             Limited Offer: First 10 Employers Only
           </span>
         </div>
 
         {/* Killer Headline */}
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-snug bg-gradient-to-r from-white via-green-100 to-emerald-400 bg-clip-text text-transparent px-4 pb-2">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-snug bg-gradient-to-r from-gray-900 via-green-700 to-emerald-600 dark:from-white dark:via-green-100 dark:to-emerald-400 bg-clip-text text-transparent px-4 pb-2">
           Hire Verified Talent, Instantly.
         </h1>
         
-        <p className="text-xl md:text-2xl text-gray-300 mb-8 font-light px-4">
-          Find the perfect professional with proven skills on <span className="text-green-400 font-semibold">ProofStack</span>.
+        <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 font-light px-4">
+          Find the perfect professional with proven skills on <span className="text-green-600 dark:text-green-400 font-semibold">ProofStack</span>.
         </p>
 
         {/* The Hook - Contest Rules */}

@@ -49,10 +49,10 @@ export default function Home() {
 
         <div className="space-y-6">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage-900/30 border border-sage-700/50 rounded-full text-sm text-sage-300 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage-100 dark:bg-sage-900/30 border border-sage-300 dark:border-sage-700/50 rounded-full text-sm text-sage-700 dark:text-sage-300 backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-sage-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage-600 dark:bg-sage-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-sage-700 dark:bg-sage-500"></span>
             </span>
             For Professionals - Build Your Verified Portfolio
           </div>
@@ -93,12 +93,12 @@ export default function Home() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1 px-6 py-4 bg-forest-900/80 border-2 border-forest-700 text-forest-50 placeholder-forest-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-all backdrop-blur-sm"
+                className="flex-1 px-6 py-4 bg-white dark:bg-forest-900/80 border-2 border-gray-300 dark:border-forest-700 text-gray-900 dark:text-forest-50 placeholder-gray-500 dark:placeholder-forest-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-all backdrop-blur-sm"
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-8 py-4 bg-gradient-to-r from-sage-600 to-sage-500 text-forest-50 font-semibold rounded-xl hover:from-sage-500 hover:to-sage-400 focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2 focus:ring-offset-forest-950 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-sage-500/20"
+                className="px-8 py-4 bg-gradient-to-r from-sage-600 to-sage-500 text-white font-semibold rounded-xl hover:from-sage-500 hover:to-sage-400 focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-forest-950 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-sage-500/20"
               >
                 {isLoading ? (
                   <span className="flex items-center gap-2">
@@ -114,20 +114,20 @@ export default function Home() {
               </button>
             </form>
           ) : (
-            <div className="p-6 bg-gradient-to-r from-sage-900/40 to-earth-900/40 border-2 border-sage-600/50 rounded-xl backdrop-blur-sm shadow-lg">
+            <div className="p-6 bg-gradient-to-r from-sage-100 to-earth-100 dark:from-sage-900/40 dark:to-earth-900/40 border-2 border-sage-400 dark:border-sage-600/50 rounded-xl backdrop-blur-sm shadow-lg">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <svg className="w-6 h-6 text-sage-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-sage-600 dark:text-sage-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-sage-300 font-semibold text-lg">You&apos;re on the waitlist!</p>
+                <p className="text-sage-800 dark:text-sage-300 font-semibold text-lg">You&apos;re on the waitlist!</p>
               </div>
-              <p className="text-sage-400 text-sm">We&apos;ll notify you when ProofStack launches. Check your email for confirmation.</p>
+              <p className="text-sage-700 dark:text-sage-400 text-sm">We&apos;ll notify you when ProofStack launches. Check your email for confirmation.</p>
             </div>
           )}
           
-          <p className="text-sm text-forest-400 mt-4">
+          <p className="text-sm text-gray-600 dark:text-forest-400 mt-4">
             No spam. Unsubscribe anytime. 
-            <Link href="/login" className="text-sage-400 hover:text-sage-300 hover:underline ml-1 font-medium">
+            <Link href="/login" className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 hover:underline ml-1 font-medium">
               Already have access? Sign in →
             </Link>
           </p>
@@ -135,12 +135,12 @@ export default function Home() {
       </section>
 
       {/* Two-Sided Platform Section - NEW */}
-      <section className="py-16 bg-gradient-to-br from-forest-900/30 to-sage-900/20 border border-forest-800/50 rounded-3xl backdrop-blur-sm">
+      <section className="py-16 bg-gradient-to-br from-gray-50 to-sage-50 dark:from-forest-900/30 dark:to-sage-900/20 border border-gray-200 dark:border-forest-800/50 rounded-3xl backdrop-blur-sm">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-forest-50 mb-4">
-            Built For <span className="text-sage-400">Everyone</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-forest-50 mb-4">
+            Built For <span className="text-sage-600 dark:text-sage-400">Everyone</span>
           </h2>
-          <p className="text-xl text-forest-300 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-700 dark:text-forest-300 max-w-2xl mx-auto">
             Whether you're showcasing skills or finding talent, ProofStack connects the right people
           </p>
         </div>

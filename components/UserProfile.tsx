@@ -94,7 +94,7 @@ export default function UserProfile() {
       <div className="flex items-center gap-3">
         <a 
           href="/signup" 
-          className="text-sm font-medium text-forest-300 dark:text-forest-200 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
+          className="text-sm font-medium text-gray-700 dark:text-forest-200 hover:text-sage-600 dark:hover:text-sage-300 transition-colors"
         >
           For Professionals
         </a>
