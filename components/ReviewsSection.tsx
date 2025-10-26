@@ -89,7 +89,14 @@ export default function ReviewsSection({
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setReviews(data || []);
+      
+      // Transform the data to match Review interface (employer is returned as array)
+      const transformedData = (data || []).map((review: any) => ({
+        ...review,
+        employer: Array.isArray(review.employer) ? review.employer[0] : review.employer
+      }));
+      
+      setReviews(transformedData);
     } catch (error) {
       console.error('Failed to load reviews:', error);
     } finally {

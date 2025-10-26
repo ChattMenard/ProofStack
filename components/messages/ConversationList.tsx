@@ -134,7 +134,7 @@ export default function ConversationList({
               user_id: p.id,
               username: p.username
             })) || [],
-            last_message: lastMessage,
+            last_message: lastMessage || undefined,
             unread_count: unreadCount
           };
         })

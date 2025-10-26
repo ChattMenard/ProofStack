@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     // Create or retrieve customer
     const { data: profile } = await supabase
       .from('profiles')
-      .select('stripe_customer_id, email')
+      .select('id, stripe_customer_id, email')
       .single()
 
     let customerId = profile?.stripe_customer_id
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       },
       metadata: {
         plan,
-        userId: profile.id,
+        userId: profile?.id || '',
       },
     })
 

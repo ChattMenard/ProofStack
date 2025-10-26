@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         await supabase
           .from('professional_promotions')
           .update({
-            [column]: (currentPromotion[column] || 0) + 1
+            [column]: ((currentPromotion as any)[column] || 0) + 1
           })
           .eq('id', promotion.id);
       }
