@@ -9,6 +9,7 @@ export default function AuthForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [usePassword, setUsePassword] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [message, setMessage] = useState('')
 
   // Listen for auth state changes and redirect
@@ -38,6 +39,27 @@ export default function AuthForm() {
     } catch (err: any) {
       posthog.capture('auth_error', { method: 'password', error: err.message })
       setMessage(err.message || 'Error signing in with password')
+    }
+  }
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setMessage('')
+    if (!email) {
+      setMessage('Please enter your email address')
+      return
+    }
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
+      })
+      if (error) throw error
+      posthog.capture('auth_password_reset_sent', { email_domain: email.split('@')[1] })
+      setMessage('Password reset link sent! Check your email.')
+      setShowForgotPassword(false)
+    } catch (err: any) {
+      posthog.capture('auth_error', { method: 'password_reset', error: err.message })
+      setMessage(err.message || 'Error sending password reset link')
     }
   }
 
@@ -145,32 +167,68 @@ export default function AuthForm() {
 
       {/* Password Login Form */}
       {usePassword ? (
-        <form onSubmit={handlePasswordSubmit} className="space-y-2">
-          <label className="block text-sm text-forest-200">Email</label>
-          <input
-            required
-            type="email"
-            className="w-full rounded border border-forest-700 bg-forest-800 text-forest-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sage-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-          />
-          <label className="block text-sm text-forest-200 mt-2">Password</label>
-          <input
-            required
-            type="password"
-            className="w-full rounded border border-forest-700 bg-forest-800 text-forest-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sage-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-          />
-          <button 
-            className="w-full bg-sage-600 hover:bg-sage-500 text-forest-50 px-4 py-2 rounded transition mt-2" 
-            type="submit"
-          >
-            Sign In
-          </button>
-        </form>
+        showForgotPassword ? (
+          /* Forgot Password Form */
+          <form onSubmit={handleForgotPassword} className="space-y-2">
+            <label className="block text-sm text-forest-200">Email</label>
+            <input
+              required
+              type="email"
+              className="w-full rounded border border-forest-700 bg-forest-800 text-forest-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sage-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+            <button 
+              className="w-full bg-sage-600 hover:bg-sage-500 text-forest-50 px-4 py-2 rounded transition mt-2" 
+              type="submit"
+            >
+              Send Reset Link
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(false)}
+              className="w-full text-sm text-forest-400 hover:text-forest-200 underline mt-2"
+            >
+              Back to Sign In
+            </button>
+          </form>
+        ) : (
+          /* Password Login Form */
+          <form onSubmit={handlePasswordSubmit} className="space-y-2">
+            <label className="block text-sm text-forest-200">Email</label>
+            <input
+              required
+              type="email"
+              className="w-full rounded border border-forest-700 bg-forest-800 text-forest-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sage-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+            <label className="block text-sm text-forest-200 mt-2">Password</label>
+            <input
+              required
+              type="password"
+              className="w-full rounded border border-forest-700 bg-forest-800 text-forest-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sage-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+            <button 
+              className="w-full bg-sage-600 hover:bg-sage-500 text-forest-50 px-4 py-2 rounded transition mt-2" 
+              type="submit"
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              className="w-full text-sm text-forest-400 hover:text-forest-200 underline mt-2"
+            >
+              Forgot Password?
+            </button>
+          </form>
+        )
       ) : (
         /* Email Magic Link */
         <form onSubmit={handleSubmit} className="space-y-2">

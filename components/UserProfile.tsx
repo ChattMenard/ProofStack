@@ -158,7 +158,7 @@ export default function UserProfile() {
               )}
               
               {/* Admin Menu */}
-              {(profile?.role === 'admin' || profile?.is_admin) && (
+              {(profile?.role === 'admin' || profile?.is_admin || profile?.is_founder) && (
                 <>
                   <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 Admin Dashboard
@@ -192,7 +192,7 @@ export default function UserProfile() {
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               
               {/* Admin Dashboard - Only for admin users */}
-              {profile?.is_admin && (
+              {(profile?.is_admin || profile?.is_founder) && (
                 <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
                   ⚙️ Admin Dashboard
                 </a>
