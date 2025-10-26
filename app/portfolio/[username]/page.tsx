@@ -126,7 +126,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
               metrics
             )
           `)
-          .eq('owner_id', profileData.id)
+          .eq('owner_id', profileData.auth_uid || profileData.id)
           .eq('visibility', 'public')
           .order('created_at', { ascending: false })
 
