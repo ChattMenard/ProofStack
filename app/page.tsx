@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <div className="space-y-20 min-h-screen">
-      {/* Employer Hero - Stop Hiring Disappointments */}
+      {/* Employer Hero - Hire Verified Talent */}
       <EmployerHero />
 
       {/* Professional Hero Section */}

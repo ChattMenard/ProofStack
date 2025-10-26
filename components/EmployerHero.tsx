@@ -38,11 +38,11 @@ export default function EmployerHero() {
 
         {/* Killer Headline */}
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight bg-gradient-to-r from-white via-green-100 to-emerald-400 bg-clip-text text-transparent px-4">
-          Stop Hiring Disappointments.
+          Hire Verified Talent, Instantly.
         </h1>
         
         <p className="text-xl md:text-2xl text-gray-300 mb-8 font-light px-4">
-          The professional you need is on <span className="text-green-400 font-semibold">ProofStack</span>.
+          Find the perfect professional with proven skills on <span className="text-green-400 font-semibold">ProofStack</span>.
         </p>
 
         {/* The Hook - Contest Rules */}
