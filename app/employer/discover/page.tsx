@@ -460,6 +460,24 @@ export default function DiscoverPage() {
                 />
               </div>
 
+              {/* Availability Status */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Availability Status
+                </label>
+                <select
+                  value={filters.availability}
+                  onChange={(e) => setFilters(prev => ({ ...prev, availability: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+                >
+                  <option value="">All Availability</option>
+                  <option value="open">🟢 Open to offers</option>
+                  <option value="passive">🟡 Passive (open to exceptional)</option>
+                  <option value="exceptional">🟠 Exceptional only</option>
+                  <option value="not_looking">🔴 Not looking</option>
+                </select>
+              </div>
+
               {/* Rating */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

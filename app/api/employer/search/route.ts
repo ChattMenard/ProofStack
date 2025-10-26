@@ -81,10 +81,6 @@ export async function POST(request: Request) {
       query = query.eq('remote_available', true);
     }
 
-    if (availability) {
-      query = query.eq('availability_status', availability);
-    }
-
     if (proMembersOnly) {
       query = query.eq('is_pro', true);
     }
@@ -116,15 +112,25 @@ export async function POST(request: Request) {
     // Get anonymous mode preferences for all professionals
     const { data: preferences } = await supabase
       .from('professional_preferences')
-      .select('profile_id, anonymous_mode')
+      .select('profile_id, anonymous_mode, availability_status')
       .in('profile_id', profiles.map((p: any) => p.id));
 
-    // Create anonymous mode map
+    // Create anonymous mode map and availability map
     const anonymousMap = new Map();
+    const availabilityMap = new Map();
     if (preferences) {
       preferences.forEach((pref: any) => {
         anonymousMap.set(pref.profile_id, pref.anonymous_mode === true);
+        availabilityMap.set(pref.profile_id, pref.availability_status);
       });
+    }
+
+    // Filter by availability if specified
+    let filteredProfiles = profiles;
+    if (availability) {
+      filteredProfiles = profiles.filter((p: any) => 
+        availabilityMap.get(p.id) === availability
+      );
     }
 
     // Helper to generate anonymous display name
@@ -148,9 +154,10 @@ export async function POST(request: Request) {
       return name;
     };
 
-    // Enrich profiles with promotion data and anonymous mode
-    let enrichedProfiles = profiles.map((profile: any) => {
+    // Enrich profiles with promotion data, anonymous mode, and availability
+    let enrichedProfiles = filteredProfiles.map((profile: any) => {
       const isAnonymous = anonymousMap.get(profile.id) === true;
+      const availabilityStatus = availabilityMap.get(profile.id) || 'open';
 
       return {
         ...profile,
@@ -160,7 +167,8 @@ export async function POST(request: Request) {
         is_anonymous: isAnonymous,
         display_name: isAnonymous 
           ? generateAnonymousName(profile.headline, profile.location, profile.years_experience)
-          : profile.username
+          : profile.username,
+        availability_status: availabilityStatus
       };
     });
 
