@@ -42,39 +42,51 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="hidden md:flex items-center gap-6">
+    <nav className="hidden md:flex items-center gap-4">
       {/* Main navigation links - only show when signed in */}
-      {isSignedIn && navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={`text-sm font-medium transition-colors ${
-            isActive(item.href)
-              ? 'text-sage-400 dark:text-sage-300 border-b-2 border-sage-400 dark:border-sage-300'
-              : 'text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300'
-          }`}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {isSignedIn && (
+        <>
+          {navItems.map((item, index) => (
+            <span key={item.href} className="flex items-center gap-4">
+              <Link
+                href={item.href}
+                className={`text-base font-medium transition-colors ${
+                  isActive(item.href)
+                    ? 'text-sage-400 dark:text-sage-300 border-b-2 border-sage-400 dark:border-sage-300'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300'
+                }`}
+              >
+                {item.label}
+              </Link>
+              {index < navItems.length - 1 && (
+                <span className="text-gray-400 dark:text-gray-600">|</span>
+              )}
+            </span>
+          ))}
+        </>
+      )}
       
       {/* Signup links - only show when NOT signed in */}
       {!isSignedIn && (
-        <div className="flex items-center gap-2 ml-2">
-          {signupLinks.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                item.label === 'For Professionals'
-                  ? 'text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300'
-                  : 'text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400'
-              }`}
-            >
-              {item.label}
-            </Link>
+        <>
+          {signupLinks.map((item, index) => (
+            <span key={item.href} className="flex items-center gap-4">
+              <Link
+                href={item.href}
+                className={`px-4 py-2 text-base font-medium transition-colors ${
+                  item.label === 'Professionals'
+                    ? 'text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400'
+                }`}
+              >
+                {item.label}
+              </Link>
+              {index < signupLinks.length - 1 && (
+                <span className="text-gray-400 dark:text-gray-600">|</span>
+              )}
+            </span>
           ))}
-        </div>
+        </>
       )}
     </nav>
   )
