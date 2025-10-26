@@ -20,13 +20,6 @@ export default function Navigation() {
 
   return (
     <nav className="hidden md:flex items-center gap-6">
-      <Link 
-        href="/employer/signup" 
-        className="text-sm font-bold text-sage-400 dark:text-sage-300 hover:text-sage-300 dark:hover:text-sage-200 transition-colors border border-sage-500/30 dark:border-sage-400/30 px-3 py-1.5 rounded-lg hover:border-sage-400/50 dark:hover:border-sage-300/50"
-      >
-        🏢 For Employers
-      </Link>
-      
       {navItems.map((item) => (
         <Link
           key={item.href}
