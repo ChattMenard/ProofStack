@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createServerSupabaseClient } from '@/lib/supabaseServerClient';
 import { withRateLimit } from '@/lib/security/rateLimiting';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const githubToken = process.env.GITHUB_TOKEN; // Optional: for higher rate limits
 
 export const dynamic = 'force-dynamic';
@@ -18,15 +16,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'GitHub username required' }, { status: 400 });
     }
 
-    // Get auth from cookies
-    const cookieHeader = request.headers.get('cookie') || '';
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      global: {
-        headers: {
-          cookie: cookieHeader
-        }
-      }
-    });
+    // Get authenticated client from cookies
+    const supabase = createServerSupabaseClient();
 
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
