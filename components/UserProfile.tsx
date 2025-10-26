@@ -10,6 +10,7 @@ export default function UserProfile() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [username, setUsername] = useState<string | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -23,7 +24,7 @@ export default function UserProfile() {
       if (data.user) {
         const { data: profileData, error } = await supabase
           .from('profiles')
-          .select('role, is_founder, user_type, is_admin')
+          .select('role, is_founder, user_type, is_admin, username, email')
           .eq('auth_uid', data.user.id)
           .single()
         
@@ -33,6 +34,7 @@ export default function UserProfile() {
         
         if (mounted && profileData) {
           setProfile(profileData)
+          setUsername(profileData.username || profileData.email)
         }
       }
       
@@ -49,7 +51,7 @@ export default function UserProfile() {
       if (session?.user) {
         supabase
           .from('profiles')
-          .select('role, is_founder, user_type, is_admin')
+          .select('role, is_founder, user_type, is_admin, username, email')
           .eq('auth_uid', session.user.id)
           .single()
           .then(({ data: profileData, error }: { data: any, error: any }) => {
@@ -59,10 +61,12 @@ export default function UserProfile() {
             
             if (mounted && profileData) {
               setProfile(profileData)
+              setUsername(profileData.username || profileData.email)
             }
           })
       } else {
         setProfile(null)
+        setUsername(null)
       }
       
       // Auto-redirect after sign in from login page
@@ -150,7 +154,7 @@ export default function UserProfile() {
                   <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 My Dashboard
                   </a>
-                  <a href="/portfolio" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href={username ? `/portfolio/${username}` : '/portfolio'} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📁 My Portfolio
                   </a>
                   <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -182,7 +186,7 @@ export default function UserProfile() {
                   <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 My Dashboard
                   </a>
-                  <a href="/portfolio" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href={username ? `/portfolio/${username}` : '/portfolio'} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📁 My Portfolio
                   </a>
                   <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
