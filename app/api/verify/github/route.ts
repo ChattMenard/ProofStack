@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabaseServerClient';
+import { createClient } from '@supabase/supabase-js';
 import { withRateLimit } from '@/lib/security/rateLimiting';
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const githubToken = process.env.GITHUB_TOKEN; // Optional: for higher rate limits
 
 export const dynamic = 'force-dynamic';
@@ -10,41 +12,38 @@ export const runtime = 'nodejs';
 export async function POST(request: Request) {
   try {
     // Parse request body first
-    const { github_username } = await request.json();
+    const { github_username, auth_uid } = await request.json();
 
     if (!github_username) {
       return NextResponse.json({ error: 'GitHub username required' }, { status: 400 });
     }
 
-    // Get authenticated client from cookies
-    const supabase = createServerSupabaseClient();
+    if (!auth_uid) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
 
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      console.error('Auth error:', authError);
+    // Create service client
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Verify the auth_uid is valid by checking if profile exists
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, auth_uid')
+      .eq('auth_uid', auth_uid)
+      .single();
+
+    if (profileError || !profile) {
       return NextResponse.json({ 
         error: 'Unauthorized - Please log in',
-        details: authError?.message 
+        details: 'Invalid session'
       }, { status: 401 });
     }
 
     // Rate limiting
-    const getUserId = async () => user?.id || null;
+    const getUserId = async () => auth_uid;
     const rateLimitResponse = await withRateLimit(request, 'apiGeneral', getUserId);
     if (rateLimitResponse) {
       return rateLimitResponse;
-    }
-
-    // Get profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, github_username')
-      .eq('auth_uid', user.id)
-      .single();
-
-    if (!profile) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
     }
 
     // Verify GitHub account exists and check commit activity

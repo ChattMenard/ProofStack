@@ -88,7 +88,10 @@ export default function VerificationPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Include cookies for auth
-        body: JSON.stringify({ github_username: githubUsername.trim() })
+        body: JSON.stringify({ 
+          github_username: githubUsername.trim(),
+          auth_uid: user.id 
+        })
       });
 
       const data = await response.json();
