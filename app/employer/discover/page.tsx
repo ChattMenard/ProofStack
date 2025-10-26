@@ -473,8 +473,8 @@ export default function DiscoverPage() {
                   <option value="">All Availability</option>
                   <option value="open">🟢 Open to offers</option>
                   <option value="passive">🟡 Passive (open to exceptional)</option>
-                  <option value="exceptional">🟠 Exceptional only</option>
-                  <option value="not_looking">🔴 Not looking</option>
+                  <option value="exceptional_only">🟠 Exceptional only</option>
+                  <option value="not_available">🔴 Not looking</option>
                 </select>
               </div>
 
@@ -639,14 +639,14 @@ export default function DiscoverPage() {
                                 ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                                 : prof.availability_status === 'passive'
                                 ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
-                                : prof.availability_status === 'exceptional'
+                                : prof.availability_status === 'exceptional_only'
                                 ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300'
                                 : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                             }`}>
                               {prof.availability_status === 'open' && '🟢 Open to offers'}
                               {prof.availability_status === 'passive' && '🟡 Passive (open to exceptional)'}
-                              {prof.availability_status === 'exceptional' && '🟠 Exceptional only'}
-                              {prof.availability_status === 'not_looking' && '🔴 Not looking'}
+                              {prof.availability_status === 'exceptional_only' && '🟠 Exceptional only'}
+                              {prof.availability_status === 'not_available' && '🔴 Not looking'}
                             </span>
                           </div>
                         )}
