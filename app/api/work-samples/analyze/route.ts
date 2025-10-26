@@ -9,6 +9,10 @@ import OpenAI from 'openai';
 import { withRateLimit } from '@/lib/security/rateLimiting';
 import { validateWorkSampleSecurity, detectSecrets } from '@/lib/security/secretDetection';
 
+// Force this route to use Node.js runtime (not Edge)
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
