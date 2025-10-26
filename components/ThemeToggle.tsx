@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
   const [mounted, setMounted] = useState(false)
 
   // Load theme from localStorage on mount
@@ -17,8 +17,8 @@ export default function ThemeToggle() {
         document.documentElement.classList.remove('dark')
       }
     } else {
-      // Default to light
-      document.documentElement.classList.remove('dark')
+      // Default to dark
+      document.documentElement.classList.add('dark')
     }
   }, [])
 

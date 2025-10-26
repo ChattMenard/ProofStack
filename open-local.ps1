@@ -1,7 +1,6 @@
 # Open ProofStack Local Development Server
 Write-Host "🚀 Starting ProofStack Dev Server..." -ForegroundColor Green
 
-# Check if npm run dev is already running
 $port = 3000
 
 # Check if server is running
@@ -12,7 +11,8 @@ if ($testConnection) {
 }
 else {
     Write-Host "Starting dev server..." -ForegroundColor Cyan
-    Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$PSScriptRoot'; npm run dev" -PassThru | Out-Null
+    $devDir = Get-Location
+    Start-Process cmd -ArgumentList "/K", "cd /d $devDir && npm run dev" -PassThru | Out-Null
     Start-Sleep -Seconds 8
 }
 
