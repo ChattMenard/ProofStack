@@ -88,24 +88,9 @@ export default function UserProfile() {
     router.push('/')
   }
 
-  // Show sign in link if not on login/signup pages and not logged in
+  // Don't show anything if not logged in - CTA buttons are now in layout header
   if (!user && pathname !== '/login' && pathname !== '/signup') {
-    return (
-      <div className="flex items-center gap-3">
-        <a 
-          href="/signup" 
-          className="text-sm font-medium text-gray-700 dark:text-forest-200 hover:text-sage-600 dark:hover:text-sage-300 transition-colors"
-        >
-          For Professionals
-        </a>
-        <a 
-          href="/employer/signup" 
-          className="px-3 py-1.5 bg-sage-600 dark:bg-sage-700 text-white text-sm rounded-lg hover:bg-sage-700 dark:hover:bg-sage-600 transition-colors"
-        >
-          For Employers
-        </a>
-      </div>
-    )
+    return null
   }
 
   // Don't show anything on login/signup pages or if still loading
