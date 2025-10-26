@@ -57,6 +57,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{
           __html: `
             (function() {
+              // Force dark mode as default (version 2)
+              const themeVersion = localStorage.getItem('themeVersion');
+              if (themeVersion !== '2') {
+                localStorage.setItem('theme', 'dark');
+                localStorage.setItem('themeVersion', '2');
+              }
               const theme = localStorage.getItem('theme') || 'dark';
               if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
