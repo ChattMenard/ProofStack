@@ -58,27 +58,27 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-forest-50 leading-tight px-4">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-forest-50 leading-tight px-4">
             Turn Your Skills Into
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-400 to-earth-400 block mt-2 animate-gradient">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-500 dark:from-sage-400 to-earth-500 dark:to-earth-400 block mt-2 animate-gradient">
               Verified Proof
             </span>
           </h1>
           
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-forest-200 max-w-3xl mx-auto leading-relaxed px-4">
-            Upload your code, projects, or achievements and get <span className="text-sage-400 font-semibold">AI-powered skill extraction</span> with cryptographic verification. Build a portfolio that employers can <span className="text-sage-400 font-semibold">trust</span>.
+          <p className="text-lg md:text-xl text-gray-700 dark:text-forest-200 max-w-3xl mx-auto leading-relaxed px-4">
+            Upload your code, projects, or achievements and get <span className="text-sage-600 dark:text-sage-400 font-semibold">AI-powered skill extraction</span> with cryptographic verification. Build a portfolio that employers can <span className="text-sage-600 dark:text-sage-400 font-semibold">trust</span>.
           </p>
 
           {/* Feature Pills */}
           <div className="flex flex-wrap justify-center gap-3 pt-4">
-            <span className="px-4 py-2 bg-forest-900/50 border border-forest-700 rounded-full text-sm text-forest-300 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-gray-100 dark:bg-forest-900/50 border border-gray-300 dark:border-forest-700 rounded-full text-sm text-gray-800 dark:text-forest-300 backdrop-blur-sm">
               🤖 AI-Powered
             </span>
-            <span className="px-4 py-2 bg-forest-900/50 border border-forest-700 rounded-full text-sm text-forest-300 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-gray-100 dark:bg-forest-900/50 border border-gray-300 dark:border-forest-700 rounded-full text-sm text-gray-800 dark:text-forest-300 backdrop-blur-sm">
               🔐 Cryptographically Verified
             </span>
-            <span className="px-4 py-2 bg-forest-900/50 border border-forest-700 rounded-full text-sm text-forest-300 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-gray-100 dark:bg-forest-900/50 border border-gray-300 dark:border-forest-700 rounded-full text-sm text-gray-800 dark:text-forest-300 backdrop-blur-sm">
               ⚡ Instant Analysis
             </span>
           </div>
