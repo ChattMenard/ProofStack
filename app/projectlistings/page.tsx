@@ -2,8 +2,100 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { createClient } from '@supabase/supabase-js';
+
+interface JobPosting {
+  id: string;
+  title: string;
+  description: string;
+  job_type: string;
+  experience_level: string;
+  location: string | null;
+  remote_allowed: boolean;
+  salary_min: number | null;
+  salary_max: number | null;
+  salary_currency: string;
+  required_skills: string[];
+  nice_to_have_skills: string[];
+  published_at: string;
+  applications_count: number;
+  organization: {
+    name: string;
+    logo_url: string | null;
+  };
+}
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function ProjectListingsPage() {
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState({
+    jobType: 'all',
+    experienceLevel: 'all',
+    remoteOnly: false
+  });
+
+  useEffect(() => {
+    loadJobs();
+  }, []);
+
+  async function loadJobs() {
+    try {
+      let query = supabase
+        .from('job_postings')
+        .select(`
+          *,
+          organization:organizations(name, logo_url)
+        `)
+        .eq('status', 'published')
+        .order('published_at', { ascending: false });
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      setJobs(data || []);
+    } catch (error) {
+      console.error('Error loading jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const filteredJobs = jobs.filter(job => {
+    // Search filter
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = 
+        job.title.toLowerCase().includes(searchLower) ||
+        job.description.toLowerCase().includes(searchLower) ||
+        job.required_skills.some(skill => skill.toLowerCase().includes(searchLower));
+      
+      if (!matchesSearch) return false;
+    }
+
+    // Job type filter
+    if (filters.jobType !== 'all' && job.job_type !== filters.jobType) {
+      return false;
+    }
+
+    // Experience level filter
+    if (filters.experienceLevel !== 'all' && job.experience_level !== filters.experienceLevel) {
+      return false;
+    }
+
+    // Remote filter
+    if (filters.remoteOnly && !job.remote_allowed) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="max-w-7xl mx-auto">
@@ -13,118 +105,178 @@ export default function ProjectListingsPage() {
             Hiring
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            Browse projects and opportunities from verified employers
+            Browse {jobs.length} job{jobs.length !== 1 ? 's' : ''} from verified employers
           </p>
         </div>
 
-        {/* Coming Soon Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
-          <div className="max-w-2xl mx-auto">
-            <div className="inline-block p-4 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-6">
-              <svg
-                className="w-16 h-16 text-blue-600 dark:text-blue-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        {/* Search and Filters */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search */}
+            <div className="md:col-span-2">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by title, skills, or description..."
+                className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+              />
+            </div>
+
+            {/* Job Type Filter */}
+            <div>
+              <select
+                value={filters.jobType}
+                onChange={(e) => setFilters({ ...filters, jobType: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+                <option value="all">All Types</option>
+                <option value="full-time">Full-Time</option>
+                <option value="part-time">Part-Time</option>
+                <option value="contract">Contract</option>
+                <option value="freelance">Freelance</option>
+              </select>
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Project Listings Coming Soon
-            </h2>
-
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-              We're building a comprehensive job board where employers can post projects and 
-              professionals can discover opportunities. This feature will include:
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
-              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  📋 Detailed Project Specs
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Budget, timeline, required skills, and deliverables clearly outlined
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  🔍 Smart Matching
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Get matched with projects that fit your skills and experience
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  ✅ Verified Employers
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Work with legitimate companies that have been vetted
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  💬 Direct Communication
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Message employers and negotiate terms directly on the platform
-                </p>
-              </div>
+            {/* Experience Level Filter */}
+            <div>
+              <select
+                value={filters.experienceLevel}
+                onChange={(e) => setFilters({ ...filters, experienceLevel: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+              >
+                <option value="all">All Levels</option>
+                <option value="entry">Entry Level</option>
+                <option value="mid">Mid Level</option>
+                <option value="senior">Senior Level</option>
+                <option value="lead">Lead/Principal</option>
+              </select>
             </div>
+          </div>
 
-            <div className="space-y-4">
-              <p className="text-gray-600 dark:text-gray-400">
-                In the meantime, employers can discover professionals on our{' '}
-                <Link href="/employer/discover" className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
-                  Discover Talent
-                </Link>
-                {' '}page.
-              </p>
-
-              <div className="flex gap-4 justify-center">
-                <Link
-                  href="/portfolios"
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  Browse Professionals
-                </Link>
-                <Link
-                  href="/employer/discover"
-                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  Employer Discovery
-                </Link>
-              </div>
-            </div>
+          {/* Remote Filter */}
+          <div className="mt-4 flex items-center">
+            <input
+              type="checkbox"
+              id="remoteOnly"
+              checked={filters.remoteOnly}
+              onChange={(e) => setFilters({ ...filters, remoteOnly: e.target.checked })}
+              className="w-4 h-4 mr-2"
+            />
+            <label htmlFor="remoteOnly" className="text-sm font-medium">
+              Remote jobs only
+            </label>
           </div>
         </div>
 
-        {/* Employer CTA */}
-        <div className="mt-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-md p-8 text-center text-white">
-          <h3 className="text-2xl font-bold mb-2">
-            Are you an employer?
-          </h3>
-          <p className="mb-4 opacity-90">
-            Post your projects and find verified professionals with proven work samples
-          </p>
-          <Link
-            href="/auth/signup"
-            className="inline-block px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Get Early Access
-          </Link>
-        </div>
+        {/* Job Listings */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading jobs...</p>
+          </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
+            <div className="max-w-md mx-auto">
+              <div className="inline-block p-4 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                <svg
+                  className="w-12 h-12 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                No jobs found
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Try adjusting your search or filters
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredJobs.map((job) => (
+              <Link
+                key={job.id}
+                href={`/projectlistings/${job.id}`}
+                className="block bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow p-6"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {job.title}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-medium">{job.organization.name}</span>
+                      <span>•</span>
+                      <span>{job.location || 'Location not specified'}</span>
+                      {job.remote_allowed && (
+                        <>
+                          <span>•</span>
+                          <span className="text-green-600 dark:text-green-400">Remote OK</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {job.organization.logo_url && (
+                    <img
+                      src={job.organization.logo_url}
+                      alt={job.organization.name}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                  )}
+                </div>
+
+                <p className="text-gray-700 dark:text-gray-300 mb-4 line-clamp-2">
+                  {job.description}
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {job.required_skills.slice(0, 5).map((skill, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                  {job.required_skills.length > 5 && (
+                    <span className="px-3 py-1 text-gray-600 dark:text-gray-400 text-sm">
+                      +{job.required_skills.length - 5} more
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex gap-4 text-gray-600 dark:text-gray-400">
+                    <span className="capitalize">{job.job_type.replace('-', ' ')}</span>
+                    <span>•</span>
+                    <span className="capitalize">{job.experience_level} Level</span>
+                    {job.salary_min && job.salary_max && (
+                      <>
+                        <span>•</span>
+                        <span>
+                          ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()} {job.salary_currency}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <div className="text-gray-500">
+                    {job.applications_count} application{job.applications_count !== 1 ? 's' : ''}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
