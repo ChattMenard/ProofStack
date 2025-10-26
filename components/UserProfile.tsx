@@ -145,7 +145,7 @@ export default function UserProfile() {
               )}
               
               {/* Professional Menu - show for professionals AND admins */}
-              {(profile?.role === 'professional' || profile?.role === 'admin' || profile?.is_admin || profile?.is_founder) && (
+              {(profile?.role === 'professional' || user.email === 'mattchenard2009@gmail.com') && (
                 <>
                   <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 My Dashboard
@@ -161,8 +161,8 @@ export default function UserProfile() {
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               
-              {/* Admin Menu */}
-              {(profile?.role === 'admin' || profile?.is_admin || profile?.is_founder) && (
+              {/* Admin Menu - Only for mattchenard2009@gmail.com */}
+              {user.email === 'mattchenard2009@gmail.com' && (
                 <>
                   <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
                     ⚙️ Admin Dashboard
@@ -188,11 +188,12 @@ export default function UserProfile() {
                 </>
               )}
               
-              {profile?.is_founder && (
+              {/* Founder badge - keep this for "founding employer" program participants */}
+              {profile?.is_founder && user.email !== 'mattchenard2009@gmail.com' && (
                 <>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
                   <div className="px-4 py-2 text-xs text-amber-600 dark:text-amber-400 font-semibold">
-                    🏆 FOUNDING MEMBER
+                    🏆 FOUNDING EMPLOYER
                   </div>
                 </>
               )}

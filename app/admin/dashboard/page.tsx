@@ -62,18 +62,21 @@ export default function AdminDashboard() {
         return; // Show email login form
       }
 
-      // Check if user is admin (founder or admin flag)
+      // Check if user is admin (only mattchenard2009@gmail.com)
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('is_founder, is_admin, role, user_type, email')
+        .select('is_admin, role, email')
         .eq('auth_uid', user.id)
         .single();
 
       console.log('🔐 Admin check - user.id:', user.id);
+      console.log('🔐 Admin check - user.email:', user.email);
       console.log('🔐 Admin check - profile:', profile);
       console.log('🔐 Admin check - error:', profileError);
 
-      if (!profile?.is_founder && !profile?.is_admin && profile?.role !== 'admin') {
+      // Only allow access for specific admin email
+      const ADMIN_EMAIL = 'mattchenard2009@gmail.com';
+      if (user.email !== ADMIN_EMAIL && profile?.email !== ADMIN_EMAIL) {
         // Not admin, redirect
         alert('Access denied. Admin privileges required.');
         router.push('/');
