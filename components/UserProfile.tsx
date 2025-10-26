@@ -139,9 +139,6 @@ export default function UserProfile() {
               {/* Employer Menu */}
               {profile?.role === 'employer' && (
                 <>
-                  <a href="/employer/discover" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    🔍 Discover Professionals
-                  </a>
                   <a href="/employer/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     💬 Messages
                   </a>
@@ -158,7 +155,7 @@ export default function UserProfile() {
               {profile?.role === 'professional' && (
                 <>
                   <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📊 Dashboard
+                    📊 My Dashboard
                   </a>
                   <a href="/portfolio" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📁 My Portfolio
