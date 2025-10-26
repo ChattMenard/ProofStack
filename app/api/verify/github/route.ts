@@ -70,40 +70,42 @@ export async function POST(request: Request) {
 
     const userData = await userResponse.json();
 
-    // Get user's events (includes commits)
-    const eventsResponse = await fetch(`https://api.github.com/users/${github_username}/events?per_page=100`, {
-      headers
-    });
+    // Verify account exists and has public repos (simpler, more reliable)
+    // GitHub Events API is limited to 90 days and may not show all activity
+    const hasPublicRepos = userData.public_repos > 0;
+    const verified = hasPublicRepos;
 
-    if (!eventsResponse.ok) {
-      return NextResponse.json({ 
-        error: 'Could not fetch GitHub activity',
-        verified: false 
-      }, { status: 500 });
+    // Try to get recent activity for metadata (best effort)
+    let totalCommits = 0;
+    let lastCommitDate = null;
+
+    try {
+      const eventsResponse = await fetch(`https://api.github.com/users/${github_username}/events?per_page=100`, {
+        headers
+      });
+
+      if (eventsResponse.ok) {
+        const events = await eventsResponse.json();
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const recentCommits = events.filter((event: any) => {
+          if (event.type !== 'PushEvent') return false;
+          const eventDate = new Date(event.created_at);
+          return eventDate >= sixMonthsAgo;
+        });
+
+        totalCommits = recentCommits.reduce((sum: number, event: any) => {
+          return sum + (event.payload?.commits?.length || 0);
+        }, 0);
+
+        lastCommitDate = recentCommits.length > 0 
+          ? new Date(recentCommits[0].created_at)
+          : null;
+      }
+    } catch (error) {
+      console.log('Could not fetch events, but account verified based on public repos');
     }
-
-    const events = await eventsResponse.json();
-
-    // Count commits in last 6 months
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-    const recentCommits = events.filter((event: any) => {
-      if (event.type !== 'PushEvent') return false;
-      const eventDate = new Date(event.created_at);
-      return eventDate >= sixMonthsAgo;
-    });
-
-    const totalCommits = recentCommits.reduce((sum: number, event: any) => {
-      return sum + (event.payload?.commits?.length || 0);
-    }, 0);
-
-    const lastCommitDate = recentCommits.length > 0 
-      ? new Date(recentCommits[0].created_at)
-      : null;
-
-    // Verification criteria: account exists and has activity
-    const verified = totalCommits > 0;
 
     // Create or update verification record
     const { error: verificationError } = await supabase
@@ -143,8 +145,8 @@ export async function POST(request: Request) {
       total_commits: totalCommits,
       last_commit_date: lastCommitDate,
       message: verified 
-        ? `GitHub account verified! Found ${totalCommits} commits in the last 6 months.`
-        : 'GitHub account found but no recent commits. Add some activity to verify.'
+        ? `GitHub account verified! ${userData.public_repos} public repositories found.${totalCommits > 0 ? ` Found ${totalCommits} recent commits.` : ''}`
+        : 'GitHub account found but no public repositories.'
     });
 
   } catch (error) {
