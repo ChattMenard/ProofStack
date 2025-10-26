@@ -213,13 +213,6 @@ export default function UserProfile() {
           </div>
           )}
         </div>
-        
-        <button 
-          onClick={handleSignOut} 
-          className="px-4 py-2 text-sm text-forest-300 dark:text-forest-200 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
-        >
-          Sign out
-        </button>
       </div>
     )
   }
