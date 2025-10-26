@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const navItems = [
-  { href: '/portfolios', label: 'Hire' },
-  { href: '/projectlistings', label: 'Hiring' },
+  { href: '/portfolios', label: 'Professionals' },
+  { href: '/projectlistings', label: 'Employers' },
 ]
 
 const signupLinks = [
@@ -79,7 +79,11 @@ export default function Navigation() {
             <span key={item.href} className="flex items-center gap-4">
               <Link
                 href={item.href}
-                className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+                className={`px-4 py-2 text-lg font-medium transition-colors ${
+                  item.label === 'Professionals'
+                    ? 'text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400'
+                }`}
               >
                 {item.label}
               </Link>
@@ -88,6 +92,20 @@ export default function Navigation() {
               )}
             </span>
           ))}
+          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
+          <Link
+            href="/login"
+            className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+          >
+            Sign In
+          </Link>
+          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
+          <Link
+            href="/signup"
+            className="text-lg font-medium px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors"
+          >
+            Sign Up
+          </Link>
         </>
       )}
 
