@@ -135,6 +135,9 @@ export default function UserProfile() {
                   <a href="/employer/post-job" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     ➕ Post a Job
                   </a>
+                  <a href="/employer/applications" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    📋 Job Applications
+                  </a>
                   <a href="/employer/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     💬 Messages
                   </a>

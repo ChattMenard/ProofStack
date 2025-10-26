@@ -213,38 +213,55 @@ export default async function EmployerDashboardPage({
       {/* Quick Actions */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Link
-            href="/employer/discover"
+            href="/employer/post-job"
             className="flex items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 transition-colors group"
           >
             <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-4">
               <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                Search Talent
+                Post a Job
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Find professionals</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Create new listing</p>
             </div>
           </Link>
 
           <Link
-            href="/employer/saved"
+            href="/employer/applications"
+            className="flex items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-yellow-500 dark:hover:border-yellow-500 transition-colors group"
+          >
+            <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-400">
+                Applications
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Review candidates</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/employer/discover"
             className="flex items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-500 dark:hover:border-green-500 transition-colors group"
           >
             <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg mr-4">
               <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400">
-                Saved List
+                Search Talent
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Review candidates</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Find professionals</p>
             </div>
           </Link>
 
