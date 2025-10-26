@@ -44,15 +44,21 @@ export default function ProofScoreV2({
     async function fetchScore() {
       try {
         const response = await fetch(`/api/professional/proof-score-v2?professional_id=${professionalId}`);
+        if (!response.ok) {
+          // Gracefully handle no data yet
+          setScore(null);
+          setBreakdown(null);
+          return;
+        }
         const data = await response.json();
 
         if (data) {
-          setScore(data.proof_score || 0);
-          setBreakdown(data.breakdown as ProofScoreBreakdown);
+          setScore(typeof data.proof_score === 'number' ? data.proof_score : null);
+          setBreakdown((data.breakdown || null) as ProofScoreBreakdown | null);
         }
       } catch (error) {
         console.error('Error fetching ProofScore V2:', error);
-        setScore(0);
+        setScore(null);
       } finally {
         setLoading(false);
       }
@@ -65,6 +71,15 @@ export default function ProofScoreV2({
     return (
       <div className="animate-pulse">
         <div className="h-8 bg-forest-800 rounded w-32"></div>
+      </div>
+    );
+  }
+
+  if (!loading && score === null) {
+    return (
+      <div className="rounded-xl border border-forest-800 bg-forest-900/40 p-4">
+        <div className="text-sm text-forest-400 font-medium mb-1">ProofScore V2</div>
+        <div className="text-forest-300 text-sm">Not enough data yet. Add verified work samples and reviews to generate your score.</div>
       </div>
     );
   }

@@ -29,6 +29,8 @@ cp .env.example .env.local
 
 # 3) Run the dev server
 npm run dev
+# If port 3000 is busy, use the alternate port:
+npm run dev:3001
 ```
 
 ## Deployment

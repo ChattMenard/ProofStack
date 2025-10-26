@@ -13,8 +13,9 @@ export default function Navigation() {
   const pathname = usePathname()
 
   const isActive = (href: string) => {
-    if (href === '/' && pathname === '/') return true
-    if (href !== '/' && pathname.startsWith(href)) return true
+    const path = pathname ?? '/'
+    if (href === '/' && path === '/') return true
+    if (href !== '/' && path.startsWith(href)) return true
     return false
   }
 

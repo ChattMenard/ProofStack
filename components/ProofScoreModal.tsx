@@ -39,7 +39,11 @@ export default function ProofScoreModal({ isOpen, onClose, professionalId }: Pro
   const loadBreakdown = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/professional/proof-score-v2?professionalId=${professionalId}`);
+      const response = await fetch(`/api/professional/proof-score-v2?professional_id=${professionalId}`);
+      if (!response.ok) {
+        setBreakdown(null);
+        return;
+      }
       const data = await response.json();
       setBreakdown(data);
     } catch (error) {

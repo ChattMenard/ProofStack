@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { supabase } from '../../../lib/supabaseClient'
 import ProofScoreV2 from '../../../components/ProofScoreV2'
@@ -25,6 +26,7 @@ interface Profile {
 
 export default function PortfolioPage({ params }: { params: { username: string } }) {
   const username = decodeURIComponent(params.username)
+  const router = useRouter()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<any>(null)
@@ -42,10 +44,10 @@ export default function PortfolioPage({ params }: { params: { username: string }
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('email', username)
+        .or(`username.eq.${username},email.eq.${username}`)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
 
       if (error) console.error('Profile error:', error)
       if (!data) {
@@ -54,6 +56,13 @@ export default function PortfolioPage({ params }: { params: { username: string }
       }
 
       setProfile(data)
+      // Canonical redirect: if visiting by email but a username exists, redirect to /portfolio/[username]
+      if (username.includes('@') && data.username) {
+        const target = `/portfolio/${encodeURIComponent(data.username)}`
+        if (window.location.pathname !== target) {
+          router.replace(target)
+        }
+      }
       if (user && data) {
         setIsOwner(user.email === data.email || user.id === data.auth_uid)
       }
@@ -257,7 +266,12 @@ export default function PortfolioPage({ params }: { params: { username: string }
           <div className="lg:col-span-2 space-y-6">
             {/* About Section */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">About</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">About</h2>
+                {isOwner && (
+                  <a href="/dashboard/profile#about" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Edit</a>
+                )}
+              </div>
               {profile.bio ? (
                 <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{profile.bio}</p>
               ) : (
@@ -269,7 +283,12 @@ export default function PortfolioPage({ params }: { params: { username: string }
 
             {/* Experience Section - Placeholder */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Experience</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Experience</h2>
+                {isOwner && (
+                  <a href="/dashboard/profile#experience" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Add</a>
+                )}
+              </div>
               <div className="space-y-6">
                 <div className="text-center py-8 text-gray-400 dark:text-gray-500">
                   <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,7 +302,12 @@ export default function PortfolioPage({ params }: { params: { username: string }
 
             {/* Education Section - Placeholder */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Education</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Education</h2>
+                {isOwner && (
+                  <a href="/dashboard/profile#education" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Add</a>
+                )}
+              </div>
               <div className="space-y-6">
                 <div className="text-center py-8 text-gray-400 dark:text-gray-500">
                   <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +329,11 @@ export default function PortfolioPage({ params }: { params: { username: string }
             {/* Reviews */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Recommendations</h2>
-              <ReviewsSection professionalId={profile.id} />
+              <ReviewsSection 
+                professionalId={profile.id} 
+                professionalUsername={profile.full_name || profile.email.split('@')[0]}
+                isOwnProfile={isOwner}
+              />
             </div>
           </div>
         </div>
