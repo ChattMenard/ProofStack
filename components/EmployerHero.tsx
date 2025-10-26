@@ -46,35 +46,14 @@ export default function EmployerHero() {
         </p>
 
         {/* Pricing Tiers */}
-        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6 mb-10">
-          {/* Free Tier */}
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-gray-500/20 rounded-2xl p-6 text-left">
-            <div className="text-2xl mb-3">🎯</div>
-            <h3 className="text-xl font-bold text-white mb-2">Free</h3>
-            <div className="text-3xl font-bold text-white mb-4">$0<span className="text-sm text-gray-400 font-normal">/month</span></div>
-            <ul className="space-y-2 text-sm text-gray-300 mb-6">
-              <li className="flex items-start gap-2">
-                <span className="text-green-400 mt-0.5">✓</span>
-                <span>5 talent searches/month</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400 mt-0.5">✓</span>
-                <span>Basic filters</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-400 mt-0.5">✓</span>
-                <span>View verified portfolios</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Pro Tier */}
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 mb-10">
+          {/* Starter Tier */}
           <div className="bg-gradient-to-br from-green-800/50 to-emerald-900/50 backdrop-blur-sm border-2 border-green-500/40 rounded-2xl p-6 text-left relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-              POPULAR
+              START HERE
             </div>
             <div className="text-2xl mb-3">⚡</div>
-            <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Starter</h3>
             <div className="text-3xl font-bold text-white mb-4">$49<span className="text-sm text-gray-400 font-normal">/month</span></div>
             <ul className="space-y-2 text-sm text-gray-300 mb-6">
               <li className="flex items-start gap-2">
@@ -87,11 +66,15 @@ export default function EmployerHero() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-400 mt-0.5">✓</span>
-                <span>Priority support</span>
+                <span>View verified portfolios</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-400 mt-0.5">✓</span>
-                <span>Analytics dashboard</span>
+                <span>Direct contact with talent</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-400 mt-0.5">✓</span>
+                <span>Email support</span>
               </li>
             </ul>
           </div>
@@ -104,11 +87,19 @@ export default function EmployerHero() {
             <ul className="space-y-2 text-sm text-gray-300 mb-6">
               <li className="flex items-start gap-2">
                 <span className="text-amber-400 mt-0.5">✓</span>
-                <span>Everything in Pro</span>
+                <span>Everything in Starter</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-amber-400 mt-0.5">✓</span>
                 <span>Team collaboration tools</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 mt-0.5">✓</span>
+                <span>Analytics dashboard</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-amber-400 mt-0.5">✓</span>
+                <span>Priority support</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-amber-400 mt-0.5">✓</span>
@@ -128,15 +119,20 @@ export default function EmployerHero() {
             href="/employer/signup"
             className="px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-lg text-lg shadow-lg shadow-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/60 hover:-translate-y-0.5"
           >
-            Get Started Free →
+            Start 7-Day Free Trial →
           </Link>
           
           <Link 
             href="/employer/discover"
             className="px-8 py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 hover:border-slate-600 text-white font-semibold rounded-lg text-lg transition-all"
           >
-            Browse Talent First
+            See Sample Profiles
           </Link>
+        </div>
+
+        {/* Trust Indicators */}
+        <div className="mt-8 text-center text-sm text-gray-400">
+          💳 No credit card required for trial • Cancel anytime
         </div>
 
         {/* Trust Indicators */}
