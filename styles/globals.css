@@ -149,6 +149,28 @@ main, header, footer, nav {
   }
 }
 
+/* Simple semantic color utilities - JUST FLIP THEM! */
+@layer utilities {
+  .bg-primary {
+    background-color: var(--bg-primary);
+  }
+  .bg-secondary {
+    background-color: var(--bg-secondary);
+  }
+  .text-primary {
+    color: var(--text-primary);
+  }
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
+  .border-default {
+    border-color: var(--border-color);
+  }
+}
+
 @keyframes bounce-subtle {
   0%, 100% {
     transform: translateY(0);

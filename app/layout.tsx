@@ -73,10 +73,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           `
         }} />
       </head>
-      <body className="bg-gray-100 text-gray-900 dark:bg-forest-950 dark:text-forest-50 relative">
+      <body className="bg-primary text-primary relative">
         <PostHogProvider>
           {/* Sticky Header with Backdrop Blur */}
-          <header className="sticky top-0 z-50 bg-gray-100/80 dark:bg-forest-950/80 backdrop-blur-lg border-b border-gray-200 dark:border-forest-800/50 relative">
+          <header className="sticky top-0 z-50 bg-primary/80 backdrop-blur-lg border-b border-default relative">
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex justify-between items-center">
                 {/* Logo Section - Goldilocks Size */}
