@@ -31,18 +31,20 @@ export const metadata = {
     description: 'Build and share your verified skills portfolio',
     images: ['/og-image.svg'],
   },
-  themeColor: '#8fb569',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'ProofStack',
   },
+}
+
+// Move viewport-related configuration to the dedicated export per Next.js guidance
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#8fb569',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
