@@ -5,6 +5,7 @@ import Link from 'next/link'
 import SupabaseWarning from '../components/SupabaseWarning'
 import UserProfile from '../components/UserProfile'
 import ThemeToggle from '../components/ThemeToggle'
+import Navigation from '../components/Navigation'
 import { PostHogProvider } from '../components/PostHogProvider'
 import BuiltWith from '../components/BuiltWith'
 import ScrollToTop from '../components/ScrollToTop'
@@ -83,20 +84,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 {/* Navigation & Actions */}
                 <div className="flex items-center gap-6">
                   {/* Navigation Links */}
-                  <nav className="hidden md:flex items-center gap-6">
-                    <Link href="/employer/signup" className="text-sm font-bold text-sage-400 dark:text-sage-300 hover:text-sage-300 dark:hover:text-sage-200 transition-colors border border-sage-500/30 dark:border-sage-400/30 px-3 py-1.5 rounded-lg hover:border-sage-400/50 dark:hover:border-sage-300/50">
-                      🏢 For Employers
-                    </Link>
-                    <Link href="/pricing" className="text-sm font-medium text-forest-300 dark:text-gray-300 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">
-                      Pricing
-                    </Link>
-                    <Link href="/about" className="text-sm font-medium text-forest-300 dark:text-gray-300 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">
-                      About
-                    </Link>
-                    <Link href="/contact" className="text-sm font-medium text-forest-300 dark:text-gray-300 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">
-                      Contact
-                    </Link>
-                  </nav>
+                  <Navigation />
 
                   {/* Action Buttons */}
                   <div className="flex items-center gap-3">
