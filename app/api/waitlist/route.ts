@@ -3,6 +3,7 @@ import { supabaseServer } from '../../../lib/supabaseServer'
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 // Simple rate limiting for waitlist (prevent spam)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
