@@ -154,7 +154,10 @@ export default function UserProfile() {
                     📁 My Portfolio
                   </a>
                   <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    � Upload Work
+                    📤 Upload Work
+                  </a>
+                  <a href="/professional/preferences" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ⚙️ Preferences
                   </a>
                 </>
               )}
