@@ -173,13 +173,13 @@ export default function UserProfile() {
               )}
               
               {/* Admin Menu */}
-              {profile?.role === 'admin' && (
+              {(profile?.role === 'admin' || profile?.is_admin) && (
                 <>
                   <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 Admin Dashboard
                   </a>
                   <a href="/admin/security" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    � Security
+                    🔒 Security
                   </a>
                 </>
               )}
