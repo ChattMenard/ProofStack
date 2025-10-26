@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import HireLimitGuard from '@/components/HireLimitGuard';
 import ProofScoreV2 from '@/components/ProofScoreV2';
+import PreferencesDisplay from '@/components/PreferencesDisplay';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -620,6 +621,11 @@ export default function DiscoverPage() {
                           size="small" 
                           showBreakdown={false}
                         />
+                      </div>
+
+                      {/* Preferences/Dealbreakers Badges */}
+                      <div className="mb-4">
+                        <PreferencesDisplay profileId={prof.id} compact={true} />
                       </div>
 
                       {/* Skills */}

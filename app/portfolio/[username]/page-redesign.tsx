@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabaseClient'
 import ProofScoreV2 from '../../../components/ProofScoreV2'
 import WorkSamplesSection from '../../../components/WorkSamplesSection'
 import ReviewsSection from '../../../components/ReviewsSection'
+import PreferencesDisplay from '../../../components/PreferencesDisplay'
 
 interface Profile {
   id: string
@@ -230,6 +231,9 @@ export default function PortfolioPage({ params }: { params: { username: string }
                 )}
               </div>
             </div>
+
+            {/* Preferences/Dealbreakers Card */}
+            <PreferencesDisplay profileId={profile.id} compact={false} />
 
             {/* Skills Card - Placeholder */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
