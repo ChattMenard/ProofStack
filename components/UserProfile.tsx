@@ -144,8 +144,8 @@ export default function UserProfile() {
                 </>
               )}
               
-              {/* Professional Menu */}
-              {profile?.role === 'professional' && (
+              {/* Professional Menu - show for professionals AND admins */}
+              {(profile?.role === 'professional' || profile?.role === 'admin' || profile?.is_admin || profile?.is_founder) && (
                 <>
                   <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 My Dashboard
@@ -153,25 +153,21 @@ export default function UserProfile() {
                   <a href="/portfolio" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📁 My Portfolio
                   </a>
-                  <a href="/professional/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    💬 Messages
-                  </a>
-                  <a href="/professional/promote/manage" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    🚀 Manage Promotion
-                  </a>
-                  <a href="/professional/reviews" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    ⭐ My Reviews
+                  <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    � Upload Work
                   </a>
                 </>
               )}
               
+              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+              
               {/* Admin Menu */}
               {(profile?.role === 'admin' || profile?.is_admin || profile?.is_founder) && (
                 <>
-                  <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📊 Admin Dashboard
+                  <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
+                    ⚙️ Admin Dashboard
                   </a>
-                  <a href="/admin/security" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <a href="/admin/security" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
                     🔒 Security
                   </a>
                 </>
@@ -189,28 +185,19 @@ export default function UserProfile() {
                   <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📤 Upload Work
                   </a>
-                  {profile?.is_founder && (
-                    <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                      ⚙️ Admin Dashboard
-                    </a>
-                  )}
+                </>
+              )}
+              
+              {profile?.is_founder && (
+                <>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                  <div className="px-4 py-2 text-xs text-amber-600 dark:text-amber-400 font-semibold">
+                    🏆 FOUNDING MEMBER
+                  </div>
                 </>
               )}
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              
-              {/* Admin Dashboard - Only for admin users */}
-              {(profile?.is_admin || profile?.is_founder) && (
-                <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
-                  ⚙️ Admin Dashboard
-                </a>
-              )}
-              
-              {profile?.is_founder && (
-                <div className="px-4 py-2 text-xs text-amber-600 dark:text-amber-400 font-semibold">
-                  🏆 FOUNDING MEMBER
-                </div>
-              )}
               
               <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
                 {user.email}
