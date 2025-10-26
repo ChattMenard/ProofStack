@@ -4,13 +4,19 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabaseClient'
 import posthog from 'posthog-js'
 
-export default function AuthForm() {
+interface AuthFormProps {
+  mode?: 'login' | 'signup'
+}
+
+export default function AuthForm({ mode = 'login' }: AuthFormProps) {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [usePassword, setUsePassword] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [usePassword, setUsePassword] = useState(mode === 'signup') // Default to password for signup
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [message, setMessage] = useState('')
+  const isSignup = mode === 'signup'
 
   // Listen for auth state changes and redirect
   useEffect(() => {
@@ -28,17 +34,47 @@ export default function AuthForm() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ 
-        email,
-        password
-      })
-      if (error) throw error
-      posthog.capture('auth_password_success', { email_domain: email.split('@')[1] })
-      // Redirect handled by auth state change listener
-    } catch (err: any) {
-      posthog.capture('auth_error', { method: 'password', error: err.message })
-      setMessage(err.message || 'Error signing in with password')
+    
+    if (isSignup) {
+      // Sign up flow
+      if (password !== confirmPassword) {
+        setMessage('Passwords do not match')
+        return
+      }
+      if (password.length < 6) {
+        setMessage('Password must be at least 6 characters')
+        return
+      }
+      
+      try {
+        const { error } = await supabase.auth.signUp({ 
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`
+          }
+        })
+        if (error) throw error
+        posthog.capture('auth_signup_success', { email_domain: email.split('@')[1] })
+        setMessage('Check your email to confirm your account!')
+      } catch (err: any) {
+        posthog.capture('auth_error', { method: 'signup_password', error: err.message })
+        setMessage(err.message || 'Error creating account')
+      }
+    } else {
+      // Sign in flow
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ 
+          email,
+          password
+        })
+        if (error) throw error
+        posthog.capture('auth_password_success', { email_domain: email.split('@')[1] })
+        // Redirect handled by auth state change listener
+      } catch (err: any) {
+        posthog.capture('auth_error', { method: 'password', error: err.message })
+        setMessage(err.message || 'Error signing in with password')
+      }
     }
   }
 
@@ -167,7 +203,7 @@ export default function AuthForm() {
 
       {/* Password Login Form */}
       {usePassword ? (
-        showForgotPassword ? (
+        !isSignup && showForgotPassword ? (
           /* Forgot Password Form */
           <form onSubmit={handleForgotPassword} className="space-y-2">
             <label className="block text-sm text-forest-200">Email</label>
@@ -194,7 +230,7 @@ export default function AuthForm() {
             </button>
           </form>
         ) : (
-          /* Password Login Form */
+          /* Password Login/Signup Form */
           <form onSubmit={handlePasswordSubmit} className="space-y-2">
             <label className="block text-sm text-forest-200">Email</label>
             <input
@@ -213,20 +249,37 @@ export default function AuthForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              minLength={6}
             />
+            {isSignup && (
+              <>
+                <label className="block text-sm text-forest-200 mt-2">Confirm Password</label>
+                <input
+                  required
+                  type="password"
+                  className="w-full rounded border border-forest-700 bg-forest-800 text-forest-50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sage-500"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  minLength={6}
+                />
+              </>
+            )}
             <button 
               className="w-full bg-sage-600 hover:bg-sage-500 text-forest-50 px-4 py-2 rounded transition mt-2" 
               type="submit"
             >
-              Sign In
+              {isSignup ? 'Create Account' : 'Sign In'}
             </button>
-            <button
-              type="button"
-              onClick={() => setShowForgotPassword(true)}
-              className="w-full text-sm text-forest-400 hover:text-forest-200 underline mt-2"
-            >
-              Forgot Password?
-            </button>
+            {!isSignup && (
+              <button
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="w-full text-sm text-forest-400 hover:text-forest-200 underline mt-2"
+              >
+                Forgot Password?
+              </button>
+            )}
           </form>
         )
       ) : (
@@ -245,7 +298,7 @@ export default function AuthForm() {
             className="w-full bg-sage-600 hover:bg-sage-500 text-forest-50 px-4 py-2 rounded transition" 
             type="submit"
           >
-            Send Magic Link
+            {isSignup ? 'Sign Up with Magic Link' : 'Send Magic Link'}
           </button>
         </form>
       )}
@@ -268,7 +321,7 @@ export default function AuthForm() {
           className="w-full bg-forest-800 hover:bg-forest-700 text-forest-50 px-4 py-2 rounded border border-forest-700 flex items-center justify-center gap-2 transition"
         >
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
-          Sign in with Google
+          {isSignup ? 'Sign up with Google' : 'Sign in with Google'}
         </button>
 
         <button 
@@ -277,7 +330,7 @@ export default function AuthForm() {
           className="w-full bg-forest-800 hover:bg-forest-700 text-forest-50 px-4 py-2 rounded border border-forest-700 flex items-center justify-center gap-2 transition"
         >
           <img src="https://www.linkedin.com/favicon.ico" alt="LinkedIn" className="w-4 h-4" />
-          Sign in with LinkedIn
+          {isSignup ? 'Sign up with LinkedIn' : 'Sign in with LinkedIn'}
         </button>
 
         <button 
@@ -286,7 +339,7 @@ export default function AuthForm() {
           className="w-full bg-forest-800 hover:bg-forest-700 text-forest-50 px-4 py-2 rounded border border-forest-700 flex items-center justify-center gap-2 transition"
         >
           <img src="https://github.githubassets.com/favicons/favicon.svg" alt="GitHub" className="w-4 h-4 invert" />
-          Sign in with GitHub
+          {isSignup ? 'Sign up with GitHub' : 'Sign in with GitHub'}
         </button>
       </div>
 

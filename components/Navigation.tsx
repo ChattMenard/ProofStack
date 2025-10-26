@@ -99,6 +99,13 @@ export default function Navigation() {
           >
             Sign In
           </Link>
+          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
+          <Link
+            href="/signup"
+            className="text-lg font-medium px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors"
+          >
+            Sign Up
+          </Link>
         </>
       )}
 
