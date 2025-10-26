@@ -311,14 +311,14 @@ export default function EmployerSignupPage() {
 
               <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?{' '}
-                <Link href="/auth/signin" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                <Link href="/login" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
                   Sign in
                 </Link>
               </p>
 
               <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
                 Looking for work?{' '}
-                <Link href="/auth/signup" className="text-purple-600 dark:text-purple-400 hover:underline font-medium">
+                <Link href="/signup" className="text-purple-600 dark:text-purple-400 hover:underline font-medium">
                   Sign up as a Professional
                 </Link>
               </p>

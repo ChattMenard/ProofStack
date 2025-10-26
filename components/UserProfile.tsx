@@ -93,7 +93,7 @@ export default function UserProfile() {
     return (
       <div className="flex items-center gap-3">
         <a 
-          href="/professional/signup" 
+          href="/signup" 
           className="text-sm font-medium text-forest-300 dark:text-forest-200 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
         >
           For Professionals
@@ -180,11 +180,8 @@ export default function UserProfile() {
                   <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 Admin Dashboard
                   </a>
-                  <a href="/admin/users" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    👥 Manage Users
-                  </a>
-                  <a href="/admin/promotions" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    💎 Manage Promotions
+                  <a href="/admin/security" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    � Security
                   </a>
                 </>
               )}
