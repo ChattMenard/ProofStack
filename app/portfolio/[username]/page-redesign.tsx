@@ -7,6 +7,7 @@ import ProofScoreV2 from '../../../components/ProofScoreV2'
 import WorkSamplesSection from '../../../components/WorkSamplesSection'
 import ReviewsSection from '../../../components/ReviewsSection'
 import PreferencesDisplay from '../../../components/PreferencesDisplay'
+import VerificationBadges from '../../../components/VerificationBadges'
 
 interface Profile {
   id: string
@@ -145,6 +146,17 @@ export default function PortfolioPage({ params }: { params: { username: string }
                       📧 {profile.email}
                     </span>
                   </div>
+                  
+                  {/* Verification Badges */}
+                  <div className="mb-3">
+                    <VerificationBadges 
+                      profileId={profile.id} 
+                      size="medium" 
+                      showLabels={true}
+                      layout="horizontal"
+                    />
+                  </div>
+                  
                   {profile.is_founder && (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-earth-600 to-earth-500 text-white shadow-sm mb-3">
                       🎯 Founding Member #{profile.founder_number}

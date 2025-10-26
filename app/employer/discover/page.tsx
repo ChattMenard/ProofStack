@@ -6,6 +6,7 @@ import Link from 'next/link';
 import HireLimitGuard from '@/components/HireLimitGuard';
 import ProofScoreV2 from '@/components/ProofScoreV2';
 import PreferencesDisplay from '@/components/PreferencesDisplay';
+import VerificationBadges from '@/components/VerificationBadges';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -692,6 +693,16 @@ export default function DiscoverPage() {
                       {/* Preferences/Dealbreakers Badges */}
                       <div className="mb-4">
                         <PreferencesDisplay profileId={prof.id} compact={true} />
+                      </div>
+
+                      {/* Verification Badges */}
+                      <div className="mb-4">
+                        <VerificationBadges 
+                          profileId={prof.id} 
+                          size="small" 
+                          showLabels={false}
+                          layout="horizontal"
+                        />
                       </div>
 
                       {/* Skills */}
