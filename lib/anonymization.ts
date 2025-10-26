@@ -1,6 +1,7 @@
 /**
  * Anonymization utilities for Ghost Mode
  * Masks professional identity while preserving key information
+ * Identity hidden at professional's discretion - cannot be bypassed
  */
 
 export interface AnonymizedProfile {
@@ -61,38 +62,12 @@ export function getAnonymousAvatar(yearsExperience?: number): string {
 }
 
 /**
- * Check if a profile should be shown as anonymous to a specific employer
+ * Check if a profile should be shown as anonymous
  */
 export async function shouldShowAnonymous(
   professionalId: string,
-  employerId: string | null,
   supabase: any
 ): Promise<boolean> {
-  // If no employer (public view), check preferences
-  if (!employerId) {
-    const { data: prefs } = await supabase
-      .from('professional_preferences')
-      .select('anonymous_mode')
-      .eq('profile_id', professionalId)
-      .single()
-
-    return prefs?.anonymous_mode === true
-  }
-
-  // Check if employer has unlocked this profile
-  const { data: unlock } = await supabase
-    .from('profile_unlocks')
-    .select('id')
-    .eq('employer_id', employerId)
-    .eq('professional_id', professionalId)
-    .single()
-
-  if (unlock) {
-    // Already unlocked, show full profile
-    return false
-  }
-
-  // Not unlocked, check if professional has anonymous mode enabled
   const { data: prefs } = await supabase
     .from('professional_preferences')
     .select('anonymous_mode')

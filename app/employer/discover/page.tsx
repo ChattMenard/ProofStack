@@ -6,7 +6,6 @@ import Link from 'next/link';
 import HireLimitGuard from '@/components/HireLimitGuard';
 import ProofScoreV2 from '@/components/ProofScoreV2';
 import PreferencesDisplay from '@/components/PreferencesDisplay';
-import UnlockProfileButton from '@/components/UnlockProfileButton';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,7 +38,6 @@ interface Professional {
   total_reviews?: number;
   is_anonymous?: boolean;
   display_name?: string;
-  is_unlocked?: boolean;
 }
 
 export default function DiscoverPage() {
@@ -557,13 +555,13 @@ export default function DiscoverPage() {
 
                     <div className="p-4 sm:p-6">
                       {/* Anonymous Profile Banner */}
-                      {prof.is_anonymous && !prof.is_unlocked && (
+                      {prof.is_anonymous && (
                         <div className="mb-4 bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30 rounded-lg p-3 border border-purple-200 dark:border-purple-700">
                           <div className="flex items-center gap-2">
                             <span className="text-2xl">👻</span>
                             <div>
                               <div className="font-semibold text-sm text-gray-900 dark:text-white">Anonymous Profile</div>
-                              <div className="text-xs text-gray-600 dark:text-gray-400">Unlock to view full details</div>
+                              <div className="text-xs text-gray-600 dark:text-gray-400">This professional has chosen to keep their identity private</div>
                             </div>
                           </div>
                         </div>
@@ -573,15 +571,15 @@ export default function DiscoverPage() {
                       <div className="flex items-start justify-between mb-4 gap-3">
                         <div className="flex items-start sm:items-center flex-col sm:flex-row gap-2 sm:gap-0 flex-1 min-w-0">
                           <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold sm:mr-4 flex-shrink-0 ${
-                            prof.is_anonymous && !prof.is_unlocked
-                              ? 'bg-gradient-to-br from-gray-400 to-gray-600 blur-sm'
+                            prof.is_anonymous
+                              ? 'bg-gradient-to-br from-gray-400 to-gray-600'
                               : 'bg-gradient-to-br from-blue-500 to-purple-600'
                           }`}>
-                            {prof.is_anonymous && !prof.is_unlocked ? '?' : (prof.username?.[0]?.toUpperCase() || '?')}
+                            {prof.is_anonymous ? '👻' : (prof.username?.[0]?.toUpperCase() || '?')}
                           </div>
                           <div className="min-w-0 flex-1">
                             <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white break-words">
-                              {prof.is_anonymous && !prof.is_unlocked ? (prof.display_name || 'Anonymous Professional') : prof.username}
+                              {prof.is_anonymous ? (prof.display_name || 'Anonymous Professional') : prof.username}
                               {prof.is_pro && (
                                 <span className="ml-2 text-xs bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded whitespace-nowrap">
                                   PRO
@@ -592,8 +590,8 @@ export default function DiscoverPage() {
                           </div>
                         </div>
 
-                        {/* Save Button - Hide for locked anonymous profiles */}
-                        {(!prof.is_anonymous || prof.is_unlocked) && (
+                        {/* Save Button - Hide for anonymous profiles */}
+                        {!prof.is_anonymous && (
                           <button
                             onClick={() => toggleSave(prof.id)}
                             className={`p-2 rounded-full transition-colors flex-shrink-0 ${
@@ -671,12 +669,11 @@ export default function DiscoverPage() {
                       )}
 
                       {/* Actions */}
-                      {prof.is_anonymous && !prof.is_unlocked ? (
-                        <div className="mt-2">
-                          <UnlockProfileButton 
-                            professionalId={prof.id}
-                            variant="button"
-                          />
+                      {prof.is_anonymous ? (
+                        <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-center">
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            This professional has chosen to remain anonymous. Their skills and experience are visible, but contact information is private.
+                          </p>
                         </div>
                       ) : (
                         <div className="flex flex-col sm:flex-row gap-2">

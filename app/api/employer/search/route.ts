@@ -113,26 +113,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // Get current user's employer ID for unlock check
-    let employerId: string | null = null;
-    const authHeader = request.headers.get('authorization');
-    if (authHeader) {
-      const token = authHeader.replace('Bearer ', '');
-      const { data: { user } } = await supabase.auth.getUser(token);
-      
-      if (user) {
-        const { data: employerProfile } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('auth_uid', user.id)
-          .single();
-        
-        if (employerProfile) {
-          employerId = employerProfile.id;
-        }
-      }
-    }
-
     // Get anonymous mode preferences for all professionals
     const { data: preferences } = await supabase
       .from('professional_preferences')
@@ -145,21 +125,6 @@ export async function POST(request: Request) {
       preferences.forEach((pref: any) => {
         anonymousMap.set(pref.profile_id, pref.anonymous_mode === true);
       });
-    }
-
-    // Get unlocked profiles for this employer
-    let unlockedMap = new Map();
-    if (employerId) {
-      const { data: unlocks } = await supabase
-        .from('profile_unlocks')
-        .select('professional_id')
-        .eq('employer_id', employerId);
-
-      if (unlocks) {
-        unlocks.forEach((unlock: any) => {
-          unlockedMap.set(unlock.professional_id, true);
-        });
-      }
     }
 
     // Helper to generate anonymous display name
@@ -183,10 +148,9 @@ export async function POST(request: Request) {
       return name;
     };
 
-    // Enrich profiles with promotion data, anonymous mode, and unlock status
+    // Enrich profiles with promotion data and anonymous mode
     let enrichedProfiles = profiles.map((profile: any) => {
       const isAnonymous = anonymousMap.get(profile.id) === true;
-      const isUnlocked = unlockedMap.get(profile.id) === true;
 
       return {
         ...profile,
@@ -194,8 +158,7 @@ export async function POST(request: Request) {
         average_rating: profile.professional_ratings?.[0]?.average_rating || null,
         total_reviews: profile.professional_ratings?.[0]?.total_reviews || 0,
         is_anonymous: isAnonymous,
-        is_unlocked: isUnlocked,
-        display_name: isAnonymous && !isUnlocked 
+        display_name: isAnonymous 
           ? generateAnonymousName(profile.headline, profile.location, profile.years_experience)
           : profile.username
       };
@@ -250,6 +213,7 @@ export async function POST(request: Request) {
     });
 
     // Log search for analytics
+    const authHeader = request.headers.get('authorization');
     if (authHeader) {
       const token = authHeader.replace('Bearer ', '');
       const { data: { user } } = await supabase.auth.getUser(token);
