@@ -3,10 +3,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/portfolios', label: 'For Hire' },
+  { href: '/projectlistings', label: 'Hiring' },
 ]
 
 export default function Navigation() {
