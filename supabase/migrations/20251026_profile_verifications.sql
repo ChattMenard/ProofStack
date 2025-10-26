@@ -67,8 +67,8 @@ CREATE POLICY "Anyone can view verification status"
 CREATE POLICY "Users can manage own verifications"
   ON profile_verifications
   FOR ALL
-  USING (auth.uid() = (SELECT auth_uid FROM profiles WHERE id = profile_id))
-  WITH CHECK (auth.uid() = (SELECT auth_uid FROM profiles WHERE id = profile_id));
+  USING (auth.uid()::text = (SELECT auth_uid FROM profiles WHERE id = profile_id))
+  WITH CHECK (auth.uid()::text = (SELECT auth_uid FROM profiles WHERE id = profile_id));
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_profile_verifications_updated_at()
