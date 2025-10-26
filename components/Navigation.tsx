@@ -45,9 +45,9 @@ export default function Navigation() {
           <Link
             key={item.href}
             href={item.href}
-            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
               item.label === 'For Professionals'
-                ? 'bg-sage-600 text-white hover:bg-sage-700'
+                ? 'text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300'
                 : 'text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400'
             }`}
           >
