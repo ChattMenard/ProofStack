@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServer } from '../../../lib/supabaseServer'
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic'
+
 // Simple rate limiting for waitlist (prevent spam)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
