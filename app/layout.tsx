@@ -86,8 +86,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <Image 
                       src="/logo.svg" 
                       alt="ProofStack" 
-                      width={280} 
-                      height={100}
+                      width={320} 
+                      height={115}
                       priority
                       className="relative transition-transform duration-300 group-hover:scale-105"
                     />
