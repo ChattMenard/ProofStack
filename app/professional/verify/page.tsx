@@ -21,12 +21,27 @@ export default function VerificationPage() {
   const [githubVerifying, setGithubVerifying] = useState(false);
   const [githubMessage, setGithubMessage] = useState('');
 
+  const [linkedinVerifying, setLinkedinVerifying] = useState(false);
+  const [linkedinMessage, setLinkedinMessage] = useState('');
+
   const [linkedinUrl, setLinkedinUrl] = useState('');
   const [portfolioUrl, setPortfolioUrl] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
 
   useEffect(() => {
     loadData();
+    
+    // Check for LinkedIn OAuth callback success/error
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('linkedin') === 'success') {
+      setLinkedinMessage('✅ LinkedIn account verified successfully!');
+      window.history.replaceState({}, '', '/professional/verify');
+      loadData(); // Reload to show new badge
+    } else if (urlParams.get('error')) {
+      const error = urlParams.get('error');
+      setLinkedinMessage(`❌ LinkedIn verification failed: ${error}`);
+      window.history.replaceState({}, '', '/professional/verify');
+    }
   }, []);
 
   const loadData = async () => {
@@ -110,6 +125,38 @@ export default function VerificationPage() {
       console.error('GitHub verification error:', error);
     } finally {
       setGithubVerifying(false);
+    }
+  };
+
+  const verifyLinkedIn = async () => {
+    if (!user) {
+      setLinkedinMessage('Please log in first');
+      return;
+    }
+
+    setLinkedinVerifying(true);
+    setLinkedinMessage('');
+
+    try {
+      const response = await fetch('/api/verify/linkedin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auth_uid: user.id })
+      });
+
+      const data = await response.json();
+
+      if (data.auth_url) {
+        // Redirect to LinkedIn OAuth
+        window.location.href = data.auth_url;
+      } else {
+        setLinkedinMessage(`❌ ${data.error || 'Failed to initiate LinkedIn verification'}`);
+        setLinkedinVerifying(false);
+      }
+    } catch (error) {
+      setLinkedinMessage('❌ Failed to verify LinkedIn account');
+      console.error('LinkedIn verification error:', error);
+      setLinkedinVerifying(false);
     }
   };
 
@@ -218,8 +265,8 @@ export default function VerificationPage() {
           </div>
         </div>
 
-        {/* LinkedIn Verification - Coming Soon */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6 opacity-60">
+        {/* LinkedIn Verification */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
             <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
               <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -227,12 +274,56 @@ export default function VerificationPage() {
             <div>
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 LinkedIn Verification
-                <span className="ml-2 text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Coming Soon</span>
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Connect your LinkedIn profile to verify professional identity
               </p>
             </div>
+          </div>
+
+          <div className="space-y-4">
+            {verifications?.linkedin_verified ? (
+              <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                <p className="text-green-800 dark:text-green-200">
+                  ✅ LinkedIn account verified!
+                </p>
+                {verifications.linkedin_profile_url && (
+                  <a 
+                    href={verifications.linkedin_profile_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 hover:underline text-sm mt-1 inline-block"
+                  >
+                    View Profile →
+                  </a>
+                )}
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={verifyLinkedIn}
+                  disabled={linkedinVerifying}
+                  className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  {linkedinVerifying ? 'Connecting...' : 'Connect LinkedIn Account'}
+                </button>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  You'll be redirected to LinkedIn to authorize the connection
+                </p>
+              </>
+            )}
+
+            {linkedinMessage && (
+              <div className={`p-3 rounded-lg ${
+                linkedinMessage.includes('✅') 
+                  ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200'
+                  : linkedinMessage.includes('⚠️')
+                  ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200'
+                  : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200'
+              }`}>
+                {linkedinMessage}
+              </div>
+            )}
           </div>
         </div>
 
