@@ -105,27 +105,40 @@ export function createRateLimiter(config: { requests: number; window: `${number}
 }
 
 /**
- * Rate limit instances (cached)
+ * Rate limit instances (cached) - LAZY INITIALIZED
  */
-const rateLimiters = {
-  workSampleView: createRateLimiter(RATE_LIMITS.WORK_SAMPLE_VIEW),
-  workSampleCreate: createRateLimiter(RATE_LIMITS.WORK_SAMPLE_CREATE),
-  aiAnalysis: createRateLimiter(RATE_LIMITS.AI_ANALYSIS),
-  authLogin: createRateLimiter(RATE_LIMITS.AUTH_LOGIN),
-  authSignup: createRateLimiter(RATE_LIMITS.AUTH_SIGNUP),
-  apiGeneral: createRateLimiter(RATE_LIMITS.API_GENERAL),
-  apiSearch: createRateLimiter(RATE_LIMITS.API_SEARCH),
-  profileView: createRateLimiter(RATE_LIMITS.PROFILE_VIEW),
-  messageSend: createRateLimiter(RATE_LIMITS.MESSAGE_SEND),
-  upload: createRateLimiter(RATE_LIMITS.UPLOAD),
+type RateLimiterKey = 'workSampleView' | 'workSampleCreate' | 'aiAnalysis' | 'authLogin' | 'authSignup' | 'apiGeneral' | 'apiSearch' | 'profileView' | 'messageSend' | 'upload';
+
+const rateLimiterMap: Record<RateLimiterKey, keyof typeof RATE_LIMITS> = {
+  workSampleView: 'WORK_SAMPLE_VIEW',
+  workSampleCreate: 'WORK_SAMPLE_CREATE',
+  aiAnalysis: 'AI_ANALYSIS',
+  authLogin: 'AUTH_LOGIN',
+  authSignup: 'AUTH_SIGNUP',
+  apiGeneral: 'API_GENERAL',
+  apiSearch: 'API_SEARCH',
+  profileView: 'PROFILE_VIEW',
+  messageSend: 'MESSAGE_SEND',
+  upload: 'UPLOAD',
 };
+
+const rateLimiters: Record<string, any> = {};
+
+function getRateLimiter(limiterType: RateLimiterKey): any {
+  if (!rateLimiters[limiterType]) {
+    const configKey = rateLimiterMap[limiterType];
+    const config = RATE_LIMITS[configKey];
+    rateLimiters[limiterType] = createRateLimiter(config);
+  }
+  return rateLimiters[limiterType];
+}
 
 /**
  * Check rate limit for a user/IP
  */
 export async function checkRateLimit(
   identifier: string, // user ID or IP address
-  limiterType: keyof typeof rateLimiters
+  limiterType: RateLimiterKey
 ): Promise<{
   success: boolean;
   limit: number;
@@ -133,17 +146,17 @@ export async function checkRateLimit(
   reset: number;
   message?: string;
 }> {
-  const limiter = rateLimiters[limiterType];
+  const limiter = getRateLimiter(limiterType);
   const result = await limiter.limit(identifier);
+  
+  const configKey = rateLimiterMap[limiterType];
   
   return {
     success: result.success,
     limit: result.limit,
     remaining: result.remaining,
     reset: result.reset,
-    message: result.success ? undefined : RATE_LIMITS[
-      limiterType.replace(/([A-Z])/g, '_$1').toUpperCase().substring(1) as keyof typeof RATE_LIMITS
-    ]?.message,
+    message: result.success ? undefined : RATE_LIMITS[configKey]?.message,
   };
 }
 
@@ -152,7 +165,7 @@ export async function checkRateLimit(
  */
 export async function withRateLimit(
   req: Request,
-  limiterType: keyof typeof rateLimiters,
+  limiterType: RateLimiterKey,
   getUserId?: () => Promise<string | null>
 ): Promise<Response | null> {
   // Get identifier (prefer user ID over IP)
