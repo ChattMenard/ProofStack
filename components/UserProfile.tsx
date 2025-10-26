@@ -121,7 +121,7 @@ export default function UserProfile() {
         <div className="relative user-profile-dropdown">
           <button 
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="px-4 py-2 bg-sage-600 text-white text-sm rounded-lg hover:bg-sage-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-white dark:bg-gray-800 border-2 border-sage-600 dark:border-sage-500 text-sage-700 dark:text-sage-300 text-sm rounded-lg hover:bg-sage-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 font-medium"
           >
             {pathname === '/' && '🏠 Welcome'}
             {pathname !== '/' && profile?.role === 'employer' && '🏢 Employer'}
