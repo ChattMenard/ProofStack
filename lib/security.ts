@@ -155,7 +155,7 @@ export function isContentSafe(content: string): { safe: boolean; reason?: string
   const maliciousPatterns = [
     /<script[^>]*>[\s\S]*?<\/script>/gi, // Script tags
     /javascript:/gi, // JavaScript protocol
-    /on\w+\s*=\s*["'][^"']*["']/gi, // Inline event handlers
+    /\son(click|load|error|mouse\w+|key\w+)\s*=\s*["'][^"']*["']/gi, // HTML inline event handlers
     /<iframe[^>]*>/gi, // Iframes
     /<embed[^>]*>/gi, // Embeds
     /<object[^>]*>/gi, // Objects
