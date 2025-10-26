@@ -36,9 +36,6 @@ export default function Home() {
 
   return (
     <div className="space-y-20 min-h-screen">
-      {/* Employer Hero - Hire Verified Talent */}
-      <EmployerHero />
-
       {/* Professional Hero Section */}
       <section className="text-center space-y-8 pt-12 pb-8 relative">
         {/* Animated Background Glow */}
@@ -133,6 +130,9 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* Employer Hero - Hire Verified Talent */}
+      <EmployerHero />
 
       {/* Two-Sided Platform Section - NEW */}
       <section className="py-16 bg-secondary border border-default rounded-3xl backdrop-blur-sm">

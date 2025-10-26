@@ -1,29 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 
 export default function EmployerHero() {
-  const [spotsRemaining, setSpotsRemaining] = useState<number | null>(null)
-
-  useEffect(() => {
-    // Fetch actual spots remaining from the database
-    const fetchSpotsRemaining = async () => {
-      try {
-        const response = await fetch('/api/founding-employers/spots-remaining')
-        const data = await response.json()
-        if (data.spots_remaining !== undefined) {
-          setSpotsRemaining(data.spots_remaining)
-        }
-      } catch (error) {
-        console.error('Failed to fetch spots remaining:', error)
-        setSpotsRemaining(10) // Fallback
-      }
-    }
-
-    fetchSpotsRemaining()
-  }, [])
-
   return (
     <section className="relative py-20 px-4 overflow-hidden">
       {/* Main Hero Content */}

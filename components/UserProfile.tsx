@@ -200,16 +200,6 @@ export default function UserProfile() {
                 </>
               )}
               
-              {/* Founder badge - keep this for "founding employer" program participants */}
-              {profile?.is_founder && user.email !== 'mattchenard2009@gmail.com' && (
-                <>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-                  <div className="px-4 py-2 text-xs text-amber-600 dark:text-amber-400 font-semibold">
-                    🏆 FOUNDING EMPLOYER
-                  </div>
-                </>
-              )}
-              
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               
               <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
