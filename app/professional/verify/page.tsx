@@ -87,6 +87,7 @@ export default function VerificationPage() {
       const response = await fetch('/api/verify/github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Include cookies for auth
         body: JSON.stringify({ github_username: githubUsername.trim() })
       });
 
