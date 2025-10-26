@@ -104,22 +104,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   {/* Navigation Links */}
                   <Navigation />
 
-                  {/* CTA Buttons for Employers & Professionals */}
-                  <div className="hidden lg:flex items-center gap-2">
-                    <Link 
-                      href="/employer/signup"
-                      className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
-                    >
-                      For Employers
-                    </Link>
-                    <Link 
-                      href="/signup"
-                      className="px-4 py-2 text-sm font-medium bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors"
-                    >
-                      For Professionals
-                    </Link>
-                  </div>
-
                   {/* Action Buttons */}
                   <div className="flex items-center gap-3">
                     <ThemeToggle />
