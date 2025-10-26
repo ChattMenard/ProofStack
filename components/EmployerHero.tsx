@@ -36,7 +36,7 @@ export default function EmployerHero() {
           </span>
         </div>
 
-        {/* Killer Headline */}
+        {/* Killer Headline - Updated to positive messaging */}
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-snug bg-gradient-to-r from-gray-900 via-green-700 to-emerald-600 dark:from-white dark:via-green-100 dark:to-emerald-400 bg-clip-text text-transparent px-4 pb-2">
           Hire Verified Talent, Instantly.
         </h1>
