@@ -28,14 +28,6 @@ export default function EmployerHero() {
     <section className="relative py-20 px-4 overflow-hidden">
       {/* Main Hero Content */}
       <div className="max-w-6xl mx-auto text-center relative z-10">
-        {/* Attention-Grabbing Badge */}
-        <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-full mb-8 animate-pulse">
-          <span className="text-2xl">🏆</span>
-          <span className="text-amber-600 dark:text-amber-400 font-bold text-sm uppercase tracking-wider">
-            Limited Offer: {spotsRemaining} Founding Employer Spots Left
-          </span>
-        </div>
-
         {/* Killer Headline - Updated to positive messaging */}
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-snug bg-gradient-to-r from-gray-900 via-green-700 to-emerald-600 dark:from-white dark:via-green-100 dark:to-emerald-400 bg-clip-text text-transparent px-4 pb-2">
           Hire Verified Talent, Instantly.

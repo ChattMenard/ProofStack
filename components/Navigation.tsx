@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
@@ -16,6 +16,7 @@ const signupLinks = [
 
 export default function Navigation() {
   const pathname = usePathname()
+  const router = useRouter()
   const [isSignedIn, setIsSignedIn] = useState(false)
 
   useEffect(() => {
@@ -33,6 +34,11 @@ export default function Navigation() {
       listener?.subscription.unsubscribe()
     }
   }, [])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+  }
 
   const isActive = (href: string) => {
     const path = pathname ?? '/'
@@ -86,6 +92,26 @@ export default function Navigation() {
               )}
             </span>
           ))}
+          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
+          <Link
+            href="/login"
+            className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+          >
+            Sign In
+          </Link>
+        </>
+      )}
+
+      {/* Sign Out link - only show when signed in */}
+      {isSignedIn && (
+        <>
+          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
+          <button
+            onClick={handleSignOut}
+            className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
+          >
+            Sign Out
+          </button>
         </>
       )}
     </nav>
