@@ -7,11 +7,18 @@
 import { Redis } from '@upstash/redis';
 import { Ratelimit } from '@upstash/ratelimit';
 
-// Initialize Redis client
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+// Lazy initialize Redis client only when rate limiting is actually used
+let redis: Redis | null = null;
+
+function getRedis(): Redis {
+  if (!redis) {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL || '',
+      token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
+    });
+  }
+  return redis;
+}
 
 /**
  * Rate limit tiers - adjust based on user type and endpoint sensitivity
@@ -87,7 +94,7 @@ export const RATE_LIMITS = {
  */
 export function createRateLimiter(config: { requests: number; window: `${number} ${'ms' | 's' | 'm' | 'h' | 'd'}`; message: string }) {
   return new Ratelimit({
-    redis,
+    redis: getRedis(),
     limiter: Ratelimit.slidingWindow(
       config.requests,
       config.window
@@ -224,11 +231,12 @@ export async function detectSuspiciousActivity(
   userId: string,
   activityType: string
 ): Promise<{ suspicious: boolean; reason?: string }> {
+  const redisClient = getRedis();
   const key = `suspicious:${userId}`;
   
   // Track activity counts
-  const counts = await redis.hincrby(key, activityType, 1);
-  await redis.expire(key, 3600); // 1 hour TTL
+  const counts = await redisClient.hincrby(key, activityType, 1);
+  await redisClient.expire(key, 3600); // 1 hour TTL
   
   // Define thresholds
   const THRESHOLDS = {
@@ -257,8 +265,9 @@ export async function blockUser(
   durationSeconds: number,
   reason: string
 ): Promise<void> {
+  const redisClient = getRedis();
   const key = `blocked:${userId}`;
-  await redis.setex(key, durationSeconds, reason);
+  await redisClient.setex(key, durationSeconds, reason);
   
   console.error('[SECURITY] User blocked', {
     userId,
@@ -275,8 +284,9 @@ export async function isUserBlocked(userId: string): Promise<{
   blocked: boolean;
   reason?: string;
 }> {
+  const redisClient = getRedis();
   const key = `blocked:${userId}`;
-  const reason = await redis.get(key);
+  const reason = await redisClient.get(key);
   
   return {
     blocked: reason !== null,
