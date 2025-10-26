@@ -58,7 +58,7 @@ export default function Home() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-forest-50 leading-tight px-4">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-primary leading-tight px-4">
             Turn Your Skills Into
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-600 to-earth-600 dark:from-sage-400 dark:to-earth-400 block mt-2 animate-gradient">
               Verified Proof
@@ -66,19 +66,19 @@ export default function Home() {
           </h1>
           
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-gray-700 dark:text-forest-200 max-w-3xl mx-auto leading-relaxed px-4">
-            Upload your code, projects, or achievements and get <span className="text-sage-700 dark:text-sage-400 font-semibold">AI-powered skill extraction</span> with cryptographic verification. Build a portfolio that employers can <span className="text-sage-700 dark:text-sage-400 font-semibold">trust</span>.
+          <p className="text-lg md:text-xl text-secondary max-w-3xl mx-auto leading-relaxed px-4">
+            Upload your code, projects, or achievements and get <span className="text-accent font-semibold">AI-powered skill extraction</span> with cryptographic verification. Build a portfolio that employers can <span className="text-accent font-semibold">trust</span>.
           </p>
 
           {/* Feature Pills */}
           <div className="flex flex-wrap justify-center gap-3 pt-4">
-            <span className="px-4 py-2 bg-gray-100 dark:bg-forest-900/50 border border-gray-300 dark:border-forest-700 rounded-full text-sm text-gray-800 dark:text-forest-300 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-secondary border border-default rounded-full text-sm text-primary backdrop-blur-sm">
               🤖 AI-Powered
             </span>
-            <span className="px-4 py-2 bg-gray-100 dark:bg-forest-900/50 border border-gray-300 dark:border-forest-700 rounded-full text-sm text-gray-800 dark:text-forest-300 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-secondary border border-default rounded-full text-sm text-primary backdrop-blur-sm">
               🔐 Cryptographically Verified
             </span>
-            <span className="px-4 py-2 bg-gray-100 dark:bg-forest-900/50 border border-gray-300 dark:border-forest-700 rounded-full text-sm text-gray-800 dark:text-forest-300 backdrop-blur-sm">
+            <span className="px-4 py-2 bg-secondary border border-default rounded-full text-sm text-primary backdrop-blur-sm">
               ⚡ Instant Analysis
             </span>
           </div>
@@ -93,7 +93,7 @@ export default function Home() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1 px-6 py-4 bg-white dark:bg-forest-900/80 border-2 border-gray-300 dark:border-forest-700 text-gray-900 dark:text-forest-50 placeholder-gray-500 dark:placeholder-forest-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-all backdrop-blur-sm"
+                className="flex-1 px-6 py-4 bg-primary border-2 border-default text-primary placeholder-secondary rounded-xl focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all backdrop-blur-sm"
               />
               <button
                 type="submit"
@@ -125,9 +125,9 @@ export default function Home() {
             </div>
           )}
           
-          <p className="text-sm text-gray-600 dark:text-forest-400 mt-4">
+          <p className="text-sm text-secondary mt-4">
             No spam. Unsubscribe anytime. 
-            <Link href="/login" className="text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 hover:underline ml-1 font-medium">
+            <Link href="/login" className="text-accent hover:text-accent hover:underline ml-1 font-medium">
               Already have access? Sign in →
             </Link>
           </p>
@@ -135,53 +135,53 @@ export default function Home() {
       </section>
 
       {/* Two-Sided Platform Section - NEW */}
-      <section className="py-16 bg-gradient-to-br from-gray-50 to-sage-50 dark:from-forest-900/30 dark:to-sage-900/20 border border-gray-200 dark:border-forest-800/50 rounded-3xl backdrop-blur-sm">
+      <section className="py-16 bg-secondary border border-default rounded-3xl backdrop-blur-sm">
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-forest-50 mb-4">
-            Built For <span className="text-sage-600 dark:text-sage-400">Everyone</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
+            Built For <span className="text-accent">Everyone</span>
           </h2>
-          <p className="text-xl text-gray-700 dark:text-forest-300 max-w-2xl mx-auto">
+          <p className="text-xl text-secondary max-w-2xl mx-auto">
             Whether you're showcasing skills or finding talent, ProofStack connects the right people
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* For Professionals */}
-          <div className="group p-8 bg-forest-900/50 border-2 border-sage-700/30 rounded-2xl hover:border-sage-500 transition-all duration-300 hover:shadow-xl hover:shadow-sage-500/20 hover:-translate-y-2">
+          <div className="group p-8 bg-secondary border-2 border-accent/30 rounded-2xl hover:border-accent transition-all duration-300 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-2">
             <div className="text-center mb-6">
               <div className="inline-block p-4 bg-gradient-to-br from-sage-600 to-sage-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-5xl">👤</span>
               </div>
-              <h3 className="text-2xl font-bold text-forest-50 mb-2">For Professionals</h3>
-              <p className="text-sage-400 font-medium">Showcase Your Skills</p>
+              <h3 className="text-2xl font-bold text-primary mb-2">For Professionals</h3>
+              <p className="text-accent font-medium">Showcase Your Skills</p>
             </div>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-sage-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-forest-50">Build Your Portfolio</div>
-                  <div className="text-sm text-forest-300">AI-powered skill extraction from your work</div>
+                  <div className="font-semibold text-primary">Build Your Portfolio</div>
+                  <div className="text-sm text-secondary">AI-powered skill extraction from your work</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-sage-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-forest-50">Get Discovered</div>
-                  <div className="text-sm text-forest-300">Employers find you based on verified skills</div>
+                  <div className="font-semibold text-primary">Get Discovered</div>
+                  <div className="text-sm text-secondary">Employers find you based on verified skills</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-sage-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-accent flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-forest-50">Boost Your Profile</div>
-                  <div className="text-sm text-forest-300">Promote your portfolio to stand out</div>
+                  <div className="font-semibold text-primary">Boost Your Profile</div>
+                  <div className="text-sm text-secondary">Promote your portfolio to stand out</div>
                 </div>
               </li>
             </ul>
@@ -195,12 +195,12 @@ export default function Home() {
           </div>
 
           {/* For Employers */}
-          <div className="group p-8 bg-forest-900/50 border-2 border-earth-700/30 rounded-2xl hover:border-earth-500 transition-all duration-300 hover:shadow-xl hover:shadow-earth-500/20 hover:-translate-y-2">
+          <div className="group p-8 bg-secondary border-2 border-earth-700/30 rounded-2xl hover:border-earth-500 transition-all duration-300 hover:shadow-xl hover:shadow-earth-500/20 hover:-translate-y-2">
             <div className="text-center mb-6">
               <div className="inline-block p-4 bg-gradient-to-br from-earth-600 to-earth-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
                 <span className="text-5xl">🏢</span>
               </div>
-              <h3 className="text-2xl font-bold text-forest-50 mb-2">For Employers</h3>
+              <h3 className="text-2xl font-bold text-primary mb-2">For Employers</h3>
               <p className="text-earth-400 font-medium">Find Verified Talent</p>
             </div>
 
@@ -210,8 +210,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-forest-50">Discover Professionals</div>
-                  <div className="text-sm text-forest-300">Advanced filters by skills, location, experience</div>
+                  <div className="font-semibold text-primary">Discover Professionals</div>
+                  <div className="text-sm text-secondary">Advanced filters by skills, location, experience</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -219,8 +219,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-forest-50">Message Directly</div>
-                  <div className="text-sm text-forest-300">Real-time messaging with candidates</div>
+                  <div className="font-semibold text-primary">Message Directly</div>
+                  <div className="text-sm text-secondary">Real-time messaging with candidates</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -228,8 +228,8 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <div>
-                  <div className="font-semibold text-forest-50">Verify Skills</div>
-                  <div className="text-sm text-forest-300">See cryptographically verified portfolios</div>
+                  <div className="font-semibold text-primary">Verify Skills</div>
+                  <div className="text-sm text-secondary">See cryptographically verified portfolios</div>
                 </div>
               </li>
             </ul>
@@ -246,24 +246,24 @@ export default function Home() {
 
       {/* Features Section - Enhanced */}
       <section className="grid md:grid-cols-3 gap-8">
-        <div className="group p-8 bg-forest-900/50 border border-forest-800 rounded-2xl hover:border-sage-700 transition-all duration-300 hover:shadow-lg hover:shadow-sage-500/10 hover:-translate-y-1">
+        <div className="group p-8 bg-secondary border border-default rounded-2xl hover:border-accent transition-all duration-300 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
           <div className="w-16 h-16 bg-gradient-to-br from-sage-600 to-sage-700 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-sage-500/20">
             <span className="text-3xl">🔍</span>
           </div>
-          <h3 className="text-xl font-bold text-forest-50 mb-3 text-center">AI-Powered Analysis</h3>
-          <p className="text-forest-300 text-center leading-relaxed">
+          <h3 className="text-xl font-bold text-primary mb-3 text-center">AI-Powered Analysis</h3>
+          <p className="text-secondary text-center leading-relaxed">
             Upload code, projects, or media. Our advanced AI extracts your skills and creates detailed, verifiable evidence.
           </p>
-          <div className="mt-4 pt-4 border-t border-forest-800">
-            <ul className="space-y-2 text-sm text-forest-400">
+          <div className="mt-4 pt-4 border-t border-default">
+            <ul className="space-y-2 text-sm text-secondary">
               <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Multi-language support
               </li>
               <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Context-aware extraction
@@ -272,24 +272,24 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="group p-8 bg-forest-900/50 border border-forest-800 rounded-2xl hover:border-sage-700 transition-all duration-300 hover:shadow-lg hover:shadow-sage-500/10 hover:-translate-y-1">
+        <div className="group p-8 bg-secondary border border-default rounded-2xl hover:border-accent transition-all duration-300 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
           <div className="w-16 h-16 bg-gradient-to-br from-earth-600 to-earth-700 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-earth-500/20">
             <span className="text-3xl">✅</span>
           </div>
-          <h3 className="text-xl font-bold text-forest-50 mb-3 text-center">Cryptographic Verification</h3>
-          <p className="text-forest-300 text-center leading-relaxed">
+          <h3 className="text-xl font-bold text-primary mb-3 text-center">Cryptographic Verification</h3>
+          <p className="text-secondary text-center leading-relaxed">
             Every skill claim is backed by cryptographic proofs and immutable evidence chains.
           </p>
-          <div className="mt-4 pt-4 border-t border-forest-800">
-            <ul className="space-y-2 text-sm text-forest-400">
+          <div className="mt-4 pt-4 border-t border-default">
+            <ul className="space-y-2 text-sm text-secondary">
               <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Tamper-proof records
               </li>
               <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Timestamp verification
@@ -298,24 +298,24 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="group p-8 bg-forest-900/50 border border-forest-800 rounded-2xl hover:border-sage-700 transition-all duration-300 hover:shadow-lg hover:shadow-sage-500/10 hover:-translate-y-1">
+        <div className="group p-8 bg-secondary border border-default rounded-2xl hover:border-accent transition-all duration-300 hover:shadow-lg hover:shadow-accent/10 hover:-translate-y-1">
           <div className="w-16 h-16 bg-gradient-to-br from-sage-500 to-earth-600 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-sage-500/20">
             <span className="text-3xl">🔗</span>
           </div>
-          <h3 className="text-xl font-bold text-forest-50 mb-3 text-center">GitHub Integration</h3>
-          <p className="text-forest-300 text-center leading-relaxed">
+          <h3 className="text-xl font-bold text-primary mb-3 text-center">GitHub Integration</h3>
+          <p className="text-secondary text-center leading-relaxed">
             Verify repository ownership with challenge-response authentication and automatic updates.
           </p>
-          <div className="mt-4 pt-4 border-t border-forest-800">
-            <ul className="space-y-2 text-sm text-forest-400">
+          <div className="mt-4 pt-4 border-t border-default">
+            <ul className="space-y-2 text-sm text-secondary">
               <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 One-click sync
               </li>
               <li className="flex items-center gap-2">
-                <svg className="w-4 h-4 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Automatic updates
@@ -328,36 +328,36 @@ export default function Home() {
       {/* Social Proof / Stats - Enhanced */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-sage-900/20 to-earth-900/20 rounded-2xl blur-2xl"></div>
-        <div className="relative bg-forest-900/80 border border-forest-700 rounded-2xl p-12 backdrop-blur-sm">
-          <h2 className="text-3xl font-bold mb-8 text-forest-50 text-center">Trusted by Developers Worldwide</h2>
+        <div className="relative bg-secondary border border-default rounded-2xl p-12 backdrop-blur-sm">
+          <h2 className="text-3xl font-bold mb-8 text-primary text-center">Trusted by Developers Worldwide</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center group">
               <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sage-400 to-sage-500 mb-2 group-hover:scale-110 transition-transform">
                 500+
               </div>
-              <div className="text-sm text-forest-300 font-medium">Skills Analyzed</div>
-              <div className="text-xs text-forest-500 mt-1">and counting</div>
+              <div className="text-sm text-secondary font-medium">Skills Analyzed</div>
+              <div className="text-xs text-secondary opacity-70 mt-1">and counting</div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-earth-400 to-earth-500 mb-2 group-hover:scale-110 transition-transform">
                 50+
               </div>
-              <div className="text-sm text-forest-300 font-medium">Verified Repos</div>
-              <div className="text-xs text-forest-500 mt-1">GitHub integrated</div>
+              <div className="text-sm text-secondary font-medium">Verified Repos</div>
+              <div className="text-xs text-secondary opacity-70 mt-1">GitHub integrated</div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sage-400 to-earth-400 mb-2 group-hover:scale-110 transition-transform">
                 95%
               </div>
-              <div className="text-sm text-forest-300 font-medium">Accuracy Rate</div>
-              <div className="text-xs text-forest-500 mt-1">AI precision</div>
+              <div className="text-sm text-secondary font-medium">Accuracy Rate</div>
+              <div className="text-xs text-secondary opacity-70 mt-1">AI precision</div>
             </div>
             <div className="text-center group">
               <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-earth-400 to-sage-400 mb-2 group-hover:scale-110 transition-transform">
                 &lt;24h
               </div>
-              <div className="text-sm text-forest-300 font-medium">Avg. Processing</div>
-              <div className="text-xs text-forest-500 mt-1">lightning fast</div>
+              <div className="text-sm text-secondary font-medium">Avg. Processing</div>
+              <div className="text-xs text-secondary opacity-70 mt-1">lightning fast</div>
             </div>
           </div>
           
@@ -389,26 +389,26 @@ export default function Home() {
 
       {/* How It Works */}
       <section className="space-y-8">
-        <h2 className="text-3xl font-bold text-center text-forest-50">How ProofStack Works</h2>
+        <h2 className="text-3xl font-bold text-center text-primary">How ProofStack Works</h2>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-sage-700 text-forest-50 rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">1</div>
-            <h3 className="text-lg font-semibold text-forest-50">Upload & Connect</h3>
-            <p className="text-forest-300">
+            <div className="w-16 h-16 bg-sage-700 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">1</div>
+            <h3 className="text-lg font-semibold text-primary">Upload & Connect</h3>
+            <p className="text-secondary">
               Upload your projects, code samples, or connect your GitHub repositories.
             </p>
           </div>
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-sage-700 text-forest-50 rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">2</div>
-            <h3 className="text-lg font-semibold text-forest-50">AI Analysis</h3>
-            <p className="text-forest-300">
+            <div className="w-16 h-16 bg-sage-700 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">2</div>
+            <h3 className="text-lg font-semibold text-primary">AI Analysis</h3>
+            <p className="text-secondary">
               Our AI analyzes your work and extracts specific skills with supporting evidence.
             </p>
           </div>
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-sage-700 text-forest-50 rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">3</div>
-            <h3 className="text-lg font-semibold text-forest-50">Get Verified</h3>
-            <p className="text-forest-300">
+            <div className="w-16 h-16 bg-sage-700 text-white rounded-full flex items-center justify-center mx-auto text-xl font-bold border-2 border-sage-600">3</div>
+            <h3 className="text-lg font-semibold text-primary">Get Verified</h3>
+            <p className="text-secondary">
               Receive cryptographically signed proofs that employers and recruiters can verify.
             </p>
           </div>
