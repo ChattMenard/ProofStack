@@ -123,7 +123,7 @@ export default function UserProfile() {
             {pathname === '/' && '🏠 Welcome'}
             {pathname?.startsWith('/professional/dashboard') && '📊 My Dashboard'}
             {pathname?.startsWith('/professional/preferences') && '🎯 Preferences'}
-            {pathname?.startsWith('/professional/verify') && '✓ Verify Accounts'}
+            {pathname?.startsWith('/professional/verify') && '✓ Verification'}
             {pathname?.startsWith('/professional') && '👤 Professional'}
             {pathname?.startsWith('/portfolio') && '📁 My Portfolio'}
             {pathname?.startsWith('/upload') && '📤 Upload Work'}
