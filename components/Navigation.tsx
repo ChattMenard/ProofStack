@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const navItems = [
-  { href: '/portfolios', label: 'For Hire' },
+  { href: '/portfolios', label: 'Hire' },
   { href: '/projectlistings', label: 'Hiring' },
 ]
 
 const signupLinks = [
-  { href: '/employer/signup', label: 'For Employers' },
-  { href: '/signup', label: 'For Professionals' },
+  { href: '/employer/signup', label: 'Employers' },
+  { href: '/signup', label: 'Professionals' },
 ]
 
 export default function Navigation() {
