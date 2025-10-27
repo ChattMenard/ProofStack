@@ -42,9 +42,9 @@ export async function POST(request: NextRequest) {
 
           // Map price IDs to plans
           const planMapping: Record<string, { tier: string; limit: number; price: number }> = {
-            'price_basic_job_post': { tier: 'basic', limit: 1, price: 249 },
-            'price_professional_job_post': { tier: 'professional', limit: 10, price: 949 },
-            'price_enterprise_job_post': { tier: 'enterprise', limit: -1, price: 2499 }
+            'price_1SMrExEQExutgDZV4l5aJXcr': { tier: 'basic', limit: 1, price: 249 },
+            'price_1SMrEyEQExutgDZVhqSCfHuC': { tier: 'professional', limit: 10, price: 949 },
+            'price_1SMrEyEQExutgDZVZG4GabS3': { tier: 'enterprise', limit: -1, price: 2499 }
           }
 
           const planDetails = planMapping[priceId] || { tier: 'basic', limit: 1, price: 249 }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
             .update({
               subscription_tier: planDetails.tier,
               subscription_price: planDetails.price,
-              billing_cycle: priceId === 'price_enterprise_job_post' ? 'yearly' : 'monthly',
+              billing_cycle: priceId === 'price_1SMrEyEQExutgDZVZG4GabS3' ? 'yearly' : 'monthly',
               stripe_subscription_id: subscriptionData.id,
               job_post_limit: planDetails.limit,
               job_posts_used: 0,
@@ -72,9 +72,9 @@ export async function POST(request: NextRequest) {
           const priceId = subscription.items.data[0].price.id
 
           const tierMapping: Record<string, string> = {
-            'price_boost_standard': 'standard',
-            'price_boost_premium': 'premium',
-            'price_boost_featured': 'featured'
+            'price_1SMrEzEQExutgDZVOVMMHQvN': 'standard',
+            'price_1SMrF0EQExutgDZVJ18doYbU': 'premium',
+            'price_1SMrF0EQExutgDZV4Gc0RZac': 'featured'
           }
 
           const tier = tierMapping[priceId] || 'standard'

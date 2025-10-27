@@ -1,0 +1,20 @@
+# Stripe Price IDs - Generated 2025-10-27 08:17:45
+
+## Job Posting Plans
+STRIPE_BASIC_JOB_POST=price_1SMrExEQExutgDZV4l5aJXcr
+STRIPE_PROFESSIONAL_JOB_POST=price_1SMrEyEQExutgDZVhqSCfHuC
+STRIPE_ENTERPRISE_JOB_POST=price_1SMrEyEQExutgDZVZG4GabS3
+
+## Portfolio Boost Plans
+STRIPE_BOOST_STANDARD=price_1SMrEzEQExutgDZVOVMMHQvN
+STRIPE_BOOST_PREMIUM=price_1SMrF0EQExutgDZVJ18doYbU
+STRIPE_BOOST_FEATURED=price_1SMrF0EQExutgDZV4Gc0RZac
+
+## Update app/pricing/employer/page.tsx:
+Replace these stripePriceId values:
+- 'price_basic_job_post' → 'price_1SMrExEQExutgDZV4l5aJXcr'
+- 'price_professional_job_post' → 'price_1SMrEyEQExutgDZVhqSCfHuC'
+- 'price_enterprise_job_post' → 'price_1SMrEyEQExutgDZVZG4GabS3'
+- 'price_boost_standard' → 'price_1SMrEzEQExutgDZVOVMMHQvN'
+- 'price_boost_premium' → 'price_1SMrF0EQExutgDZVJ18doYbU'
+- 'price_boost_featured' → 'price_1SMrF0EQExutgDZV4Gc0RZac'

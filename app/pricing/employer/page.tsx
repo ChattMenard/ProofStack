@@ -51,7 +51,7 @@ export default function EmployerPricingPage() {
       price: 249,
       billingCycle: 'monthly',
       jobPostLimit: 1,
-      stripePriceId: 'price_basic_job_post',
+      stripePriceId: 'price_1SMrExEQExutgDZV4l5aJXcr',
       features: [
         '1 active job posting',
         '30-day listing duration',
@@ -68,7 +68,7 @@ export default function EmployerPricingPage() {
       billingCycle: 'monthly',
       jobPostLimit: 10,
       isPopular: true,
-      stripePriceId: 'price_professional_job_post',
+      stripePriceId: 'price_1SMrEyEQExutgDZVhqSCfHuC',
       features: [
         '10 active job postings',
         '60-day listing duration',
@@ -86,7 +86,7 @@ export default function EmployerPricingPage() {
       price: 2499,
       billingCycle: 'yearly',
       jobPostLimit: -1, // unlimited
-      stripePriceId: 'price_enterprise_job_post',
+      stripePriceId: 'price_1SMrEyEQExutgDZVZG4GabS3',
       features: [
         'Unlimited job postings',
         'Unlimited listing duration',
@@ -106,7 +106,7 @@ export default function EmployerPricingPage() {
       id: 'standard',
       name: 'Standard Boost',
       price: 19,
-      stripePriceId: 'price_boost_standard',
+      stripePriceId: 'price_1SMrEzEQExutgDZVOVMMHQvN',
       features: [
         'Highlighted in search results',
         'Standard badge on profile',
@@ -118,7 +118,7 @@ export default function EmployerPricingPage() {
       id: 'premium',
       name: 'Premium Boost',
       price: 49,
-      stripePriceId: 'price_boost_premium',
+      stripePriceId: 'price_1SMrF0EQExutgDZVJ18doYbU',
       features: [
         'Top 10 search placement',
         'Premium badge on profile',
@@ -131,7 +131,7 @@ export default function EmployerPricingPage() {
       id: 'featured',
       name: 'Featured Boost',
       price: 99,
-      stripePriceId: 'price_boost_featured',
+      stripePriceId: 'price_1SMrF0EQExutgDZV4Gc0RZac',
       features: [
         'Top 3 guaranteed placement',
         'Featured badge on profile',
