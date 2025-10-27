@@ -78,8 +78,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {/* Sticky Header with Backdrop Blur */}
           <header className="sticky top-0 z-50 bg-primary/80 backdrop-blur-lg border-b border-default relative">
             <div className="max-w-7xl mx-auto px-6 py-4">
-              <div className="flex justify-between items-center">
-                {/* Logo Section - Goldilocks Size */}
+              <div className="grid grid-cols-3 items-center">
+                {/* Logo Section - Left */}
                 <Link href="/" className="flex items-center gap-4 group">
                   <div className="relative">
                     <div className="absolute inset-0 bg-sage-500/20 dark:bg-sage-400/20 blur-xl rounded-full group-hover:bg-sage-500/30 dark:group-hover:bg-sage-400/30 transition-all duration-300"></div>
@@ -99,16 +99,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   </div>
                 </Link>
 
-                {/* Navigation & Actions */}
-                <div className="flex items-center gap-6">
-                  {/* Navigation Links */}
+                {/* Navigation Links - Center */}
+                <div className="flex justify-center">
                   <Navigation />
+                </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-3">
-                    <ThemeToggle />
-                    <UserProfile />
-                  </div>
+                {/* Action Buttons - Right */}
+                <div className="flex items-center gap-3 justify-end">
+                  <ThemeToggle />
+                  <UserProfile />
                 </div>
               </div>
             </div>
