@@ -83,6 +83,28 @@ export default function Navigation() {
           )}
         </div>
       ))}
+      
+      {/* My Messages - for logged-in users */}
+      {isSignedIn && userRole === 'professional' && professionalQuickLinks.map((link) => (
+        <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative ml-3">
+          {link.label}
+          {link.href.includes('/messages') && unreadCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </Link>
+      ))}
+      {isSignedIn && userRole === 'employer' && employerQuickLinks.map((link) => (
+        <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative ml-3">
+          {link.label}
+          {link.href.includes('/messages') && unreadCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </Link>
+      ))}
     </nav>
   )
 }
