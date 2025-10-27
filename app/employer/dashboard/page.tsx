@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabaseServerClient';
 import Link from 'next/link';
+import SubscriptionUsageWidget from '@/components/SubscriptionUsageWidget';
 
 export default async function EmployerDashboardPage({
   searchParams,
@@ -115,6 +116,9 @@ export default async function EmployerDashboardPage({
           </div>
         </div>
       )}
+
+      {/* Subscription Usage Widget */}
+      <SubscriptionUsageWidget />
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
