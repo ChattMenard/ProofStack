@@ -1,11 +1,10 @@
 import { createServerSupabaseClient } from '@/lib/supabaseServerClient';
 import Link from 'next/link';
-import HireAttemptsRemaining from '@/components/HireAttemptsRemaining';
 
 export default async function EmployerDashboardPage({
   searchParams,
 }: {
-  searchParams: { welcome?: string; founding?: string; foundingNumber?: string };
+  searchParams: { welcome?: string };
 }) {
   const supabase = createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -19,7 +18,7 @@ export default async function EmployerDashboardPage({
 
   const { data: organization } = await supabase
     .from('organizations')
-    .select('*, is_founding_employer, founding_employer_number, pro_expires_at, subscription_tier')
+    .select('*, pro_expires_at, subscription_tier')
     .eq('id', profile?.organization_id)
     .single();
 
@@ -50,50 +49,8 @@ export default async function EmployerDashboardPage({
 
   return (
     <div className="space-y-8">
-      {/* Founding Employer Celebration Banner */}
-      {(searchParams.founding || organization?.is_founding_employer) && (
-        <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-2xl p-8 text-white shadow-2xl border-4 border-amber-300">
-          <div className="flex items-start gap-6">
-            <div className="flex-shrink-0">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-xl">
-                <span className="text-5xl">🏆</span>
-              </div>
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold">
-                  Founding Employer #{organization?.founding_employer_number}
-                </h1>
-                <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold">
-                  PRO TIER
-                </span>
-              </div>
-              <p className="text-xl opacity-95 mb-4">
-                🎉 Congratulations! You're one of our first 5 employers. You have <strong>1 month of Pro tier FREE</strong> with all premium features!
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                  </svg>
-                  <span>
-                    Expires: {organization?.pro_expires_at ? new Date(organization.pro_expires_at).toLocaleDateString() : 'N/A'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  <span>Founding Member Badge</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Welcome Banner */}
-      {searchParams.welcome && !searchParams.founding && (
+      {searchParams.welcome && (
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
           <h1 className="text-3xl font-bold mb-2">Welcome to ProofStack! 🎉</h1>
           <p className="text-lg opacity-90 mb-6">
@@ -106,11 +63,6 @@ export default async function EmployerDashboardPage({
             Discover Professionals →
           </Link>
         </div>
-      )}
-
-      {/* Hire Attempts Widget - Step 2 Complete! */}
-      {organization && (
-        <HireAttemptsRemaining employerOrgId={organization.id} />
       )}
 
       {/* Organization Info */}

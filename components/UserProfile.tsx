@@ -3,6 +3,12 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '../lib/supabaseClient'
+import { 
+  professionalNavigation, 
+  employerNavigation, 
+  adminNavigation,
+  getAllLinksFlat
+} from '@/lib/navigationConfig'
 
 export default function UserProfile() {
   const router = useRouter()
@@ -25,7 +31,7 @@ export default function UserProfile() {
       if (data.user) {
         const { data: profileData, error } = await supabase
           .from('profiles')
-          .select('role, is_founder, user_type, is_admin, username, email')
+          .select('role, user_type, is_admin, username, email')
           .eq('auth_uid', data.user.id)
           .single()
         
@@ -65,7 +71,7 @@ export default function UserProfile() {
         if (session?.user) {
           supabase
             .from('profiles')
-            .select('role, is_founder, user_type, is_admin, username, email')
+            .select('role, user_type, is_admin, username, email')
             .eq('auth_uid', session.user.id)
             .single()
             .then(({ data: profileData, error }: { data: any, error: any }) => {
@@ -106,12 +112,12 @@ export default function UserProfile() {
     router.push('/')
   }
 
-  // Don't show anything on login/signup pages or if still loading
-  if (pathname === '/login' || pathname === '/signup' || loading) {
+  // Don't show anything on login/signup pages
+  if (pathname === '/login' || pathname === '/signup') {
     return null
   }
 
-  // Show Sign In / Sign Up buttons if not logged in
+  // Show Sign In / Sign Up buttons if not logged in (or still loading)
   if (!user) {
     return (
       <div className="flex items-center gap-3">
@@ -141,7 +147,7 @@ export default function UserProfile() {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="px-5 py-2.5 bg-white dark:bg-gray-800 border-2 border-sage-600 dark:border-sage-500 text-sage-700 dark:text-sage-300 text-base rounded-lg hover:bg-sage-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 font-medium"
           >
-            👤 My Account
+            My Account
             <svg className={`w-5 h-5 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -153,51 +159,38 @@ export default function UserProfile() {
               {/* Employer Menu */}
               {profile?.user_type === 'employer' && (
                 <>
-                  <a href="/employer/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    🏠 Dashboard
-                  </a>
-                  <a href="/employer/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    🏢 Company Profile
-                  </a>
-                  <a href="/employer/post-job" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    ➕ Post a Job
-                  </a>
-                  <a href="/employer/applications" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📋 Applications
-                  </a>
-                  <a href="/employer/discover" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    � Discover Talent
-                  </a>
-                  <a href="/employer/saved" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    ⭐ Saved Professionals
-                  </a>
-                  <a href="/employer/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    💬 Messages
-                  </a>
-                  <a href="/employer/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    ⚙️ Settings
-                  </a>
+                  {employerNavigation.map((section) => (
+                    <div key={section.title}>
+                      {section.links.map((link) => (
+                        <a 
+                          key={link.href}
+                          href={link.href} 
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          {link.icon} {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  ))}
                 </>
               )}
               
               {/* Professional Menu - show for professionals AND admins */}
               {(profile?.user_type === 'professional' || user.email === 'mattchenard2009@gmail.com') && (
                 <>
-                  <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📊 My Dashboard
-                  </a>
-                  <a href={username ? `/portfolio/${username}` : '/portfolio'} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📁 My Portfolio
-                  </a>
-                  <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📤 Upload Work
-                  </a>
-                  <a href="/professional/preferences" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    🎯 Preferences
-                  </a>
-                  <a href="/professional/verify" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    ✓ Verify Accounts
-                  </a>
+                  {professionalNavigation.map((section) => (
+                    <div key={section.title}>
+                      {section.links.map((link) => (
+                        <a 
+                          key={link.href}
+                          href={link.href} 
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                          {link.icon} {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  ))}
                 </>
               )}
               
@@ -206,36 +199,21 @@ export default function UserProfile() {
               {/* Admin Menu - Only for mattchenard2009@gmail.com */}
               {user.email === 'mattchenard2009@gmail.com' && (
                 <>
-                  <a href="/admin/dashboard" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
-                    ⚙️ Admin Dashboard
-                  </a>
-                  <a href="/admin/security" className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold">
-                    🔒 Security
-                  </a>
+                  {adminNavigation.map((section) => (
+                    <div key={section.title}>
+                      {section.links.map((link) => (
+                        <a 
+                          key={link.href}
+                          href={link.href} 
+                          className="block px-4 py-2 text-sm text-amber-600 dark:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold"
+                        >
+                          {link.icon} {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  ))}
                 </>
               )}
-              
-              {/* Default if no role - show all options */}
-              {!profile?.role && (
-                <>
-                  <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📊 My Dashboard
-                  </a>
-                  <a href={username ? `/portfolio/${username}` : '/portfolio'} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📁 My Portfolio
-                  </a>
-                  <a href="/upload" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📤 Upload Work
-                  </a>
-                </>
-              )}
-              
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              
-              {/* Universal Settings - for all users */}
-              <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                ⚙️ Settings
-              </a>
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               
@@ -244,14 +222,8 @@ export default function UserProfile() {
                 onClick={handleSignOut}
                 className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
               >
-                🚪 Sign Out
+                Sign Out
               </button>
-              
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-              
-              <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
-                {user.email}
-              </div>
             </div>
           </div>
           )}

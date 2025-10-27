@@ -64,7 +64,7 @@ export default function PricingPage() {
             {/* Popular Badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
               <span className="px-4 py-1 bg-gradient-to-r from-sage-600 to-sage-500 text-forest-50 text-sm font-bold rounded-full shadow-lg">
-                ⭐ FREE FOREVER
+                ⭐ FREE FOR PERSONAL USE
               </span>
             </div>
 
@@ -130,7 +130,7 @@ export default function PricingPage() {
             </button>
             
             <p className="text-center text-xs text-forest-400 mt-4">
-              ✨ No credit card required • 🚀 Start instantly
+              ✨ Start instantly
             </p>
           </div>
 
@@ -404,7 +404,7 @@ export default function PricingPage() {
               </Link>
             </div>
             <p className="text-sm text-forest-400 mt-6">
-              No credit card required • Setup in minutes • Cancel anytime
+              Setup in minutes • Cancel anytime
             </p>
           </div>
         </div>

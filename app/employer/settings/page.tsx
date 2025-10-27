@@ -166,22 +166,6 @@ export default function EmployerSettingsPage() {
                 Contact support to change your email address
               </p>
             </div>
-
-            {profile?.is_founding_employer && (
-              <div className="p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🏆</span>
-                  <div>
-                    <div className="font-semibold text-yellow-900 dark:text-yellow-200">
-                      Founding Employer #{profile.founding_employer_number}
-                    </div>
-                    <div className="text-sm text-yellow-800 dark:text-yellow-300">
-                      You're one of our first supporters! Thank you for being part of our journey.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

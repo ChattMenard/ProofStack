@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
-import HireLimitGuard from '@/components/HireLimitGuard';
 import ProofScoreV2 from '@/components/ProofScoreV2';
 import PreferencesDisplay from '@/components/PreferencesDisplay';
 import VerificationBadges from '@/components/VerificationBadges';
@@ -733,29 +732,13 @@ export default function DiscoverPage() {
                         >
                           View Profile
                         </Link>
-                        {/* Step 3: Hire button wrapped with limit guard */}
-                        {currentUser && employerOrg ? (
-                          <HireLimitGuard
-                            employerOrgId={employerOrg.id}
-                            employerUserId={currentUser.id}
-                            professionalId={prof.id}
-                            attemptType="message"
-                          >
-                            <button
-                              onClick={() => handleMessage(prof.id)}
-                              className="w-full sm:w-auto px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm sm:text-base"
-                            >
-                              Message
-                            </button>
-                          </HireLimitGuard>
-                        ) : (
-                          <button
-                            onClick={() => handleMessage(prof.id)}
-                            className="w-full sm:w-auto px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm sm:text-base"
-                          >
-                            Message
-                          </button>
-                        )}
+                        {/* Message button */}
+                        <button
+                          onClick={() => handleMessage(prof.id)}
+                          className="w-full sm:w-auto px-4 py-2 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm sm:text-base"
+                        >
+                          Message
+                        </button>
                       </div>
                     </div>
                   </div>

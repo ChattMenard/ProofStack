@@ -90,7 +90,7 @@ export default function EmployerHero() {
             href="/employer/signup"
             className="px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-lg text-lg shadow-lg shadow-green-500/50 transition-all hover:shadow-xl hover:shadow-green-500/60 hover:-translate-y-0.5"
           >
-            Start 7-Day Free Trial →
+            Get Started →
           </Link>
           
           <Link 
@@ -103,7 +103,7 @@ export default function EmployerHero() {
 
         {/* Trust Indicators */}
         <div className="mt-8 text-center text-sm text-gray-400">
-          💳 No credit card required for trial • Cancel anytime
+          💳 Start instantly • Cancel anytime
         </div>
 
         {/* Trust Indicators */}

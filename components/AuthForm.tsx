@@ -25,13 +25,19 @@ export default function AuthForm({ mode = 'login', accountType = 'professional' 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: any, session: any) => {
       if (event === 'SIGNED_IN' && session) {
         posthog.capture('auth_success', { method: event })
-        // Redirect to dashboard after successful sign in
-        router.push('/dashboard')
+        
+        // For signup mode with professionals, redirect to onboarding
+        if (isSignup && accountType === 'professional') {
+          router.push('/onboarding')
+        } else {
+          // Otherwise redirect to dashboard
+          router.push('/dashboard')
+        }
       }
     })
 
     return () => subscription.unsubscribe()
-  }, [router])
+  }, [router, isSignup, accountType])
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

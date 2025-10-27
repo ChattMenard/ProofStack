@@ -8,6 +8,7 @@ import WorkSamplesSection from '../../../components/WorkSamplesSection'
 import ReviewsSection from '../../../components/ReviewsSection'
 import PreferencesDisplay from '../../../components/PreferencesDisplay'
 import VerificationBadges from '../../../components/VerificationBadges'
+import GitActivity from '../../../components/GitActivity'
 
 interface Profile {
   id: string
@@ -21,8 +22,6 @@ interface Profile {
   linkedin_url?: string
   github_username?: string
   plan?: string
-  is_founder?: boolean
-  founder_number?: number
   created_at: string
 }
 
@@ -156,12 +155,6 @@ export default function PortfolioPage({ params }: { params: { username: string }
                       layout="horizontal"
                     />
                   </div>
-                  
-                  {profile.is_founder && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-earth-600 to-earth-500 text-white shadow-sm mb-3">
-                      🎯 Founding Member #{profile.founder_number}
-                    </span>
-                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -341,6 +334,9 @@ export default function PortfolioPage({ params }: { params: { username: string }
               <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Verified Work Samples</h2>
               <WorkSamplesSection professionalId={profile.id} />
             </div>
+
+            {/* Git Activity */}
+            <GitActivity profileId={profile.id} />
 
             {/* Reviews */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">

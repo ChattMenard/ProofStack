@@ -4,17 +4,21 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import VerificationBadges from '@/components/VerificationBadges';
+import SkillLevelBadge from '@/components/SkillLevelBadge';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+type SkillLevel = 'junior' | 'mid' | 'senior' | 'lead' | 'unverified';
+
 export default function PortfoliosPage() {
   const [professionals, setProfessionals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedSkillLevels, setSelectedSkillLevels] = useState<SkillLevel[]>([]);
 
   useEffect(() => {
     loadProfessionals();
@@ -39,13 +43,24 @@ export default function PortfoliosPage() {
     }
   };
 
+  const toggleSkillLevel = (level: SkillLevel) => {
+    setSelectedSkillLevels(prev =>
+      prev.includes(level)
+        ? prev.filter(l => l !== level)
+        : [...prev, level]
+    );
+  };
+
   const filteredProfessionals = professionals.filter(prof => {
     const matchesSearch = !searchQuery || 
       prof.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       prof.headline?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       prof.bio?.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesSearch;
+    const matchesSkillLevel = selectedSkillLevels.length === 0 ||
+      selectedSkillLevels.includes(prof.skill_level || 'unverified');
+    
+    return matchesSearch && matchesSkillLevel;
   });
 
   if (loading) {
@@ -79,8 +94,36 @@ export default function PortfoliosPage() {
             placeholder="Search The Talent by name, skills, or bio..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white mb-4"
           />
+          
+          {/* Skill Level Filter */}
+          <div>
+            <p className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">Filter by Skill Level:</p>
+            <div className="flex flex-wrap gap-2">
+              {(['junior', 'mid', 'senior', 'lead'] as SkillLevel[]).map(level => (
+                <button
+                  key={level}
+                  onClick={() => toggleSkillLevel(level)}
+                  className={`transition-all ${
+                    selectedSkillLevels.includes(level)
+                      ? 'ring-2 ring-indigo-600 ring-offset-2'
+                      : 'opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <SkillLevelBadge level={level} size="sm" />
+                </button>
+              ))}
+              {selectedSkillLevels.length > 0 && (
+                <button
+                  onClick={() => setSelectedSkillLevels([])}
+                  className="ml-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Results Count */}
@@ -125,6 +168,13 @@ export default function PortfoliosPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
                   {prof.bio}
                 </p>
+              )}
+
+              {/* Skill Level Badge */}
+              {prof.skill_level && prof.skill_level !== 'unverified' && (
+                <div className="mb-3">
+                  <SkillLevelBadge level={prof.skill_level} size="sm" />
+                </div>
               )}
 
               {/* Verification Badges */}
