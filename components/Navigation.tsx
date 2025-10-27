@@ -68,16 +68,25 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="hidden md:flex items-center gap-6">
-      {publicNavigation.map((item) => (
-        <Link 
-          key={item.href} 
-          href={item.href} 
-          className={`text-sm font-medium transition-colors ${isActive(item.href) ? 'text-sage-400 dark:text-sage-300 border-b-2 border-sage-400' : 'text-gray-600 dark:text-gray-400 hover:text-sage-400'}`}
-        >
-          {item.label}
-        </Link>
-      ))}
+    <nav className="hidden md:flex items-center gap-3">
+      {/* Marketplaces with separator */}
+      <div className="flex items-center gap-3">
+        {publicNavigation.map((item, idx) => (
+          <div key={item.href} className="flex items-center gap-3">
+            <Link 
+              href={item.href} 
+              className={`text-sm font-medium transition-colors ${isActive(item.href) ? 'text-sage-400 dark:text-sage-300' : 'text-gray-600 dark:text-gray-400 hover:text-sage-400'}`}
+            >
+              {item.label}
+            </Link>
+            {idx < publicNavigation.length - 1 && (
+              <span className="text-gray-400 dark:text-gray-500">|</span>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      {/* User-specific quick links */}
       {isSignedIn && userRole === 'professional' && professionalQuickLinks.map((link) => (
         <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative">
           {link.label}
@@ -91,7 +100,7 @@ export default function Navigation() {
       {isSignedIn && userRole === 'employer' && employerQuickLinks.map((link) => (
         <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative">
           {link.label}
-          {link.href.includes('/messages') && unreadCount > 0 && (
+          {link.href.includes('/messages') && unreadCount > 9 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>

@@ -111,9 +111,9 @@ export function getAllLinksFlat(sections: NavSection[]): NavLink[] {
 
 // Quick access links for main navigation (most important items)
 export const professionalQuickLinks: NavLink[] = [
-  { href: '/professional/messages', label: 'Messages', icon: '💬' },
+  { href: '/professional/messages', label: 'My Messages', icon: '💬' },
 ]
 
 export const employerQuickLinks: NavLink[] = [
-  { href: '/employer/messages', label: 'Messages', icon: '💬' },
+  { href: '/employer/messages', label: 'My Messages', icon: '💬' },
 ]
