@@ -189,28 +189,6 @@ export default function AuthForm({ mode = 'login', accountType = 'professional' 
     }
   }
 
-  const handleLinkedIn = async () => {
-    setMessage('')
-    try {
-      posthog.capture('auth_linkedin_started', isSignup ? { account_type: accountType } : {})
-      const { error } = await supabase.auth.signInWithOAuth({ 
-        provider: 'linkedin_oidc',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          ...(isSignup && {
-            data: {
-              user_type: accountType
-            }
-          })
-        }
-      })
-      if (error) throw error
-    } catch (err: any) {
-      posthog.capture('auth_error', { method: 'linkedin', error: err.message })
-      setMessage(err.message || 'Error signing in with LinkedIn')
-    }
-  }
-
   return (
     <div className="space-y-4 max-w-sm bg-forest-900 p-8 rounded-lg border border-forest-800 shadow-xl">
       {/* Show email confirmation message if signup successful */}
@@ -394,15 +372,6 @@ export default function AuthForm({ mode = 'login', accountType = 'professional' 
         >
           <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
           {isSignup ? 'Sign up with Google' : 'Sign in with Google'}
-        </button>
-
-        <button 
-          type="button" 
-          onClick={handleLinkedIn}
-          className="w-full bg-forest-800 hover:bg-forest-700 text-forest-50 px-4 py-2 rounded border border-forest-700 flex items-center justify-center gap-2 transition"
-        >
-          <img src="https://www.linkedin.com/favicon.ico" alt="LinkedIn" className="w-4 h-4" />
-          {isSignup ? 'Sign up with LinkedIn' : 'Sign in with LinkedIn'}
         </button>
 
         <button 

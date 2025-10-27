@@ -180,15 +180,19 @@ export default function UserProfile() {
                 <>
                   {professionalNavigation.map((section) => (
                     <div key={section.title}>
-                      {section.links.map((link) => (
-                        <a 
-                          key={link.href}
-                          href={link.href} 
-                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          {link.icon} {link.label}
-                        </a>
-                      ))}
+                      {section.links.map((link) => {
+                        // Replace [username] placeholder with actual username
+                        const href = link.href.replace('[username]', username || profile?.email || '')
+                        return (
+                          <a 
+                            key={link.href}
+                            href={href} 
+                            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            {link.icon} {link.label}
+                          </a>
+                        )
+                      })}
                     </div>
                   ))}
                 </>
