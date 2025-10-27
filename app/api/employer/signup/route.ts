@@ -46,6 +46,27 @@ export async function POST(request: Request) {
 
     const userId = authData.user.id;
 
+    // Wait a moment for the trigger to create the profile
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Get the profile ID (which is different from auth user ID)
+    const { data: profileData, error: profileLookupError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('auth_uid', userId)
+      .single();
+
+    if (profileLookupError || !profileData) {
+      console.error('Profile lookup error:', profileLookupError);
+      await supabase.auth.admin.deleteUser(userId);
+      return NextResponse.json(
+        { error: 'Failed to create user profile' },
+        { status: 500 }
+      );
+    }
+
+    const profileId = profileData.id;
+
     // 2. Create organization slug from company name
     const slug = companyName
       .toLowerCase()
@@ -62,7 +83,7 @@ export async function POST(request: Request) {
         industry: industry,
         company_size: companySize,
         website: website || null,
-        created_by: userId,
+        created_by: profileId,
         subscription_tier: 'free'
       })
       .select()
@@ -83,7 +104,7 @@ export async function POST(request: Request) {
       .from('organization_members')
       .insert({
         organization_id: orgData.id,
-        user_id: userId,
+        user_id: profileId,
         role: 'owner',
         joined_at: new Date().toISOString(),
         is_active: true
@@ -107,7 +128,7 @@ export async function POST(request: Request) {
         user_type: 'employer',
         organization_id: orgData.id
       })
-      .eq('id', userId);
+      .eq('id', profileId);
 
     if (profileError) {
       console.error('Profile update error:', profileError);

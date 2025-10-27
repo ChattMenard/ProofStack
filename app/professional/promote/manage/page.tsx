@@ -39,7 +39,7 @@ function ManagePromotionContent() {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
-        router.push('/auth/signin');
+        router.push('/login');
         return;
       }
 

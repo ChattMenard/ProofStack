@@ -11,7 +11,7 @@ export default async function EmployerDashboardLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/auth/signin?redirect=/employer/dashboard');
+    redirect('/login?redirect=/employer/dashboard');
   }
 
   // TODO: Add check for user_type === 'employer'

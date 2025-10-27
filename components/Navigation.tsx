@@ -4,9 +4,9 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-const navItems = [
+const marketplaceLinks = [
   { href: '/portfolios', label: 'Professionals' },
-  { href: '/projectlistings', label: 'Employers' },
+  { href: '/projectlistings', label: 'Jobs' },
 ]
 
 const signupLinks = [
@@ -18,16 +18,39 @@ export default function Navigation() {
   const pathname = usePathname()
   const router = useRouter()
   const [isSignedIn, setIsSignedIn] = useState(false)
+  const [userRole, setUserRole] = useState<string | null>(null)
 
   useEffect(() => {
-    // Check if user is signed in
-    supabase.auth.getUser().then(({ data }: any) => {
+    // Check if user is signed in and get role
+    supabase.auth.getUser().then(async ({ data }: any) => {
       setIsSignedIn(!!data.user)
+      
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('auth_uid', data.user.id)
+          .single()
+        
+        setUserRole(profile?.user_type || null)
+      }
     })
 
     // Listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((event: any, session: any) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event: any, session: any) => {
       setIsSignedIn(!!session?.user)
+      
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('auth_uid', session.user.id)
+          .single()
+        
+        setUserRole(profile?.user_type || null)
+      } else {
+        setUserRole(null)
+      }
     })
 
     return () => {
@@ -48,77 +71,99 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="hidden md:flex items-center gap-4">
-      {/* Main navigation links - only show when signed in */}
+    <nav className="hidden md:flex items-center gap-6">
+      {/* Signed In - Show role-specific quick links + marketplace */}
       {isSignedIn && (
         <>
-          {navItems.map((item, index) => (
-            <span key={item.href} className="flex items-center gap-4">
+          {/* Employer Quick Links */}
+          {userRole === 'employer' && (
+            <>
               <Link
-                href={item.href}
-                className={`text-lg font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'text-sage-400 dark:text-sage-300 border-b-2 border-sage-400 dark:border-sage-300'
+                href="/employer/dashboard"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/employer/dashboard')
+                    ? 'text-sage-400 dark:text-sage-300'
                     : 'text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300'
                 }`}
               >
-                {item.label}
+                🏠 Dashboard
               </Link>
-              {index < navItems.length - 1 && (
-                <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
-              )}
-            </span>
+              <Link
+                href="/employer/post-job"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
+              >
+                ➕ Post Job
+              </Link>
+              <Link
+                href="/employer/applications"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
+              >
+                📋 Applications
+              </Link>
+              <Link
+                href="/employer/discover"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
+              >
+                🔍 Discover
+              </Link>
+            </>
+          )}
+          
+          {/* Professional Quick Links */}
+          {userRole === 'professional' && (
+            <>
+              <Link
+                href="/professional/dashboard"
+                className={`text-sm font-medium transition-colors ${
+                  isActive('/professional/dashboard')
+                    ? 'text-sage-400 dark:text-sage-300'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300'
+                }`}
+              >
+                📊 Dashboard
+              </Link>
+              <Link
+                href="/upload"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors"
+              >
+                📤 Upload
+              </Link>
+            </>
+          )}
+          
+          {/* Marketplace Links - Always show when signed in */}
+          {marketplaceLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`text-sm font-medium transition-colors ${
+                isActive(item.href)
+                  ? 'text-sage-400 dark:text-sage-300 border-b-2 border-sage-400 dark:border-sage-300'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300'
+              }`}
+            >
+              {item.label}
+            </Link>
           ))}
         </>
       )}
       
-      {/* Signup links - only show when NOT signed in */}
+      {/* When NOT signed in - show marketplace links only */}
       {!isSignedIn && (
         <>
-          {signupLinks.map((item, index) => (
-            <span key={item.href} className="flex items-center gap-4">
-              <Link
-                href={item.href}
-                className={`px-4 py-2 text-lg font-medium transition-colors ${
-                  item.label === 'Professionals'
-                    ? 'text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400'
-                }`}
-              >
-                {item.label}
-              </Link>
-              {index < signupLinks.length - 1 && (
-                <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
-              )}
-            </span>
+          {marketplaceLinks.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`text-sm font-medium transition-colors ${
+                isActive(item.href)
+                  ? 'text-sage-400 dark:text-sage-300 border-b-2 border-sage-400 dark:border-sage-300'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300'
+              }`}
+            >
+              {item.label}
+            </Link>
           ))}
-          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
-          <Link
-            href="/login"
-            className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
-          >
-            Sign In
-          </Link>
-          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
-          <Link
-            href="/signup"
-            className="text-lg font-medium px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors"
-          >
-            Sign Up
-          </Link>
-        </>
-      )}
-
-      {/* Sign Out link - only show when signed in */}
-      {isSignedIn && (
-        <>
-          <span className="text-gray-400 dark:text-gray-600 text-lg">|</span>
-          <button
-            onClick={handleSignOut}
-            className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors"
-          >
-            Sign Out
-          </button>
         </>
       )}
     </nav>

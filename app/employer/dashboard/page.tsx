@@ -14,7 +14,7 @@ export default async function EmployerDashboardPage({
   const { data: profile } = await supabase
     .from('profiles')
     .select('*, organization_id')
-    .eq('id', user?.id)
+    .eq('auth_uid', user?.id)
     .single();
 
   const { data: organization } = await supabase
@@ -214,6 +214,23 @@ export default async function EmployerDashboardPage({
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Link
+            href="/employer/profile"
+            className="flex items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-sage-500 dark:hover:border-sage-500 transition-colors group"
+          >
+            <div className="p-3 bg-sage-100 dark:bg-sage-900/30 rounded-lg mr-4">
+              <svg className="w-6 h-6 text-sage-600 dark:text-sage-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-sage-600 dark:group-hover:text-sage-400">
+                Company Profile
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Edit your info</p>
+            </div>
+          </Link>
+
           <Link
             href="/employer/post-job"
             className="flex items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 transition-colors group"

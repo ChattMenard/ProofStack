@@ -30,10 +30,10 @@ interface JobPosting {
     name: string;
     logo_url: string | null;
     website: string | null;
-  };
+  } | null;
   employer: {
     full_name: string;
-  };
+  } | null;
 }
 
 export default function JobDetailPage({ params }: { params: { id: string } }) {
@@ -170,7 +170,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   {job.title}
                 </h1>
                 <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400 mb-4">
-                  {job.organization.logo_url && (
+                  {job.organization?.logo_url && (
                     <img
                       src={job.organization.logo_url}
                       alt={job.organization.name}
@@ -179,9 +179,9 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   )}
                   <div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {job.organization.name}
+                      {job.organization?.name || 'Company Name'}
                     </div>
-                    {job.organization.website && (
+                    {job.organization?.website && (
                       <a
                         href={job.organization.website}
                         target="_blank"

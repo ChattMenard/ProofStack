@@ -39,7 +39,7 @@ export default function EmployerSettingsPage() {
       const { data: profileData } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('auth_uid', user.id)
         .single();
 
       setProfile(profileData);

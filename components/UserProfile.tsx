@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '../lib/supabaseClient'
 
 export default function UserProfile() {
@@ -100,14 +101,29 @@ export default function UserProfile() {
     router.push('/')
   }
 
-  // Don't show anything if not logged in - CTA buttons are now in layout header
-  if (!user && pathname !== '/login' && pathname !== '/signup') {
-    return null
-  }
-
   // Don't show anything on login/signup pages or if still loading
   if (pathname === '/login' || pathname === '/signup' || loading) {
     return null
+  }
+
+  // Show Sign In / Sign Up buttons if not logged in
+  if (!user) {
+    return (
+      <div className="flex items-center gap-3">
+        <Link
+          href="/login"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400 transition-colors px-4 py-2"
+        >
+          Sign In
+        </Link>
+        <Link
+          href="/signup"
+          className="text-sm font-medium px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors"
+        >
+          Sign Up
+        </Link>
+      </div>
+    )
   }
 
   // Show user info and sign out if logged in
@@ -130,19 +146,28 @@ export default function UserProfile() {
             <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 animate-fadeIn">
               <div className="py-2">
               {/* Employer Menu */}
-              {profile?.role === 'employer' && (
+              {profile?.user_type === 'employer' && (
                 <>
+                  <a href="/employer/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    🏠 Dashboard
+                  </a>
+                  <a href="/employer/profile" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    🏢 Company Profile
+                  </a>
                   <a href="/employer/post-job" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     ➕ Post a Job
                   </a>
                   <a href="/employer/applications" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    📋 Job Applications
+                    📋 Applications
                   </a>
-                  <a href="/employer/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                    💬 Messages
+                  <a href="/employer/discover" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    � Discover Talent
                   </a>
                   <a href="/employer/saved" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     ⭐ Saved Professionals
+                  </a>
+                  <a href="/employer/messages" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    💬 Messages
                   </a>
                   <a href="/employer/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     ⚙️ Settings
@@ -151,7 +176,7 @@ export default function UserProfile() {
               )}
               
               {/* Professional Menu - show for professionals AND admins */}
-              {(profile?.role === 'professional' || user.email === 'mattchenard2009@gmail.com') && (
+              {(profile?.user_type === 'professional' || user.email === 'mattchenard2009@gmail.com') && (
                 <>
                   <a href="/professional/dashboard" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     📊 My Dashboard
@@ -206,6 +231,16 @@ export default function UserProfile() {
               <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                 ⚙️ Settings
               </a>
+              
+              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+              
+              {/* Sign Out Button */}
+              <button
+                onClick={handleSignOut}
+                className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+              >
+                🚪 Sign Out
+              </button>
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               

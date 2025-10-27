@@ -83,7 +83,7 @@ export default function DiscoverPage() {
     const { data: profile } = await supabase
       .from('profiles')
       .select('organization_id')
-      .eq('id', user.id)
+      .eq('auth_uid', user.id)
       .single();
 
     if (profile?.organization_id) {
@@ -135,7 +135,7 @@ export default function DiscoverPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        window.location.href = '/auth/signin';
+        window.location.href = '/login';
         return;
       }
 

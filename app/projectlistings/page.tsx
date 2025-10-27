@@ -22,7 +22,7 @@ interface JobPosting {
   organization: {
     name: string;
     logo_url: string | null;
-  };
+  } | null;
 }
 
 const supabase = createClient(
@@ -215,7 +215,7 @@ export default function ProjectListingsPage() {
                       {job.title}
                     </h3>
                     <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                      <span className="font-medium">{job.organization.name}</span>
+                      <span className="font-medium">{job.organization?.name || 'Company Name'}</span>
                       <span>•</span>
                       <span>{job.location || 'Location not specified'}</span>
                       {job.remote_allowed && (
@@ -226,7 +226,7 @@ export default function ProjectListingsPage() {
                       )}
                     </div>
                   </div>
-                  {job.organization.logo_url && (
+                  {job.organization?.logo_url && (
                     <img
                       src={job.organization.logo_url}
                       alt={job.organization.name}

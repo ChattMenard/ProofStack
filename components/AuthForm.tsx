@@ -6,9 +6,10 @@ import posthog from 'posthog-js'
 
 interface AuthFormProps {
   mode?: 'login' | 'signup'
+  accountType?: 'professional' | 'employer'
 }
 
-export default function AuthForm({ mode = 'login' }: AuthFormProps) {
+export default function AuthForm({ mode = 'login', accountType = 'professional' }: AuthFormProps) {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -16,6 +17,7 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
   const [usePassword, setUsePassword] = useState(mode === 'signup') // Default to password for signup
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [message, setMessage] = useState('')
+  const [emailSent, setEmailSent] = useState(false) // Track if confirmation email was sent
   const isSignup = mode === 'signup'
 
   // Listen for auth state changes and redirect
@@ -51,12 +53,16 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              user_type: accountType
+            }
           }
         })
         if (error) throw error
-        posthog.capture('auth_signup_success', { email_domain: email.split('@')[1] })
-        setMessage('Check your email to confirm your account!')
+        posthog.capture('auth_signup_success', { email_domain: email.split('@')[1], account_type: accountType })
+        setEmailSent(true)
+        setMessage('')
       } catch (err: any) {
         posthog.capture('auth_error', { method: 'signup_password', error: err.message })
         setMessage(err.message || 'Error creating account')
@@ -106,12 +112,23 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
       const { error } = await supabase.auth.signInWithOtp({ 
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+          data: isSignup ? {
+            user_type: accountType
+          } : undefined
         }
       })
       if (error) throw error
-      posthog.capture('auth_magic_link_sent', { email_domain: email.split('@')[1] })
-      setMessage('Check your email for the magic link.')
+      posthog.capture('auth_magic_link_sent', { 
+        email_domain: email.split('@')[1],
+        ...(isSignup && { account_type: accountType })
+      })
+      if (isSignup) {
+        setEmailSent(true)
+        setMessage('')
+      } else {
+        setMessage('Check your email for the magic link.')
+      }
     } catch (err: any) {
       posthog.capture('auth_error', { method: 'magic_link', error: err.message })
       setMessage(err.message || 'Error sending magic link')
@@ -121,11 +138,16 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
   const handleGitHub = async () => {
     setMessage('')
     try {
-      posthog.capture('auth_github_started')
+      posthog.capture('auth_github_started', isSignup ? { account_type: accountType } : {})
       const { error } = await supabase.auth.signInWithOAuth({ 
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${window.location.origin}/auth/callback`,
+          ...(isSignup && {
+            data: {
+              user_type: accountType
+            }
+          })
         }
       })
       if (error) throw error
@@ -138,7 +160,7 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
   const handleGoogle = async () => {
     setMessage('')
     try {
-      posthog.capture('auth_google_started')
+      posthog.capture('auth_google_started', isSignup ? { account_type: accountType } : {})
       const { error } = await supabase.auth.signInWithOAuth({ 
         provider: 'google',
         options: {
@@ -146,7 +168,12 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-          }
+          },
+          ...(isSignup && {
+            data: {
+              user_type: accountType
+            }
+          })
         }
       })
       if (error) throw error
@@ -159,11 +186,16 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
   const handleLinkedIn = async () => {
     setMessage('')
     try {
-      posthog.capture('auth_linkedin_started')
+      posthog.capture('auth_linkedin_started', isSignup ? { account_type: accountType } : {})
       const { error } = await supabase.auth.signInWithOAuth({ 
         provider: 'linkedin_oidc',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`
+          redirectTo: `${window.location.origin}/auth/callback`,
+          ...(isSignup && {
+            data: {
+              user_type: accountType
+            }
+          })
         }
       })
       if (error) throw error
@@ -175,23 +207,57 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
 
   return (
     <div className="space-y-4 max-w-sm bg-forest-900 p-8 rounded-lg border border-forest-800 shadow-xl">
-      {/* Toggle between Magic Link and Password */}
-      <div className="flex gap-2 mb-4">
-        <button
-          type="button"
-          onClick={() => setUsePassword(false)}
-          className={`flex-1 px-4 py-2 rounded transition ${
-            !usePassword
-              ? 'bg-sage-600 text-white'
-              : 'bg-forest-800 text-forest-300 hover:bg-forest-700'
-          }`}
-        >
-          Magic Link
-        </button>
-        <button
-          type="button"
-          onClick={() => setUsePassword(true)}
-          className={`flex-1 px-4 py-2 rounded transition ${
+      {/* Show email confirmation message if signup successful */}
+      {emailSent ? (
+        <div className="text-center space-y-4">
+          <div className="bg-sage-900/30 border border-sage-700 rounded-lg p-6">
+            <svg className="w-16 h-16 text-sage-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <h3 className="text-xl font-bold text-forest-50 mb-2">
+              Check your email
+            </h3>
+            <p className="text-forest-300 mb-4">
+              We've sent a confirmation link to:
+            </p>
+            <p className="text-sage-400 font-medium mb-4">
+              {email}
+            </p>
+            <p className="text-forest-400 text-sm">
+              Click the link in your email to activate your account and complete the signup process.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setEmailSent(false)
+              setEmail('')
+              setPassword('')
+              setConfirmPassword('')
+            }}
+            className="text-sage-400 hover:text-sage-300 text-sm"
+          >
+            ← Back to signup
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {/* Toggle between Magic Link and Password */}
+          <div className="flex gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => setUsePassword(false)}
+              className={`flex-1 px-4 py-2 rounded transition ${
+                !usePassword
+                  ? 'bg-sage-600 text-white'
+                  : 'bg-forest-800 text-forest-300 hover:bg-forest-700'
+              }`}
+            >
+              Magic Link
+            </button>
+            <button
+              type="button"
+              onClick={() => setUsePassword(true)}
+              className={`flex-1 px-4 py-2 rounded transition ${
             usePassword
               ? 'bg-sage-600 text-white'
               : 'bg-forest-800 text-forest-300 hover:bg-forest-700'
@@ -344,6 +410,8 @@ export default function AuthForm({ mode = 'login' }: AuthFormProps) {
       </div>
 
       {message && <p className="text-sm text-forest-200">{message}</p>}
+        </div>
+      )}
     </div>
   )
 }

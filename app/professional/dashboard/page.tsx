@@ -37,7 +37,7 @@ export default function ProfessionalDashboard() {
       // Get authenticated user
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
-        router.push('/auth/signin');
+        router.push('/login');
         return;
       }
       setUser(authUser);

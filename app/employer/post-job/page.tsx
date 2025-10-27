@@ -43,25 +43,24 @@ export default function PostJobPage() {
 
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('*, organization_members(organization_id)')
-      .eq('id', user.id)
+      .select('*')
+      .eq('auth_uid', user.id)
       .single();
 
-    if (profileData?.user_type !== 'employer') {
-      alert('Only employers can post jobs');
+    if (!profileData) {
+      alert('Profile not found. Please contact support.');
       router.push('/');
       return;
     }
 
     setProfile(profileData);
     
-    // Get organization ID
-    const orgMember = profileData.organization_members?.[0];
-    if (orgMember) {
-      setOrganizationId(orgMember.organization_id);
+    // Get organization ID from profile
+    if (profileData.organization_id) {
+      setOrganizationId(profileData.organization_id);
     } else {
-      alert('You must be part of an organization to post jobs');
-      router.push('/employer/dashboard');
+      alert('You must be part of an organization to post jobs. Please complete your employer profile.');
+      router.push('/employer/profile');
     }
   }
 
@@ -84,8 +83,17 @@ export default function PostJobPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      // Get profile ID
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_uid', user.id)
+        .single();
+
+      if (!profileData) throw new Error('Profile not found');
+
       const jobData = {
-        employer_id: user.id,
+        employer_id: profileData.id,
         organization_id: organizationId,
         title: formData.title,
         description: formData.description,
@@ -116,8 +124,14 @@ export default function PostJobPage() {
 
       if (error) throw error;
 
-      alert(publish ? 'Job posted successfully!' : 'Draft saved!');
-      router.push('/employer/dashboard');
+      // Show success message and redirect after a brief delay
+      const message = publish ? '✅ Job posted successfully! Redirecting...' : '✅ Draft saved! Redirecting...';
+      alert(message);
+      
+      // Small delay so user can see the success message
+      setTimeout(() => {
+        router.push('/employer/dashboard');
+      }, 500);
     } catch (error: any) {
       console.error('Error posting job:', error);
       alert(error.message || 'Failed to post job');
@@ -131,7 +145,17 @@ export default function PostJobPage() {
   }
 
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
+    <div className="container mx-auto p-8 max-w-4xl relative">
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sage-600 mx-auto mb-4"></div>
+            <p className="text-lg font-medium text-gray-900 dark:text-white">Publishing your job...</p>
+          </div>
+        </div>
+      )}
+
       <h1 className="text-4xl font-bold mb-8">Post a Job</h1>
 
       <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">

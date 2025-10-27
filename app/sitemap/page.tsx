@@ -31,7 +31,7 @@ export default function SitemapPage() {
       title: "Authentication",
       icon: "🔐",
       items: [
-        { path: "/auth/signin", name: "Sign In", description: "Login page" },
+        { path: "/login", name: "Sign In", description: "Login page" },
         { path: "/auth/signup", name: "Sign Up", description: "Registration page" },
         { path: "/auth/callback", name: "OAuth Callback", description: "OAuth redirect handler" },
       ]

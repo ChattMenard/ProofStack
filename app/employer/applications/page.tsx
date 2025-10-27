@@ -64,19 +64,6 @@ export default function JobApplicationsPage() {
         return;
       }
 
-      // Check if user is employer
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.user_type !== 'employer') {
-        alert('Only employers can access this page');
-        router.push('/');
-        return;
-      }
-
       // Load jobs with application counts
       const { data: jobsData, error: jobsError } = await supabase
         .from('job_postings')

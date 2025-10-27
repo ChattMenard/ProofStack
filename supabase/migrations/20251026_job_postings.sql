@@ -110,6 +110,17 @@ COMMENT ON COLUMN job_applications.status IS 'Current status of application';
 ALTER TABLE job_postings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE job_applications ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Anyone can view published jobs" ON job_postings;
+DROP POLICY IF EXISTS "Employers can view own jobs" ON job_postings;
+DROP POLICY IF EXISTS "Employers can create jobs" ON job_postings;
+DROP POLICY IF EXISTS "Employers can update own jobs" ON job_postings;
+DROP POLICY IF EXISTS "Employers can delete own jobs" ON job_postings;
+DROP POLICY IF EXISTS "Professionals can view own applications" ON job_applications;
+DROP POLICY IF EXISTS "Employers can view applications to their jobs" ON job_applications;
+DROP POLICY IF EXISTS "Professionals can create applications" ON job_applications;
+DROP POLICY IF EXISTS "Employers can update applications" ON job_applications;
+
 -- Job Postings Policies
 
 -- Anyone can view published jobs
@@ -184,9 +195,11 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_job_postings_updated_at ON job_postings;
 CREATE TRIGGER update_job_postings_updated_at BEFORE UPDATE ON job_postings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_job_applications_updated_at ON job_applications;
 CREATE TRIGGER update_job_applications_updated_at BEFORE UPDATE ON job_applications
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -201,5 +214,6 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS increment_job_applications_count ON job_applications;
 CREATE TRIGGER increment_job_applications_count AFTER INSERT ON job_applications
   FOR EACH ROW EXECUTE FUNCTION increment_applications_count();
