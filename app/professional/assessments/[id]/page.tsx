@@ -3,53 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
+import { assessmentQuestions } from '@/lib/assessmentQuestions'
 
-// Sample quiz questions (in production, fetch from DB/API)
-const quizData: Record<string, any> = {
-  'junior-quiz-1': {
-    title: 'JavaScript Fundamentals',
-    targetLevel: 'junior',
-    type: 'technical_quiz',
-    durationMinutes: 20,
-    questions: [
-      {
-        question: 'What is the output of: typeof null?',
-        options: ['null', 'object', 'undefined', 'number'],
-        correctAnswer: 1
-      },
-      {
-        question: 'Which method is used to add an element to the end of an array?',
-        options: ['unshift()', 'push()', 'pop()', 'shift()'],
-        correctAnswer: 1
-      },
-      {
-        question: 'What does "use strict" do in JavaScript?',
-        options: [
-          'Enables stricter parsing and error handling',
-          'Makes code run faster',
-          'Prevents all errors',
-          'Enables ES6 features'
-        ],
-        correctAnswer: 0
-      },
-      {
-        question: 'How do you declare a constant variable?',
-        options: ['var x = 5', 'let x = 5', 'const x = 5', 'constant x = 5'],
-        correctAnswer: 2
-      },
-      {
-        question: 'What is a closure in JavaScript?',
-        options: [
-          'A function that returns another function',
-          'A function with access to its outer scope',
-          'A way to close browser windows',
-          'A loop structure'
-        ],
-        correctAnswer: 1
-      }
-    ]
-  }
-}
+// Use centralized question bank
+const quizData = assessmentQuestions
 
 export default function AssessmentTakePage() {
   const router = useRouter()

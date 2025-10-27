@@ -108,7 +108,8 @@ export default function JobApplicationsPage() {
           id,
           status,
           applied_at,
-          professional:profiles!professional_id(
+          professional_id,
+          profiles!professional_id(
             id,
             full_name,
             username,
@@ -121,7 +122,14 @@ export default function JobApplicationsPage() {
         .order('applied_at', { ascending: false });
 
       if (error) throw error;
-      setApplications(data || []);
+      
+      // Transform data to match expected structure (profiles returns array, we need single object)
+      const transformedData = data?.map(app => ({
+        ...app,
+        professional: Array.isArray(app.profiles) ? app.profiles[0] : app.profiles
+      })) || [];
+      
+      setApplications(transformedData);
     } catch (error) {
       console.error('Error loading applications:', error);
     }
