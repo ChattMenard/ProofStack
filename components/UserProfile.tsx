@@ -44,40 +44,6 @@ export default function UserProfile() {
     
     load()
 
-    const { data: listener } = supabase.auth.onAuthStateChange((event: string, session: any) => {
-      if (!mounted) return
-      setUser(session?.user ?? null)
-      
-      // Fetch profile on auth change
-      if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('role, is_founder, user_type, is_admin, username, email')
-          .eq('auth_uid', session.user.id)
-          .single()
-          .then(({ data: profileData, error }: { data: any, error: any }) => {
-            console.log('🔍 UserProfile auth change - auth_uid:', session.user.id)
-            console.log('🔍 UserProfile auth change - profileData:', profileData)
-            console.log('🔍 UserProfile auth change - error:', error)
-            
-            if (mounted && profileData) {
-              setProfile(profileData)
-              setUsername(profileData.username || profileData.email)
-            }
-          })
-      } else {
-        setProfile(null)
-        setUsername(null)
-      }
-      
-      // Auto-redirect after sign in from login page
-      if (event === 'SIGNED_IN' && session && pathname === '/login') {
-        setTimeout(() => {
-          router.push('/dashboard')
-        }, 500)
-      }
-    })
-
     // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement
@@ -88,9 +54,48 @@ export default function UserProfile() {
 
     document.addEventListener('click', handleClickOutside)
 
+    // Listen for auth changes - check if method exists
+    let authListener: any = null
+    if (supabase.auth.onAuthStateChange) {
+      const { data: listener } = supabase.auth.onAuthStateChange((event: string, session: any) => {
+        if (!mounted) return
+        setUser(session?.user ?? null)
+        
+        // Fetch profile on auth change
+        if (session?.user) {
+          supabase
+            .from('profiles')
+            .select('role, is_founder, user_type, is_admin, username, email')
+            .eq('auth_uid', session.user.id)
+            .single()
+            .then(({ data: profileData, error }: { data: any, error: any }) => {
+              console.log('🔍 UserProfile auth change - auth_uid:', session.user.id)
+              console.log('🔍 UserProfile auth change - profileData:', profileData)
+              console.log('🔍 UserProfile auth change - error:', error)
+              
+              if (mounted && profileData) {
+                setProfile(profileData)
+                setUsername(profileData.username || profileData.email)
+              }
+            })
+        } else {
+          setProfile(null)
+          setUsername(null)
+        }
+        
+        // Auto-redirect after sign in from login page
+        if (event === 'SIGNED_IN' && session && pathname === '/login') {
+          setTimeout(() => {
+            router.push('/dashboard')
+          }, 500)
+        }
+      })
+      authListener = listener
+    }
+
     return () => {
       mounted = false
-      listener?.subscription.unsubscribe()
+      authListener?.subscription?.unsubscribe()
       document.removeEventListener('click', handleClickOutside)
     }
   }, [router, pathname])

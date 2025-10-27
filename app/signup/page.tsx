@@ -26,21 +26,21 @@ function SignupContent() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Professional Account */}
+            {/* Talent Account */}
             <button
               onClick={() => setAccountType('professional')}
               className="bg-forest-900 border-2 border-forest-700 hover:border-sage-500 rounded-lg p-8 text-left transition-all group"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-2xl font-bold text-forest-50 group-hover:text-sage-400">
-                  I'm a Professional
+                  I'm The Talent
                 </h3>
                 <svg className="w-8 h-8 text-sage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <p className="text-forest-300 mb-4">
-                Create a portfolio to showcase your work samples and get discovered by employers
+                Showcase your work, build your portfolio, and get discovered by employers
               </p>
               <ul className="space-y-2 text-sm text-forest-400">
                 <li className="flex items-center">
@@ -78,7 +78,7 @@ function SignupContent() {
                 </svg>
               </div>
               <p className="text-forest-300 mb-4">
-                Find and hire verified professionals based on their actual work
+                Find and hire The Talent based on their actual work
               </p>
               <ul className="space-y-2 text-sm text-forest-400">
                 <li className="flex items-center">
@@ -91,7 +91,7 @@ function SignupContent() {
                   <svg className="w-4 h-4 mr-2 text-sage-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
-                  Search verified talent
+                  Search The Talent
                 </li>
                 <li className="flex items-center">
                   <svg className="w-4 h-4 mr-2 text-sage-500" fill="currentColor" viewBox="0 0 20 20">
@@ -122,7 +122,7 @@ function SignupContent() {
             Back to account type
           </button>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-forest-50">
-            Create your professional account
+            Create your The Talent account
           </h2>
           <p className="mt-2 text-center text-sm text-forest-300">
             Already have an account?{' '}

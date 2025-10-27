@@ -53,7 +53,7 @@ export default function PortfoliosPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading professionals...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading The Talent...</p>
         </div>
       </div>
     );
@@ -65,10 +65,10 @@ export default function PortfoliosPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            For Hire
+            🎯 The Talent
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            Browse verified professionals ready for your next project
+            Browse verified talent ready for your next project
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export default function PortfoliosPage() {
         <div className="mb-8 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
           <input
             type="text"
-            placeholder="Search professionals by name, skills, or bio..."
+            placeholder="Search The Talent by name, skills, or bio..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -85,7 +85,7 @@ export default function PortfoliosPage() {
 
         {/* Results Count */}
         <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-          {filteredProfessionals.length} professional{filteredProfessionals.length !== 1 ? 's' : ''} found
+          {filteredProfessionals.length} profile{filteredProfessionals.length !== 1 ? 's' : ''} found
         </div>
 
         {/* Professionals Grid */}

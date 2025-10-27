@@ -102,7 +102,7 @@ export default function ProjectListingsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Hiring
+            💼 Job Marketplace
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
             Browse {jobs.length} job{jobs.length !== 1 ? 's' : ''} from verified employers
