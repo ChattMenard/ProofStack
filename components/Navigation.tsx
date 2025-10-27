@@ -41,7 +41,7 @@ export default function Navigation({ showMarketplacesOnly = false, showMessagesO
         .eq('profile_id', profileId)
       
       if (!error && data) {
-        const total = data.reduce((sum, p) => sum + (p.unread_count || 0), 0)
+        const total = data.reduce((sum: number, p: any) => sum + (p.unread_count || 0), 0)
         setUnreadCount(total)
       }
     } catch (err) {
