@@ -86,11 +86,26 @@ export default function PostJobPage() {
       // Get profile ID
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, organization_id')
         .eq('auth_uid', user.id)
         .single();
 
       if (!profileData) throw new Error('Profile not found');
+
+      // Check job posting limits if publishing
+      if (publish && profileData.organization_id) {
+        const { data: canPostResult, error: checkError } = await supabase
+          .rpc('can_post_job', { org_id: profileData.organization_id });
+
+        if (checkError) {
+          console.error('Error checking job post limit:', checkError);
+        } else if (!canPostResult) {
+          alert('You have reached your job posting limit for this billing cycle. Please upgrade your plan or wait until next month.');
+          setLoading(false);
+          router.push('/pricing/employer');
+          return;
+        }
+      }
 
       const jobData = {
         employer_id: profileData.id,
