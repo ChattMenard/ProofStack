@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
 import SkillLevelBadge, { SkillLevelProgress } from '@/components/SkillLevelBadge'
 
 interface Assessment {
@@ -43,7 +44,18 @@ export default function AssessmentsPage() {
 
   async function fetchAssessments() {
     try {
-      const res = await fetch('/api/assessments/available')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('Please log in to view assessments')
+        setLoading(false)
+        return
+      }
+
+      const res = await fetch('/api/assessments/available', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      })
       if (!res.ok) throw new Error('Failed to fetch assessments')
       const json = await res.json()
       setData(json)
