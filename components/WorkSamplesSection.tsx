@@ -92,28 +92,46 @@ export default function WorkSamplesSection({ professionalId, isOwner = false }: 
     const scores = [];
     
     if (sample.code_quality_score !== null) {
-      scores.push({ label: 'Code Quality', value: sample.code_quality_score });
-      scores.push({ label: 'Technical Depth', value: sample.technical_depth_score });
-      scores.push({ label: 'Problem Solving', value: sample.problem_solving_score });
+      scores.push({ label: 'Code Quality', value: sample.code_quality_score, icon: '⚙️' });
+      scores.push({ label: 'Technical Depth', value: sample.technical_depth_score, icon: '🎯' });
+      scores.push({ label: 'Problem Solving', value: sample.problem_solving_score, icon: '💡' });
     }
     
     if (sample.writing_clarity_score !== null) {
-      scores.push({ label: 'Clarity', value: sample.writing_clarity_score });
-      scores.push({ label: 'Technical Accuracy', value: sample.technical_accuracy_score });
+      scores.push({ label: 'Clarity', value: sample.writing_clarity_score, icon: '✨' });
+      scores.push({ label: 'Technical Accuracy', value: sample.technical_accuracy_score, icon: '📐' });
     }
 
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-        {scores.map((score, idx) => (
-          <div key={idx} className="bg-gray-50 rounded-lg p-2">
-            <div className="text-xs text-gray-600">{score.label}</div>
-            <div className="text-lg font-semibold text-blue-600">{score.value?.toFixed(1)}/10</div>
-          </div>
-        ))}
+      <div className="space-y-4 mt-4">
+        {/* Overall Score Highlight */}
         {sample.overall_quality_score !== null && (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-2 border border-blue-200">
-            <div className="text-xs text-blue-700 font-medium">Overall Quality</div>
-            <div className="text-xl font-bold text-blue-600">{sample.overall_quality_score.toFixed(1)}/10</div>
+          <div className="bg-gradient-to-r from-sage-500 to-sage-600 rounded-xl p-4 text-white shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-sm font-medium opacity-90">Overall Quality Score</div>
+                <div className="text-3xl font-bold mt-1">{sample.overall_quality_score.toFixed(1)}<span className="text-lg opacity-75">/10</span></div>
+              </div>
+              <div className="text-5xl">✨</div>
+            </div>
+          </div>
+        )}
+
+        {/* Detailed Scores Grid */}
+        {scores.length > 0 && (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            {scores.map((score, idx) => (
+              <div key={idx} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xs font-medium text-gray-600 dark:text-gray-400">{score.label}</div>
+                  <span className="text-lg">{score.icon}</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <div className="text-2xl font-bold text-sage-600 dark:text-sage-400">{score.value?.toFixed(1)}</div>
+                  <div className="text-sm text-gray-500">/10</div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
