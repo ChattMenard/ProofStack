@@ -78,8 +78,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {/* Sticky Header with Backdrop Blur */}
           <header className="sticky top-0 z-50 bg-primary/80 backdrop-blur-lg border-b border-default relative">
             <div className="max-w-7xl mx-auto px-6 py-4">
-              <div className="grid grid-cols-3 items-center">
-                {/* Logo Section - Left */}
+              <div className="flex items-center justify-between">
+                {/* Left Section: Logo */}
                 <Link href="/" className="flex items-center gap-4 group">
                   <div className="relative">
                     <div className="absolute inset-0 bg-sage-500/20 dark:bg-sage-400/20 blur-xl rounded-full group-hover:bg-sage-500/30 dark:group-hover:bg-sage-400/30 transition-all duration-300"></div>
@@ -99,13 +99,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   </div>
                 </Link>
 
-                {/* Navigation Links - Center */}
-                <div className="flex justify-center">
-                  <Navigation />
+                {/* Center: Marketplaces */}
+                <div className="absolute left-1/2 transform -translate-x-1/2">
+                  <Navigation showMarketplacesOnly={true} />
                 </div>
 
-                {/* Action Buttons - Right */}
-                <div className="flex items-center gap-3 justify-end">
+                {/* Right Section: My Messages + Theme + Account */}
+                <div className="flex items-center gap-3">
+                  <Navigation showMessagesOnly={true} />
                   <ThemeToggle />
                   <UserProfile />
                 </div>

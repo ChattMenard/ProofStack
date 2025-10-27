@@ -5,7 +5,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { publicNavigation, professionalQuickLinks, employerQuickLinks } from '@/lib/navigationConfig'
 
-export default function Navigation() {
+interface NavigationProps {
+  showMarketplacesOnly?: boolean
+  showMessagesOnly?: boolean
+}
+
+export default function Navigation({ showMarketplacesOnly = false, showMessagesOnly = false }: NavigationProps) {
   const pathname = usePathname()
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [userRole, setUserRole] = useState<string | null>(null)
@@ -70,7 +75,7 @@ export default function Navigation() {
   return (
     <nav className="hidden md:flex items-center gap-3">
       {/* Marketplaces with separator - centered */}
-      {publicNavigation.map((item, idx) => (
+      {!showMessagesOnly && publicNavigation.map((item, idx) => (
         <div key={item.href} className="flex items-center gap-3">
           <Link 
             href={item.href} 
@@ -85,8 +90,8 @@ export default function Navigation() {
       ))}
       
       {/* My Messages - for logged-in users */}
-      {isSignedIn && userRole === 'professional' && professionalQuickLinks.map((link) => (
-        <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative ml-3">
+      {!showMarketplacesOnly && isSignedIn && userRole === 'professional' && professionalQuickLinks.map((link) => (
+        <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative">
           {link.label}
           {link.href.includes('/messages') && unreadCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
@@ -95,8 +100,8 @@ export default function Navigation() {
           )}
         </Link>
       ))}
-      {isSignedIn && userRole === 'employer' && employerQuickLinks.map((link) => (
-        <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative ml-3">
+      {!showMarketplacesOnly && isSignedIn && userRole === 'employer' && employerQuickLinks.map((link) => (
+        <Link key={link.href} href={link.href} className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-sage-400 relative">
           {link.label}
           {link.href.includes('/messages') && unreadCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
