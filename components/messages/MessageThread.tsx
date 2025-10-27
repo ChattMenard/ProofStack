@@ -164,16 +164,38 @@ export default function MessageThread({ conversationId, currentUserId, recipient
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId);
 
-      // Trigger AI message analysis in background (for professionals only)
-      // This analyzes communication quality for ProofScore
+      // Trigger AI message analysis ONLY for professional→employer first messages
+      // This analyzes composition, manners, spelling, punctuation for ProofScore
       if (messageId && messages.length === 0) {
-        // This is the first message from this professional
-        fetch('/api/professional/analyze-message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message_id: messageId })
-        }).catch(err => console.log('Message analysis failed:', err));
-        // Don't await - run in background
+        // Check if current user is a professional and recipient is an employer
+        const { data: senderProfile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('auth_uid', currentUserId)
+          .single();
+
+        const { data: participants } = await supabase
+          .from('conversation_participants')
+          .select('user_id, profiles!user_id(user_type)')
+          .eq('conversation_id', conversationId)
+          .neq('user_id', currentUserId);
+
+        const recipientProfile = participants?.[0] as any;
+        const recipientUserType = recipientProfile?.profiles?.user_type;
+
+        // ONLY analyze if sender is professional and recipient is employer
+        if (senderProfile?.user_type === 'professional' && recipientUserType === 'employer') {
+          fetch('/api/professional/analyze-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              message_id: messageId,
+              professional_id: currentUserId,
+              message_text: newMessage.trim()
+            })
+          }).catch(err => console.log('Message quality analysis failed:', err));
+          // Don't await - run in background
+        }
       }
     } catch (error) {
       console.error('Error sending message:', error);

@@ -22,7 +22,30 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: `You are a professional writing quality analyzer. Evaluate the following text for:
+          content: context === 'initial employer contact message'
+            ? `You are analyzing a professional's first message to a potential employer. Rate STRICTLY on:
+1. Spelling & Grammar (0-10): Typos, grammar errors, punctuation mistakes
+2. Professional Manners (0-10): Politeness, respect, appropriate tone
+3. Composition & Clarity (0-10): Clear structure, concise writing, easy to understand
+
+DO NOT judge:
+- Technical knowledge or skills
+- Work experience or qualifications
+- Message length (brief is fine)
+- Industry-specific jargon
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "grammar_score": <number 0-10>,
+  "professionalism_score": <number 0-10>,
+  "clarity_score": <number 0-10>,
+  "overall_score": <number 0-10>,
+  "feedback": "<brief explanation focusing on writing quality only>",
+  "issues": ["<specific spelling/grammar/punctuation issues only>"]
+}
+
+Be fair - judge writing quality only, not content.`
+            : `You are a professional writing quality analyzer. Evaluate the following text for:
 1. Grammar and spelling (0-10 scale)
 2. Professional tone (0-10 scale)
 3. Clarity and structure (0-10 scale)
