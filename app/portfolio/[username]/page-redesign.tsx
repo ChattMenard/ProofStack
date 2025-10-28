@@ -32,6 +32,9 @@ export default function PortfolioPage({ params }: { params: { username: string }
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [showAllSkills, setShowAllSkills] = useState(false)
+  const [showCredentials, setShowCredentials] = useState(true)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   useEffect(() => {
     loadPortfolio()
@@ -74,6 +77,43 @@ export default function PortfolioPage({ params }: { params: { username: string }
     }
   }
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !profile) return
+
+    setUploadingAvatar(true)
+    try {
+      // Upload to Cloudinary
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) throw new Error('Upload failed')
+
+      const { url } = await res.json()
+
+      // Update profile with new avatar URL
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: url })
+        .eq('id', profile.id)
+
+      if (error) throw error
+
+      // Refresh profile
+      setProfile({ ...profile, avatar_url: url })
+    } catch (error) {
+      console.error('Avatar upload error:', error)
+      alert('Failed to upload avatar. Please try again.')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-forest-950">
@@ -104,7 +144,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
         <div className="bg-white dark:bg-forest-900 rounded-lg shadow-lg border border-gray-200 dark:border-forest-800 p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Avatar */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 relative group">
               {profile.avatar_url ? (
                 <Image
                   src={profile.avatar_url}
@@ -116,6 +156,22 @@ export default function PortfolioPage({ params }: { params: { username: string }
               ) : (
                 <div className="w-36 h-36 rounded-lg bg-gradient-to-br from-sage-600 to-sage-700 flex items-center justify-center text-white text-5xl font-bold border-4 border-white dark:border-forest-800 shadow-lg">
                   {profile.full_name?.[0] || profile.email[0].toUpperCase()}
+                </div>
+              )}
+              
+              {/* Upload Button for Owner */}
+              {isOwner && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                  <label className="cursor-pointer px-4 py-2 bg-white text-gray-900 rounded-lg font-medium text-sm hover:bg-gray-100 transition-colors">
+                    {uploadingAvatar ? 'Uploading...' : 'Change Photo'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      disabled={uploadingAvatar}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
               )}
             </div>
@@ -218,23 +274,48 @@ export default function PortfolioPage({ params }: { params: { username: string }
                     <div className="text-gray-400 dark:text-gray-500 italic">Not provided</div>
                   </div>
                 )}
-                {profile.linkedin_url && (
-                  <div>
-                    <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">LinkedIn</div>
-                    <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-sage-600 hover:underline">
-                      View LinkedIn Profile
-                    </a>
-                  </div>
-                )}
-                {profile.github_username && (
-                  <div>
-                    <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">GitHub</div>
-                    <a href={`https://github.com/${profile.github_username}`} target="_blank" rel="noopener noreferrer" className="text-sage-600 hover:underline">
-                      @{profile.github_username}
-                    </a>
-                  </div>
-                )}
               </div>
+              
+              {/* Identity Credentials Section */}
+              {(profile.linkedin_url || profile.github_username) && (
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-forest-700">
+                  <button
+                    onClick={() => setShowCredentials(!showCredentials)}
+                    className="w-full flex items-center justify-between text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-sage-600 dark:hover:text-sage-400"
+                  >
+                    <span>Identity Verifications</span>
+                    <svg 
+                      className={`w-4 h-4 transition-transform ${showCredentials ? 'rotate-180' : ''}`}
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {showCredentials && (
+                    <div className="mt-3 space-y-3">
+                      {profile.linkedin_url && (
+                        <div>
+                          <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">LinkedIn</div>
+                          <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-sage-600 hover:underline">
+                            View LinkedIn Profile
+                          </a>
+                        </div>
+                      )}
+                      {profile.github_username && (
+                        <div>
+                          <div className="text-gray-500 dark:text-gray-400 text-xs mb-1">GitHub</div>
+                          <a href={`https://github.com/${profile.github_username}`} target="_blank" rel="noopener noreferrer" className="text-sage-600 hover:underline">
+                            @{profile.github_username}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Preferences/Dealbreakers Card */}
@@ -263,8 +344,11 @@ export default function PortfolioPage({ params }: { params: { username: string }
                   </div>
                 </div>
                 <div className="text-center pt-2">
-                  <button className="text-sage-600 hover:text-sage-700 font-medium text-sm">
-                    Show all verified skills →
+                  <button 
+                    onClick={() => setShowAllSkills(!showAllSkills)}
+                    className="text-sage-600 hover:text-sage-700 font-medium text-sm"
+                  >
+                    {showAllSkills ? '← Show less' : 'Show all verified skills →'}
                   </button>
                 </div>
               </div>
@@ -278,7 +362,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">About</h2>
                 {isOwner && (
-                  <a href="/dashboard/profile#about" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Edit</a>
+                  <a href="/professional/settings" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Edit</a>
                 )}
               </div>
               {profile.bio ? (
@@ -295,7 +379,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Experience</h2>
                 {isOwner && (
-                  <a href="/dashboard/profile#experience" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Add</a>
+                  <a href="/professional/settings#experience" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Add</a>
                 )}
               </div>
               <div className="space-y-6">
@@ -314,7 +398,7 @@ export default function PortfolioPage({ params }: { params: { username: string }
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Education</h2>
                 {isOwner && (
-                  <a href="/dashboard/profile#education" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Add</a>
+                  <a href="/professional/settings#education" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Add</a>
                 )}
               </div>
               <div className="space-y-6">
