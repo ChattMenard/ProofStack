@@ -374,6 +374,17 @@ export default function PortfolioPage({ params }: { params: { username: string }
               )}
             </div>
 
+            {/* Work Preferences */}
+            <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Work Preferences</h2>
+                {isOwner && (
+                  <a href="/professional/preferences" className="text-sm text-sage-600 hover:text-sage-700 font-medium">Edit</a>
+                )}
+              </div>
+              <PreferencesDisplay profileId={profile.id} />
+            </div>
+
             {/* Experience Section - Placeholder */}
             <div className="bg-white dark:bg-forest-900 rounded-lg shadow border border-gray-200 dark:border-forest-800 p-6">
               <div className="flex items-center justify-between mb-4">
