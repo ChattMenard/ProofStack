@@ -35,5 +35,21 @@
   ],
   "env": {
     "NODE_ENV": "production"
+  },
+  "database": {
+    "migrations": [
+      {
+        "name": "Add discord_user_id to profiles",
+        "sql": "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS discord_user_id TEXT;"
+      },
+      {
+        "name": "Create index for discord_user_id",
+        "sql": "CREATE INDEX IF NOT EXISTS idx_profiles_discord_user_id ON profiles(discord_user_id);"
+      },
+      {
+        "name": "Comment on discord_user_id column",
+        "sql": "COMMENT ON COLUMN profiles.discord_user_id IS 'Discord user ID for role sync and community integration';"
+      }
+    ]
   }
 }
