@@ -145,6 +145,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <li><Link href="/dashboard" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Dashboard</Link></li>
                     <li><Link href="/upload" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Upload</Link></li>
                     <li><Link href="/portfolio" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Portfolio</Link></li>
+                    <li><Link href="/forum" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Forum</Link></li>
+                    <li><Link href="/forum/new" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">New Discussion</Link></li>
                   </ul>
                 </div>
 

@@ -117,7 +117,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-forest-50 animate-gradient bg-gradient-to-r from-sage-400 to-earth-400 bg-clip-text text-transparent">
-                AI Code Detection Tool
+                Skill Assessment Tool
               </h1>
               <p className="text-forest-300 mt-1">{user?.email}</p>
               {profile?.is_founder && (
