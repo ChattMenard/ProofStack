@@ -51,7 +51,10 @@ export default function PricingPage() {
             Simple, Transparent Pricing
           </h1>
           <p className="text-xl text-forest-300 max-w-3xl mx-auto mb-8">
-            ProofStack is <strong>free for professionals</strong>. Upgrade anytime with profile boosts to stand out.
+            Hire verified talent with affordable subscription plans. <br />
+            <Link href="/pricing/talent" className="text-sage-400 hover:text-sage-300 underline">
+              Looking for portfolio boosts? View talent pricing →
+            </Link>
           </p>
         </div>
       </section>
