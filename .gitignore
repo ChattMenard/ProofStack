@@ -17,3 +17,9 @@ test-results/
 supabase/.temp/
 .venv/
 .env.production
+*.log
+*.tsbuildinfo
+*.backup
+*.bak
+*.old
+*~
