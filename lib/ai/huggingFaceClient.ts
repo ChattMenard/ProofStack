@@ -1,8 +1,15 @@
 import fetch from 'node-fetch'
+import { detectSecrets } from '../security'
 
 const HF_TOKEN = process.env.HF_TOKEN || ''
 
 export async function analyzeWithHuggingFace(prompt: string, model = 'microsoft/DialoGPT-medium') {
+  // Defense-in-depth: don't send prompts that contain secrets
+  const secretCheck = detectSecrets(prompt)
+  if (secretCheck.found) {
+    throw new Error('Prompt contains potential secrets; aborting call to Hugging Face')
+  }
+
   if (!HF_TOKEN) throw new Error('HF_TOKEN not configured')
 
   const resp = await fetch(`https://api-inference.huggingface.co/models/${model}`, {

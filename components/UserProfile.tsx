@@ -200,8 +200,8 @@ export default function UserProfile() {
               
               <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
               
-              {/* Admin Menu - Only for mattchenard2009@gmail.com */}
-              {user.email === 'mattchenard2009@gmail.com' && (
+              {/* Admin Menu - Only for admins */}
+              {profile?.is_admin && (
                 <>
                   {adminNavigation.map((section) => (
                     <div key={section.title}>

@@ -31,6 +31,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to update timestamp on row update
+DROP TRIGGER IF EXISTS github_cache_update_timestamp ON github_api_cache;
 CREATE TRIGGER github_cache_update_timestamp
   BEFORE UPDATE ON github_api_cache
   FOR EACH ROW

@@ -49,10 +49,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify professional exists
+    // Verify professional exists and is actually a professional (not employer)
     const { data: professional, error: professionalError } = await supabase
       .from('profiles')
-      .select('id, email, username, full_name')
+      .select('id, email, username, full_name, user_type')
       .eq('id', professional_id)
       .single();
 
@@ -60,6 +60,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Professional not found' },
         { status: 404 }
+      );
+    }
+
+    // ENFORCEMENT: Only professionals (talent) can purchase portfolio boosts
+    // Employers purchase subscriptions separately
+    if (professional.user_type !== 'professional') {
+      return NextResponse.json(
+        { error: 'Only professionals can purchase portfolio boosts. Employers should purchase subscriptions.' },
+        { status: 403 }
       );
     }
 

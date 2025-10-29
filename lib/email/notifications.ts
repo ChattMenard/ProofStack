@@ -235,3 +235,46 @@ export async function sendPromotionExpiringEmail(to: string, data: {
     return { success: false, error };
   }
 }
+
+export async function sendSecurityAlertEmail(tos: string[] | string, data: {
+  sampleId: string
+  analysisId?: string
+  secrets: Array<{ type: string; severity: string; match: string; position: number }>
+  professionalId?: string
+  ownerEmail?: string
+}) {
+  try {
+    const recipients = Array.isArray(tos) ? tos : [tos]
+    const secretTypes = [...new Set(data.secrets.map(s => s.type))].join(', ')
+    const detailsHtml = data.secrets.map(s => `<li><strong>${s.type}</strong> (${s.severity}) — match: ${s.match}</li>`).join('')
+    const subject = `Security alert: potential secrets detected in sample ${data.sampleId}`
+
+    for (const to of recipients) {
+      await getResend().emails.send({
+        from: FROM_EMAIL,
+        to,
+        subject,
+        html: `
+          <html>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; color: #111;">
+              <h2>Security alert: potential secrets detected</h2>
+              <p>Sample ID: <code>${data.sampleId}</code></p>
+              ${data.analysisId ? `<p>Analysis ID: <code>${data.analysisId}</code></p>` : ''}
+              ${data.professionalId ? `<p>Professional ID: <code>${data.professionalId}</code></p>` : ''}
+              ${data.ownerEmail ? `<p>Uploader: ${data.ownerEmail}</p>` : ''}
+              <p>Detected secret types: <strong>${secretTypes}</strong></p>
+              <ul>${detailsHtml}</ul>
+              <p>Please review the sample and contact the uploader to remove any sensitive credentials. You can view the sample in the admin dashboard.</p>
+              <p><a href="${SITE_URL}/admin/samples/${data.sampleId}">Open sample in admin</a></p>
+            </body>
+          </html>
+        `
+      })
+    }
+
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to send security alert email:', error)
+    return { success: false, error }
+  }
+}

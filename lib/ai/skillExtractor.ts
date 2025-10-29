@@ -1,6 +1,7 @@
 import { analyzeWithOllama } from '../ollamaClient'
 import { analyzeWithAnthropic } from './anthropicClient'
 import { analyzeWithHuggingFace } from './huggingFaceClient'
+import { detectSecrets } from '../security'
 
 export type ExtractedSkill = {
   skill: string
@@ -56,6 +57,13 @@ function extractFirstValidJSON(text: string): string | null {
  */
 export async function extractSkillsFromText(text: string, model = 'mistral') : Promise<ExtractedSkill[]> {
   if (!text || !text.trim()) return []
+
+  // Defense-in-depth: scan input text for secrets before calling any model
+  const secretCheck = detectSecrets(text)
+  if (secretCheck.found) {
+    // Throw so callers (workers) can mark the analysis as failed and avoid exfiltration
+    throw new Error('Input contains potential secrets; aborting skill extraction')
+  }
 
   const prompt = `You are a helpful assistant that extracts programmatic and professional skills from a work sample. Return a JSON array where each item has: \n- skill (string)\n- level (number, 0-100)\n- evidence (array of strings with snippets or reasons)\n- confidence (number 0-1)\nReturn ONLY valid JSON. Example: [{"skill":"React","level":80,"evidence":["uses hooks","JSX components"],"confidence":0.92}]\n\nSample:\n${text}`
 

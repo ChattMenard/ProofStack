@@ -92,8 +92,8 @@ CREATE TRIGGER trg_increment_job_posts
   EXECUTE FUNCTION trg_track_job_post_creation();
 
 -- Subscription pricing reference (for documentation)
-COMMENT ON COLUMN organizations.subscription_tier IS 'Pricing: free (0 posts), basic ($249/1 post/mo), professional ($949/10 posts/mo), enterprise ($2499/unlimited/yr)';
+COMMENT ON COLUMN organizations.subscription_tier IS 'Pricing tiers (reference): starter ($399/month, 5 posts), professional ($999/month, 15 posts), enterprise ($2499-5000+/month, unlimited posts). Use organizations.subscription_price for exact billed amount.';
 COMMENT ON COLUMN organizations.job_post_limit IS '0 = free tier, positive number = limit, -1 = unlimited';
 
 -- Portfolio boost pricing reference
-COMMENT ON TABLE professional_promotions IS 'Portfolio Boost Pricing: standard ($19/mo), premium ($49/mo), featured ($99/mo)';
+COMMENT ON TABLE professional_promotions IS 'Portfolio Boost Pricing (developer-facing optional boosts): $15-25/month tiers or $149/year. Professionals (Talent) are free for the platform and may purchase boosts only; employers purchase subscriptions separately.';

@@ -70,12 +70,16 @@ CREATE INDEX IF NOT EXISTS idx_org_members_org_id ON organization_members(organi
 CREATE INDEX IF NOT EXISTS idx_org_members_user_id ON organization_members(user_id);
 CREATE INDEX IF NOT EXISTS idx_org_members_role ON organization_members(role);
 
--- Add foreign key for organization_id in profiles
-ALTER TABLE profiles
-ADD CONSTRAINT fk_profiles_organization 
-FOREIGN KEY (organization_id) 
-REFERENCES organizations(id) 
-ON DELETE SET NULL;
+-- Add foreign key for organization_id in profiles (only if not exists)
+DO $$ BEGIN
+    ALTER TABLE profiles
+    ADD CONSTRAINT fk_profiles_organization 
+    FOREIGN KEY (organization_id) 
+    REFERENCES organizations(id) 
+    ON DELETE SET NULL;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- ============================================================================
 -- PART 3: PROFESSIONAL PROMOTIONS (ADVERTISING)
@@ -381,18 +385,44 @@ CREATE POLICY "Owners can update organizations"
     )
   );
 
--- Reviews: Anyone can read public reviews, only review authors can update/delete
-CREATE POLICY "Anyone can read public reviews"
-  ON employer_reviews FOR SELECT
-  USING (is_public = true OR employer_id = auth.uid() OR professional_id = auth.uid());
+-- Professional Promotions: Only professionals can manage their own promotions
+-- ENFORCEMENT: Only user_type = 'professional' can purchase/create promotions
+CREATE POLICY "Professionals can view their own promotions"
+  ON professional_promotions FOR SELECT
+  USING (professional_id = auth.uid());
 
-CREATE POLICY "Employers can create reviews"
-  ON employer_reviews FOR INSERT
+CREATE POLICY "Professionals can create their own promotions"
+  ON professional_promotions FOR INSERT
+  WITH CHECK (
+    professional_id = auth.uid() AND
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE id = auth.uid()
+      AND user_type = 'professional'
+    )
+  );
+
+CREATE POLICY "Professionals can update their own promotions"
+  ON professional_promotions FOR UPDATE
+  USING (professional_id = auth.uid())
+  WITH CHECK (professional_id = auth.uid());
+
+CREATE POLICY "Service role can manage all promotions"
+  ON professional_promotions FOR ALL
+  USING (auth.role() = 'service_role');
+
+-- Ratings: Public read, only employers can create/update
+CREATE POLICY "Anyone can read ratings"
+  ON professional_ratings FOR SELECT
+  USING (true);
+
+CREATE POLICY "Employers can create ratings"
+  ON professional_ratings FOR INSERT
   WITH CHECK (employer_id = auth.uid());
 
-CREATE POLICY "Review authors can update their reviews"
-  ON employer_reviews FOR UPDATE
-  USING (employer_id = auth.uid() AND (now() - created_at) < interval '48 hours');
+CREATE POLICY "Employers can update their ratings"
+  ON professional_ratings FOR UPDATE
+  USING (employer_id = auth.uid());
 
 -- Messages: Only conversation participants can read/write
 CREATE POLICY "Participants can read messages"

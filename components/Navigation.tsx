@@ -74,34 +74,20 @@ export default function Navigation({ showMarketplacesOnly = false, showMessagesO
 
   return (
     <nav className="hidden md:flex items-center gap-3">
-      {/* Marketplaces with Community - centered */}
-      {!showMessagesOnly && (
-        <>
+      {/* Marketplaces with separator - centered */}
+      {!showMessagesOnly && publicNavigation.map((item, idx) => (
+        <div key={item.href} className="flex items-center gap-3">
           <Link 
-            href="/portfolios" 
-            className={`text-sm font-semibold transition-colors ${isActive('/portfolios') ? 'text-sage-400 dark:text-sage-300' : 'text-gray-600 dark:text-gray-400 hover:text-sage-400'}`}
+            href={item.href} 
+            className={`text-sm font-semibold transition-colors ${isActive(item.href) ? 'text-sage-400 dark:text-sage-300' : 'text-gray-600 dark:text-gray-400 hover:text-sage-400'}`}
           >
-            Talent Marketplace
+            {item.label}
           </Link>
-          <span className="text-gray-400 dark:text-gray-500">|</span>
-          <a 
-            href="https://discord.gg/tR83acbmUs" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-sage-400 transition-colors"
-          >
-            Community
-          </a>
-          <span className="text-gray-400 dark:text-gray-500">|</span>
-          <Link 
-            href="/projectlistings" 
-            className={`text-sm font-semibold transition-colors ${isActive('/projectlistings') ? 'text-sage-400 dark:text-sage-300' : 'text-gray-600 dark:text-gray-400 hover:text-sage-400'}`}
-          >
-            Job Marketplace
-          </Link>
-        </>
-      )}
-
+          {idx < publicNavigation.length - 1 && (
+            <span className="text-gray-400 dark:text-gray-500">|</span>
+          )}
+        </div>
+      ))}
       
       {/* My Messages - for logged-in users */}
       {!showMarketplacesOnly && isSignedIn && userRole === 'professional' && professionalQuickLinks.map((link) => (

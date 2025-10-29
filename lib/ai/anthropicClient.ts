@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import { logApiCost, calculateAnthropicCost, estimateTokens } from '../costTracking'
+import { detectSecrets } from '../security'
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || ''
 
@@ -13,6 +14,16 @@ export async function analyzeWithAnthropic(
     operation?: string
   }
 ) {
+  // Defense-in-depth: don't send prompts that contain secrets
+  try {
+    const secretCheck = detectSecrets(prompt)
+    if (secretCheck.found) {
+      throw new Error('Prompt contains potential secrets; aborting call to Anthropic')
+    }
+  } catch (err) {
+    // Early fail to avoid exfiltration
+    throw err
+  }
   if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not configured')
 
   const startTime = Date.now()

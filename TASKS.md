@@ -14,6 +14,66 @@ How to use
 - Move items between sections as priorities change.
 - Link to PRs/issues or files when complete.
 
+Users & Billing
+---------------
+
+- User types: There are only two user types in the product model: `Employer` and `Talent` (DB name: `professional`). Use "Talent" in UI copy; use `professional` in DB queries/migrations.
+- Promotions & spend rules: The `professional_promotions` table grants paid advertising for professionals. NOTE: Professionals (talent) may only spend on portfolio-boost purchases (promotions that boost a professional's portfolio visibility). Employers pay subscription fees and are the only users who purchase employer subscriptions or employer-targeted products.
+- Pricing source and action required: Employer subscription prices should reflect the Glassdoor-based rates we previously decided on. Insert the finalized Glassdoor rates below when ready (or supply them to update this file and the billing/config code).
+
+Pricing & product decisions (current)
+-----------------------------------
+
+- Developers / Talent (free tier)
+  - Base profile access: FREE (unlimited view, apply limits handled by employer rules)
+  - Skill verification features: included (verification badges appear after successful checks)
+  - Unlimited applications to jobs (platform-level rule)
+  - Job matching based on verified skills (included)
+
+- Developer optional Boosts (professional_promotions)
+  - Optional Boosts: $15-25/month (tiered) or $149/year (annual) — boosts increase visibility and add profile analytics
+  - Boost features: priority placement, "Open to offers" badge, portfolio showcase, verified skill score prominence, analytics on profile views/employer interest
+  - Implementation note: enforce via `professional_promotions` table and server-side checks so professionals can only buy boosts (not employer subscriptions)
+
+- Employer subscription tiers (new Glassdoor-based pricing)
+  - Starter: $399/month
+    - 5 active job postings
+    - Search/filter by verified skills
+    - Contact 25 candidates/month
+    - Basic skill match scoring
+    - Standard verification reports
+
+  - Professional: $999/month
+    - 15 active postings
+    - Unlimited candidate contact
+    - Advanced filters (specific tech stacks, project complexity)
+    - Detailed verification breakdowns
+    - ATS integration and skill gap analysis tools
+
+  - Enterprise: $2,499 - $5,000+/month (custom)
+    - Unlimited postings
+    - Custom verification criteria
+    - API access and white-label badges
+    - Dedicated account manager, bulk hiring tools, custom skill assessments
+
+- High-value add-ons (à la carte)
+  - Custom skill assessment: $99-299 per candidate
+  - Deep background check integration: $49-99 per candidate
+  - Reference verification: $75 per candidate
+  - Project code review (senior): $149 per candidate
+  - Success-based pay-per-hire: $1,500-3,000 per successful hire (optional alternative)
+
+Next actions / tasks
+--------------------
+
+- [x] Update `supabase/migrations/20251027_employer_billing.sql` to set canonical pricing constants/comments and ensure `organizations.subscription_price` defaults align with the new tiers — @matt - 0.1d
+- [x] Add pricing constants/config file (e.g., `lib/pricing.ts`) and wire into billing code and Stripe integration; include monthly/yearly mapping — @matt - 0.25d
+- [x] Enforce professional promotions spend rules in server API and RLS: professionals may only purchase `professional_promotions` (portfolio boosts), employers purchase subscriptions — @backend - 0.5d ✅ COMPLETED
+- [x] Add tests for promotions purchase flow and employer subscription enforcement (unit + integration) — @qa - 0.5d ✅ COMPLETED
+- [ ] Apply billing migration to Supabase production DB (`20251027_employer_billing.sql`) — @matt - 0.25d
+
+
+
 High-level milestones
 ---------------------
 

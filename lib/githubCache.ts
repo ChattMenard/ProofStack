@@ -106,17 +106,18 @@ export async function fetchGitHubWithCache(
     headers['If-None-Match'] = cached.etag
   }
 
-  // Use global fetch when available (node18+ / runtime), otherwise fall back to node-fetch.
-  // Tests typically mock 'node-fetch', so require('node-fetch') will pick up that mock.
-  // Handle both CommonJS and ESM shapes from the require call.
-  const fetchFn: any = (globalThis as any).fetch || (function () {
+  // Use global fetch when available (node18+ / runtime), otherwise dynamically import node-fetch.
+  // Tests typically mock 'node-fetch' so dynamic import will still resolve the mocked module.
+  let fetchFn: any = (globalThis as any).fetch
+  if (!fetchFn) {
     try {
-      const m = require('node-fetch')
-      return m && m.default ? m.default : m
+      // dynamic import works with ESM-only packages like node-fetch v3+
+      const mod = await import('node-fetch')
+      fetchFn = mod && (mod as any).default ? (mod as any).default : mod
     } catch (e) {
       throw new Error('fetch is not defined')
     }
-  })()
+  }
 
   const response = await fetchFn(url, { headers })
 
