@@ -28,8 +28,9 @@ export const professionalNavigation: NavSection[] = [
     title: 'My Account',
     links: [
       { href: '/professional/dashboard', label: 'Dashboard', icon: '📊' },
-      { href: '/portfolio/[username]', label: 'My Portfolio', icon: '�' },
+      { href: '/portfolio/[username]', label: 'My Portfolio', icon: '🎨' },
       { href: '/professional/reviews', label: 'My Reviews', icon: '⭐' },
+      { href: '/professional/my-jobs', label: 'My Job Listings', icon: '📋' },
       { href: '/upload', label: 'Upload Work', icon: '📤' },
       { href: '/professional/assessments', label: 'Skill Assessments', icon: '🎯' },
       { href: '/professional/import-git', label: 'Import from GitHub', icon: '🔗' },
