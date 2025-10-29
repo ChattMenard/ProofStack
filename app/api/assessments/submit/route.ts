@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuthAppRouter } from '@/lib/requireAuthAppRouter'
 import { supabaseServer } from '@/lib/supabaseServer'
-import { withRateLimit } from '@/lib/rateLimitRedis'
 
 interface SubmitAssessmentRequest {
   assessmentType: 'coding_challenge' | 'technical_quiz' | 'portfolio_review' | 'project_complexity'

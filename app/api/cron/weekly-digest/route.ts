@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabaseServer'
 import { Resend } from 'resend'
 
+// Force dynamic route - don't try to statically generate cron endpoints
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 /**

@@ -45,9 +45,8 @@ export default function AdminDashboard() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      // DEV MODE: Allow specific email in development
+      // DEV MODE: Allow access in development
       const isDev = process.env.NODE_ENV === 'development';
-      const devEmail = 'mattchenard2009@gmail.com';
       
       if (isDev) {
         // In dev, just load the dashboard without auth
