@@ -7,16 +7,46 @@
 -- 1. CREATE migration_log TABLE IF NOT EXISTS
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS public.migration_log (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL UNIQUE,
-  description text,
-  applied_at timestamptz DEFAULT now(),
-  applied_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
-  success boolean DEFAULT true,
-  error_message text,
-  created_at timestamptz DEFAULT now()
-);
+-- Check if table exists and add missing columns if needed
+DO $$ 
+BEGIN
+  -- Create table if it doesn't exist
+  CREATE TABLE IF NOT EXISTS public.migration_log (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name text NOT NULL UNIQUE,
+    description text,
+    applied_at timestamptz DEFAULT now(),
+    created_at timestamptz DEFAULT now()
+  );
+  
+  -- Add optional columns if they don't exist (for enhanced tracking)
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'migration_log' 
+    AND column_name = 'applied_by'
+  ) THEN
+    ALTER TABLE public.migration_log ADD COLUMN applied_by uuid REFERENCES auth.users(id) ON DELETE SET NULL;
+  END IF;
+  
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'migration_log' 
+    AND column_name = 'success'
+  ) THEN
+    ALTER TABLE public.migration_log ADD COLUMN success boolean DEFAULT true;
+  END IF;
+  
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'migration_log' 
+    AND column_name = 'error_message'
+  ) THEN
+    ALTER TABLE public.migration_log ADD COLUMN error_message text;
+  END IF;
+END $$;
 
 -- Add helpful comment
 COMMENT ON TABLE public.migration_log IS 
@@ -142,18 +172,47 @@ END $$;
 -- =============================================================================
 
 -- Log this migration (will use the new policy)
-INSERT INTO public.migration_log (name, description, applied_at, success)
-VALUES (
-  '20251030_enable_rls_migration_log',
-  'Enable RLS on migration_log table and create appropriate security policies',
-  NOW(),
-  true
-)
-ON CONFLICT (name) DO UPDATE
-SET 
-  applied_at = NOW(),
-  success = true,
-  description = EXCLUDED.description;
+-- Use dynamic SQL to handle tables with or without 'success' column
+DO $$
+DECLARE
+  has_success_column boolean;
+BEGIN
+  -- Check if success column exists
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'migration_log' 
+    AND column_name = 'success'
+  ) INTO has_success_column;
+  
+  IF has_success_column THEN
+    -- Insert with success column
+    INSERT INTO public.migration_log (name, description, applied_at, success)
+    VALUES (
+      '20251030_enable_rls_migration_log',
+      'Enable RLS on migration_log table and create appropriate security policies',
+      NOW(),
+      true
+    )
+    ON CONFLICT (name) DO UPDATE
+    SET 
+      applied_at = NOW(),
+      success = true,
+      description = EXCLUDED.description;
+  ELSE
+    -- Insert without success column
+    INSERT INTO public.migration_log (name, description, applied_at)
+    VALUES (
+      '20251030_enable_rls_migration_log',
+      'Enable RLS on migration_log table and create appropriate security policies',
+      NOW()
+    )
+    ON CONFLICT (name) DO UPDATE
+    SET 
+      applied_at = NOW(),
+      description = EXCLUDED.description;
+  END IF;
+END $$;
 
 -- Show success message
 DO $$
