@@ -1,26 +1,20 @@
 -- Migration: Add RLS policies to tables with RLS enabled but no policies
 -- Date: 2025-10-30
--- Purpose: Secure 12 tables that have RLS enabled but no access policies
+-- Purpose: Secure tables that have RLS enabled but no access policies
 -- Security Impact: HIGH - Without policies, RLS-enabled tables block ALL access
 
--- =============================================================================
--- 1. ANALYSES TABLE
--- =============================================================================
--- AI analysis results for work samples
+-- Note: Some tables (analyses, proofs, samples, uploads) already have policies
+-- in add_founding_employers.sql. This migration only adds policies for tables
+-- that genuinely don't have any.
 
-CREATE POLICY analyses_owner_full_access
-  ON public.analyses
-  FOR ALL
-  TO authenticated
-  USING (
-    professional_id = auth.uid()
-  )
-  WITH CHECK (
-    professional_id = auth.uid()
-  );
-
-COMMENT ON POLICY analyses_owner_full_access ON public.analyses IS
-  'Professionals can manage their own AI analyses';
+-- =============================================================================
+-- SKIP: ANALYSES TABLE (already has policies)
+-- =============================================================================
+-- Already defined in add_founding_employers.sql:
+-- - Users can view own analyses
+-- - Users can insert own analyses
+-- - Users can update own analyses
+-- - Users can delete own analyses
 
 -- =============================================================================
 -- 2. CONVERSATIONS TABLE
@@ -209,65 +203,21 @@ COMMENT ON POLICY profile_views_viewer_insert ON public.profile_views IS
   'Users can record their own profile views';
 
 -- =============================================================================
--- 8. PROOFS TABLE
+-- SKIP: PROOFS TABLE (already has policies)
 -- =============================================================================
--- Work verification proofs
-
-CREATE POLICY proofs_owner_full_access
-  ON public.proofs
-  FOR ALL
-  TO authenticated
-  USING (
-    user_id = auth.uid()
-  )
-  WITH CHECK (
-    user_id = auth.uid()
-  );
-
-CREATE POLICY proofs_public_read_verified
-  ON public.proofs
-  FOR SELECT
-  TO authenticated
-  USING (
-    verified = true
-    AND is_public = true
-  );
-
-COMMENT ON POLICY proofs_owner_full_access ON public.proofs IS
-  'Users manage their own proofs';
-
-COMMENT ON POLICY proofs_public_read_verified ON public.proofs IS
-  'Verified public proofs are visible to all';
+-- Already defined in add_founding_employers.sql:
+-- - Users can view own proofs
+-- - Users can insert own proofs  
+-- - Users can update own proofs
 
 -- =============================================================================
--- 9. SAMPLES TABLE
+-- SKIP: SAMPLES TABLE (already has policies)
 -- =============================================================================
--- Work sample uploads
-
-CREATE POLICY samples_owner_full_access
-  ON public.samples
-  FOR ALL
-  TO authenticated
-  USING (
-    user_id = auth.uid()
-  )
-  WITH CHECK (
-    user_id = auth.uid()
-  );
-
-CREATE POLICY samples_public_read
-  ON public.samples
-  FOR SELECT
-  TO authenticated
-  USING (
-    is_public = true
-  );
-
-COMMENT ON POLICY samples_owner_full_access ON public.samples IS
-  'Users manage their own samples';
-
-COMMENT ON POLICY samples_public_read ON public.samples IS
-  'Public samples visible to all authenticated users';
+-- Already defined in add_founding_employers.sql:
+-- - Users can view own samples
+-- - Users can insert own samples
+-- - Users can update own samples
+-- - Users can delete own samples
 
 -- =============================================================================
 -- 10. SEARCH_HISTORY TABLE
@@ -289,23 +239,13 @@ COMMENT ON POLICY search_history_owner_full_access ON public.search_history IS
   'Users manage their own search history';
 
 -- =============================================================================
--- 11. UPLOADS TABLE
+-- SKIP: UPLOADS TABLE (already has policies)
 -- =============================================================================
--- File upload tracking
-
-CREATE POLICY uploads_owner_full_access
-  ON public.uploads
-  FOR ALL
-  TO authenticated
-  USING (
-    user_id = auth.uid()
-  )
-  WITH CHECK (
-    user_id = auth.uid()
-  );
-
-COMMENT ON POLICY uploads_owner_full_access ON public.uploads IS
-  'Users manage their own uploads';
+-- Already defined in add_founding_employers.sql:
+-- - Users can view own uploads
+-- - Users can insert own uploads
+-- - Users can update own uploads  
+-- - Users can delete own uploads
 
 -- =============================================================================
 -- 12. USAGE_TRACKING TABLE
@@ -346,10 +286,9 @@ BEGIN
   FROM pg_tables t
   WHERE t.schemaname = 'public'
   AND t.tablename IN (
-    'analyses', 'conversation_participants', 'conversations',
+    'conversation_participants', 'conversations',
     'organization_members', 'professional_promotions', 'professional_ratings',
-    'profile_views', 'proofs', 'samples', 'search_history',
-    'uploads', 'usage_tracking'
+    'profile_views', 'search_history', 'usage_tracking'
   )
   AND NOT EXISTS (
     SELECT 1 FROM pg_policies p
@@ -360,7 +299,7 @@ BEGIN
   IF tables_without_policies > 0 THEN
     RAISE WARNING '% tables still have no RLS policies', tables_without_policies;
   ELSE
-    RAISE NOTICE '✅ Security verification passed: All 12 tables now have RLS policies';
+    RAISE NOTICE '✅ Security verification passed: All 8 tables now have RLS policies';
   END IF;
 END $$;
 
@@ -385,7 +324,7 @@ BEGIN
       INSERT INTO public.migration_log (name, description, applied_at, success)
       VALUES (
         ''20251030_add_missing_rls_policies'',
-        ''Add RLS policies to 12 tables that had RLS enabled but no policies'',
+        ''Add RLS policies to 8 tables that had RLS enabled but no policies'',
         NOW(),
         true
       )
@@ -399,7 +338,7 @@ BEGIN
       INSERT INTO public.migration_log (name, description, applied_at)
       VALUES (
         ''20251030_add_missing_rls_policies'',
-        ''Add RLS policies to 12 tables that had RLS enabled but no policies'',
+        ''Add RLS policies to 8 tables that had RLS enabled but no policies'',
         NOW()
       )
       ON CONFLICT (name) DO UPDATE
