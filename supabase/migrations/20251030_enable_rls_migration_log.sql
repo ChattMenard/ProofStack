@@ -172,10 +172,11 @@ END $$;
 -- =============================================================================
 
 -- Log this migration (will use the new policy)
--- Use dynamic SQL to handle tables with or without 'success' column
+-- Use EXECUTE for true dynamic SQL to handle tables with or without 'success' column
 DO $$
 DECLARE
   has_success_column boolean;
+  sql_statement text;
 BEGIN
   -- Check if success column exists
   SELECT EXISTS (
@@ -186,32 +187,37 @@ BEGIN
   ) INTO has_success_column;
   
   IF has_success_column THEN
-    -- Insert with success column
-    INSERT INTO public.migration_log (name, description, applied_at, success)
-    VALUES (
-      '20251030_enable_rls_migration_log',
-      'Enable RLS on migration_log table and create appropriate security policies',
-      NOW(),
-      true
-    )
-    ON CONFLICT (name) DO UPDATE
-    SET 
-      applied_at = NOW(),
-      success = true,
-      description = EXCLUDED.description;
+    -- Build SQL with success column
+    sql_statement := '
+      INSERT INTO public.migration_log (name, description, applied_at, success)
+      VALUES (
+        ''20251030_enable_rls_migration_log'',
+        ''Enable RLS on migration_log table and create appropriate security policies'',
+        NOW(),
+        true
+      )
+      ON CONFLICT (name) DO UPDATE
+      SET 
+        applied_at = NOW(),
+        success = true,
+        description = EXCLUDED.description';
   ELSE
-    -- Insert without success column
-    INSERT INTO public.migration_log (name, description, applied_at)
-    VALUES (
-      '20251030_enable_rls_migration_log',
-      'Enable RLS on migration_log table and create appropriate security policies',
-      NOW()
-    )
-    ON CONFLICT (name) DO UPDATE
-    SET 
-      applied_at = NOW(),
-      description = EXCLUDED.description;
+    -- Build SQL without success column
+    sql_statement := '
+      INSERT INTO public.migration_log (name, description, applied_at)
+      VALUES (
+        ''20251030_enable_rls_migration_log'',
+        ''Enable RLS on migration_log table and create appropriate security policies'',
+        NOW()
+      )
+      ON CONFLICT (name) DO UPDATE
+      SET 
+        applied_at = NOW(),
+        description = EXCLUDED.description';
   END IF;
+  
+  -- Execute the dynamic SQL
+  EXECUTE sql_statement;
 END $$;
 
 -- Show success message
