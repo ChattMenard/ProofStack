@@ -6,7 +6,7 @@ import { Resend } from 'resend'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Do not instantiate Resend at module load time (build can run without env vars)
 
 /**
  * Weekly Digest Email Cron Job
@@ -30,6 +30,13 @@ export async function GET(request: NextRequest) {
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not configured')
+      return NextResponse.json({ error: 'Server configuration error: RESEND_API_KEY not set' }, { status: 500 })
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY)
 
     const supabase = supabaseServer
     const now = new Date()

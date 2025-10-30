@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from '@/lib/supabaseServer';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -17,13 +17,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create Supabase admin client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+    // Use guarded supabaseServer instance
+    const supabase = supabaseServer;
 
     // 1. Create user account with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({

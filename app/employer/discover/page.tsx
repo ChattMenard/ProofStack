@@ -1,16 +1,11 @@
-'use client';
+ 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '@/lib/supabaseClient';
 import Link from 'next/link';
 import ProofScoreV2 from '@/components/ProofScoreV2';
 import PreferencesDisplay from '@/components/PreferencesDisplay';
 import VerificationBadges from '@/components/VerificationBadges';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 interface SearchFilters {
   skills: string[];

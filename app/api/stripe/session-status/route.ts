@@ -16,6 +16,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Retrieve the session from Stripe
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe not configured (missing STRIPE_SECRET_KEY)' }, { status: 500 })
+    }
+
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     return NextResponse.json({

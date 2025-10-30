@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '@/lib/supabaseClient';
 
 interface JobPosting {
   id: string;
@@ -25,10 +25,7 @@ interface JobPosting {
   } | null;
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// use shared supabase client
 
 export default function ProjectListingsPage() {
   const [jobs, setJobs] = useState<JobPosting[]>([]);

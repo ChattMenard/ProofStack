@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 export async function POST(request: NextRequest) {
   try {
+    // Lazily instantiate OpenAI to avoid build-time errors when env vars are missing
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not configured')
+      return NextResponse.json(
+        { error: 'Server configuration error: OPENAI_API_KEY not set' },
+        { status: 500 }
+      )
+    }
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+
     const { text, context } = await request.json()
 
     if (!text || text.trim().length === 0) {

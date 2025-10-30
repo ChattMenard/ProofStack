@@ -68,6 +68,10 @@ export async function POST(request: NextRequest) {
       sessionConfig.cancel_url = `${baseUrl}/dashboard?upgrade=cancelled`
     }
 
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe not configured (missing STRIPE_SECRET_KEY)' }, { status: 500 })
+    }
+
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
     // Return different responses based on mode

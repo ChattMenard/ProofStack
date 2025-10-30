@@ -5,12 +5,9 @@
  * Tracks metrics like accuracy, latency, cost, and user satisfaction.
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { supabaseServer } from './supabaseServer'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+const supabase = supabaseServer
 
 // Model variants for different operations
 export type ModelVariant = 

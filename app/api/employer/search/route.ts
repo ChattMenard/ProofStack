@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from '@/lib/supabaseServer';
 import { withRateLimit } from '@/lib/security/rateLimiting';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -13,8 +13,7 @@ export async function POST(request: Request) {
   try {
     // SECURITY: Rate limiting to prevent scraping
     const getUserId = async () => {
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseServer.auth.getUser();
       return user?.id || null;
     };
     
@@ -36,12 +35,7 @@ export async function POST(request: Request) {
     } = filters;
 
     // Create Supabase admin client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    });
+    const supabase = supabaseServer;
 
     // Build the query
     let query = supabase

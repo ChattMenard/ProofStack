@@ -1,14 +1,9 @@
-'use client';
+ 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '@/lib/supabaseClient';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 interface JobWithApplications {
   id: string;
@@ -77,8 +72,8 @@ export default function JobApplicationsPage() {
 
       // Calculate stats
       const totalJobs = jobsData?.length || 0;
-      const activeJobs = jobsData?.filter(j => j.status === 'published').length || 0;
-      const totalApplications = jobsData?.reduce((sum, j) => sum + (j.applications_count || 0), 0) || 0;
+  const activeJobs = (jobsData as any[])?.filter((j: any) => j.status === 'published').length || 0;
+  const totalApplications = (jobsData as any[])?.reduce((sum: any, j: any) => sum + (j.applications_count || 0), 0) || 0;
 
       setStats({
         totalJobs,
@@ -88,7 +83,7 @@ export default function JobApplicationsPage() {
       });
 
       // Auto-select first job with applications
-      const firstJobWithApps = jobsData?.find(j => j.applications_count > 0);
+  const firstJobWithApps = (jobsData as any[])?.find((j: any) => j.applications_count > 0);
       if (firstJobWithApps) {
         setSelectedJob(firstJobWithApps.id);
       }
@@ -124,7 +119,7 @@ export default function JobApplicationsPage() {
       if (error) throw error;
       
       // Transform data to match expected structure (profiles returns array, we need single object)
-      const transformedData = data?.map(app => ({
+        const transformedData = data?.map((app: any) => ({
         ...app,
         professional: Array.isArray(app.profiles) ? app.profiles[0] : app.profiles
       })) || [];

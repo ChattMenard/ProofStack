@@ -1,14 +1,11 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabaseClient';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// guarded client provided by lib/supabaseClient
 
 const tierInfo = {
   standard: { name: 'Standard Promotion', badge: '🚀 Promoted', color: 'blue', price: 19 },

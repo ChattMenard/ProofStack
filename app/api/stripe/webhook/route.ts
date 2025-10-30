@@ -4,8 +4,6 @@ import { supabase } from '../../../../lib/supabaseClient'
 import Stripe from 'stripe'
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -17,6 +15,11 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event
 
   try {
+    if (!stripe) {
+      console.error('Stripe not configured; webhook cannot be verified')
+      return NextResponse.json({ error: 'Stripe not configured (missing STRIPE_SECRET_KEY)' }, { status: 500 })
+    }
+
     event = stripe.webhooks.constructEvent(
       body,
       signature,
@@ -182,12 +185,17 @@ export async function POST(request: NextRequest) {
 
         // Send email notification
         if (invoice.customer_email) {
-          await resend.emails.send({
-            from: 'no-reply@proofstack.com',
-            to: invoice.customer_email,
-            subject: 'Payment Failed',
-            html: `<p>Dear Customer,</p><p>Your recent payment attempt failed. Please update your payment details to avoid service interruptions.</p>`
-          })
+          if (!process.env.RESEND_API_KEY) {
+            console.error('RESEND_API_KEY not configured; skipping payment failed email')
+          } else {
+            const resendClient = new Resend(process.env.RESEND_API_KEY);
+            await resendClient.emails.send({
+              from: 'no-reply@proofstack.com',
+              to: invoice.customer_email,
+              subject: 'Payment Failed',
+              html: `<p>Dear Customer,</p><p>Your recent payment attempt failed. Please update your payment details to avoid service interruptions.</p>`
+            })
+          }
         }
         break
       }

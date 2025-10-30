@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import { supabaseServer } from '@/lib/supabaseServer'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-const resend = new Resend(process.env.RESEND_API_KEY)
+const supabase = supabaseServer
 
 /**
  * POST /api/forum/threads/[id]/replies
@@ -119,12 +115,17 @@ export async function POST(
       .single()
 
     if (threadData?.creator_id && threadData.creator_id !== userId) {
-      await resend.emails.send({
-        from: 'no-reply@proofstack.com',
-        to: threadData.creator_id,
-        subject: 'New Reply to Your Thread',
-        html: `<p>Someone has replied to your thread. Check it out <a href='/forum/threads/${threadId}'>here</a>.</p>`
-      })
+      if (!process.env.RESEND_API_KEY) {
+        console.error('RESEND_API_KEY not configured; skipping email notification')
+      } else {
+        const resend = new (await import('resend')).Resend(process.env.RESEND_API_KEY)
+        await resend.emails.send({
+          from: 'no-reply@proofstack.com',
+          to: threadData.creator_id,
+          subject: 'New Reply to Your Thread',
+          html: `<p>Someone has replied to your thread. Check it out <a href='/forum/threads/${threadId}'>here</a>.</p>`
+        })
+      }
     }
 
     return NextResponse.json(reply, { status: 201 })

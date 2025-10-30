@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from '@/lib/supabaseServer';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-09-30.clover'
-});
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
+const supabase = supabaseServer;
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,15 +32,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Cancel Stripe subscription
-    try {
-      await stripe.subscriptions.cancel(stripe_subscription_id);
-      console.log('Stripe subscription canceled:', stripe_subscription_id);
-    } catch (stripeError: any) {
-      console.error('Stripe cancellation error:', stripeError);
-      // If subscription doesn't exist in Stripe (already canceled), continue
-      if (stripeError.code !== 'resource_missing') {
-        throw stripeError;
+    // Cancel Stripe subscription (lazy-initialize Stripe client and guard missing key)
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('Stripe secret key missing; cannot cancel subscription in Stripe')
+    } else {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-09-30.clover' });
+      try {
+        await stripe.subscriptions.cancel(stripe_subscription_id);
+        console.log('Stripe subscription canceled:', stripe_subscription_id);
+      } catch (stripeError: any) {
+        console.error('Stripe cancellation error:', stripeError);
+        // If subscription doesn't exist in Stripe (already canceled), continue
+        if (stripeError.code !== 'resource_missing') {
+          throw stripeError;
+        }
       }
     }
 

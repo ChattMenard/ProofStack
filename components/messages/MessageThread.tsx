@@ -1,12 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import supabase from '@/lib/supabaseClient';
 
 interface Message {
   id: string;
@@ -101,7 +96,7 @@ export default function MessageThread({ conversationId, currentUserId, recipient
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`
         },
-        async (payload) => {
+  async (payload: any) => {
           // Fetch the sender info for the new message
           const { data: senderData } = await supabase
             .from('profiles')

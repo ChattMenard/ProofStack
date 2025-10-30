@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from '@/lib/supabaseServer'
 import { sendNewReviewEmail } from '@/lib/email/notifications';
 import { validateWorkSampleSecurity } from '@/lib/security/secretDetection';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
+const supabase = supabaseServer
 
 export async function POST(request: NextRequest) {
   try {

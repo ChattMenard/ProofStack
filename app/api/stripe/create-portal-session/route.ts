@@ -25,6 +25,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create portal session
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe not configured (missing STRIPE_SECRET_KEY)' }, { status: 500 })
+    }
+
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
       return_url: `${process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin}/dashboard`,

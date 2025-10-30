@@ -1,14 +1,15 @@
 import Stripe from 'stripe'
 import { supabase } from './supabaseClient'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY environment variable')
-}
-
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-09-30.clover',
-  typescript: true,
-})
+// Guarded Stripe instance: only create if the secret key is provided.
+// During local builds we avoid throwing at import time so the build can proceed
+// without production secrets. Callers should check `stripe` before using it.
+export const stripe: Stripe | null = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-09-30.clover',
+      typescript: true,
+    })
+  : null
 
 // Stripe price IDs (you'll create these in Stripe dashboard)
 export const STRIPE_PRICES = {
@@ -63,6 +64,8 @@ export async function createCheckoutSession(
       coupon: couponCode,
     }]
   }
+
+  if (!stripe) throw new Error('Missing STRIPE_SECRET_KEY environment variable')
 
   const session = await stripe.checkout.sessions.create(sessionConfig)
   return session.id

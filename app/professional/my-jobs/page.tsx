@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
+import supabase from '@/lib/supabaseClient'
 
 interface JobPosting {
   id: string
@@ -24,10 +24,7 @@ interface JobPosting {
   created_at: string
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+// use shared supabase client
 
 export default function MyJobsPage() {
   const router = useRouter()
@@ -68,8 +65,8 @@ export default function MyJobsPage() {
 
       // Calculate stats
       const totalJobs = data?.length || 0
-      const activeJobs = data?.filter(j => j.status === 'published').length || 0
-      const totalApplications = data?.reduce((sum, j) => sum + (j.applications_count || 0), 0) || 0
+  const activeJobs = (data as any[])?.filter((j: any) => j.status === 'published').length || 0
+  const totalApplications = (data as any[])?.reduce((sum: any, j: any) => sum + (j.applications_count || 0), 0) || 0
 
       setStats({
         totalJobs,

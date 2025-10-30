@@ -1,15 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '@/lib/supabaseClient';
 import Link from 'next/link';
 import VerificationBadges from '@/components/VerificationBadges';
 import SkillLevelBadge from '@/components/SkillLevelBadge';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 type SkillLevel = 'junior' | 'mid' | 'senior' | 'lead' | 'unverified';
 

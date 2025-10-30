@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseServer } from './supabaseServer'
 
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute in milliseconds
@@ -176,13 +176,9 @@ export function withRateLimit(
         // Try to get user from session
         const authHeader = req.headers.authorization
         if (authHeader?.startsWith('Bearer ')) {
-          try {
-            const supabase = createClient(
-              process.env.NEXT_PUBLIC_SUPABASE_URL!,
-              process.env.SUPABASE_SERVICE_ROLE_KEY!
-            )
+            try {
             const token = authHeader.replace('Bearer ', '')
-            const { data: { user } } = await supabase.auth.getUser(token)
+            const { data: { user } } = await supabaseServer.auth.getUser(token)
             userId = user?.id
           } catch {
             // Ignore auth errors, fall back to IP-based limiting

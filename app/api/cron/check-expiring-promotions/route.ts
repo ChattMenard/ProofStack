@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { sendPromotionExpiringEmail } from '@/lib/email/notifications';
+import { supabaseServer } from '@/lib/supabaseServer';
 
 // Force dynamic rendering for this API route
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Use the server supabase client which safely falls back in non-configured environments
+const supabase = supabaseServer;
 
 export async function GET(req: NextRequest) {
   try {

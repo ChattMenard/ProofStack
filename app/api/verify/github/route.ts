@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from '@/lib/supabaseServer';
 import { withRateLimit } from '@/lib/security/rateLimiting';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     }
 
     // Create service client
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const supabase = supabaseServer;
 
     // Verify the auth_uid is valid by checking if profile exists
     const { data: profile, error: profileError } = await supabase

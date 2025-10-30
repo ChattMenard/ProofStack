@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from '@/lib/supabaseServer';
 import OpenAI from 'openai';
 import { withRateLimit } from '@/lib/security/rateLimiting';
 import { validateWorkSampleSecurity, detectSecrets } from '@/lib/security/secretDetection';
@@ -13,17 +13,22 @@ import { validateWorkSampleSecurity, detectSecrets } from '@/lib/security/secret
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = supabaseServer;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+// Lazily instantiate OpenAI inside the handler to avoid build-time errors
 
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not configured')
+      return NextResponse.json(
+        { error: 'Server configuration error: OPENAI_API_KEY not set' },
+        { status: 500 }
+      )
+    }
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+
     // SECURITY: Rate limiting (AI analysis is expensive)
     const getUserId = async () => {
       const { data: { user } } = await supabase.auth.getUser();

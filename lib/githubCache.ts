@@ -4,12 +4,9 @@
  * Reduces rate limiting and improves performance
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { supabaseServer } from './supabaseServer'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-
-const supabase = createClient(supabaseUrl, supabaseServiceRole)
+const supabase = supabaseServer
 
 interface CacheEntry {
   url: string
