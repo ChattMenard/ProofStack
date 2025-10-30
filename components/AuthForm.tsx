@@ -22,15 +22,28 @@ export default function AuthForm({ mode = 'login', accountType = 'professional' 
 
   // Listen for auth state changes and redirect
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: any, session: any) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: any, session: any) => {
       if (event === 'SIGNED_IN' && session) {
         posthog.capture('auth_success', { method: event })
         
+        // Fetch user profile to determine role
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('auth_uid', session.user.id)
+          .single()
+        
+        const userType = profileData?.user_type || accountType
+        
         // For signup mode with professionals, redirect to onboarding
-        if (isSignup && accountType === 'professional') {
+        if (isSignup && userType === 'professional') {
           router.push('/onboarding')
+        } else if (userType === 'professional') {
+          router.push('/professional/dashboard')
+        } else if (userType === 'employer') {
+          router.push('/employer/dashboard')
         } else {
-          // Otherwise redirect to dashboard
+          // Fallback to generic dashboard
           router.push('/dashboard')
         }
       }

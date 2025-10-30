@@ -89,10 +89,24 @@ export default function UserProfile() {
           setUsername(null)
         }
         
-        // Auto-redirect after sign in from login page
+        // Auto-redirect after sign in from login page based on user type
         if (event === 'SIGNED_IN' && session && pathname === '/login') {
-          setTimeout(() => {
-            router.push('/dashboard')
+          setTimeout(async () => {
+            // Fetch user profile to determine role
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('user_type')
+              .eq('auth_uid', session.user.id)
+              .single()
+            
+            // Redirect based on user type
+            if (profileData?.user_type === 'professional') {
+              router.push('/professional/dashboard')
+            } else if (profileData?.user_type === 'employer') {
+              router.push('/employer/dashboard')
+            } else {
+              router.push('/dashboard')
+            }
           }, 500)
         }
       })
