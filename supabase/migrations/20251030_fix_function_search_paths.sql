@@ -33,16 +33,16 @@ BEGIN
     SELECT 
       p.proname as function_name,
       pg_get_function_identity_arguments(p.oid) as arguments,
-      p.oid::regprocedure::text as full_signature
+      p.oid::regprocedure::text as full_signature,
+      p.proconfig as config_array
     FROM pg_proc p
     JOIN pg_namespace n ON p.pronamespace = n.oid
     WHERE n.nspname = 'public'
     AND p.proname NOT LIKE 'pg_%'
     AND p.prosecdef = false  -- Skip SECURITY DEFINER functions (handle separately)
-    AND NOT EXISTS (
-      SELECT 1 FROM pg_proc_proconfig 
-      WHERE prooid = p.oid 
-      AND proconfig::text LIKE '%search_path%'
+    AND (
+      p.proconfig IS NULL  -- No config set
+      OR NOT (p.proconfig::text LIKE '%search_path%')  -- Config exists but no search_path
     )
   LOOP
     -- Build ALTER FUNCTION statement with explicit search_path
@@ -78,10 +78,9 @@ BEGIN
   JOIN pg_namespace n ON p.pronamespace = n.oid
   WHERE n.nspname = 'public'
   AND p.proname NOT LIKE 'pg_%'
-  AND NOT EXISTS (
-    SELECT 1 FROM pg_proc_proconfig 
-    WHERE prooid = p.oid 
-    AND proconfig::text LIKE '%search_path%'
+  AND (
+    p.proconfig IS NULL 
+    OR NOT (p.proconfig::text LIKE '%search_path%')
   );
   
   IF remaining_count > 0 THEN
