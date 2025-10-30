@@ -14,13 +14,7 @@ export interface PricingTier {
   };
 }
 
-export interface BoostTier {
-  name: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  features: string[];
-}
-
+// BoostTier and developer boosts removed: all talent boosts are now free.
 export interface AddOn {
   name: string;
   priceRange: [number, number]; // min-max per candidate
@@ -76,31 +70,7 @@ export const EMPLOYER_TIERS: Record<string, PricingTier> = {
 };
 
 // Developer boost tiers (optional portfolio boosts)
-export const DEVELOPER_BOOSTS: Record<string, BoostTier> = {
-  basic: {
-    name: 'Basic Boost',
-    monthlyPrice: 15,
-    yearlyPrice: 149,
-    features: [
-      'Priority placement in search results',
-      '"Open to offers" highlight badge',
-      'Portfolio showcase features',
-      'Verified skill score prominently displayed',
-      'Analytics on profile views/employer interest'
-    ]
-  },
-  premium: {
-    name: 'Premium Boost',
-    monthlyPrice: 25,
-    yearlyPrice: 299, // assuming 12x monthly
-    features: [
-      'All Basic Boost features',
-      'Enhanced analytics dashboard',
-      'Priority support for verification requests',
-      'Custom portfolio themes'
-    ]
-  }
-};
+// Developer boosts removed: all talent boosts are now free.
 
 // High-value add-ons (à la carte services)
 export const ADD_ONS: Record<string, AddOn> = {
@@ -136,9 +106,7 @@ export function getEmployerTier(tier: string): PricingTier | undefined {
   return EMPLOYER_TIERS[tier.toLowerCase()];
 }
 
-export function getDeveloperBoost(tier: string): BoostTier | undefined {
-  return DEVELOPER_BOOSTS[tier.toLowerCase()];
-}
+
 
 export function getAddOn(name: string): AddOn | undefined {
   return ADD_ONS[name];
@@ -172,6 +140,7 @@ export function getEffectivePrice(basePrice: number, env: string = 'production')
   return basePrice;
 }
 
+
 // Stripe product ID mappings (placeholders - replace with actual Stripe product IDs)
 export const STRIPE_PRODUCT_IDS = {
   employer: {
@@ -187,26 +156,15 @@ export const STRIPE_PRODUCT_IDS = {
       monthly: 'prod_enterprise_monthly',
       yearly: 'prod_enterprise_yearly'
     }
-  },
-  developer: {
-    basic: {
-      monthly: 'prod_boost_basic_monthly',
-      yearly: 'prod_boost_basic_yearly'
-    },
-    premium: {
-      monthly: 'prod_boost_premium_monthly',
-      yearly: 'prod_boost_premium_yearly'
-    }
   }
 };
+
 
 // Export all for easy import
 export default {
   EMPLOYER_TIERS,
-  DEVELOPER_BOOSTS,
   ADD_ONS,
   getEmployerTier,
-  getDeveloperBoost,
   getAddOn,
   calculateYearlyPrice,
   getEffectivePrice,

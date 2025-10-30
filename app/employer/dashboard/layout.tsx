@@ -14,8 +14,16 @@ export default async function EmployerDashboardLayout({
     redirect('/login?redirect=/employer/dashboard');
   }
 
-  // TODO: Add check for user_type === 'employer'
-  // For now, allow all authenticated users
+  // Check if user is an employer
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('user_type')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.user_type !== 'employer') {
+    redirect('/unauthorized');
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

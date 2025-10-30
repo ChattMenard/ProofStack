@@ -260,11 +260,10 @@ BEGIN
     RAISE EXCEPTION 'Unauthorized';
   END IF;
   
-  -- TODO: Implement actual encryption using pgcrypto or Supabase Vault
-  -- For now, we'll just hash it to prevent plaintext storage
+  -- Implement actual encryption using pgcrypto
   UPDATE work_samples
   SET 
-    encrypted_content = encode(digest(p_content, 'sha256'), 'hex'),
+    encrypted_content = pgp_sym_encrypt(p_content, current_setting('app.encryption_key')),
     content = '[ENCRYPTED]', -- Remove plaintext
     updated_at = now()
   WHERE id = p_sample_id;
@@ -276,7 +275,7 @@ BEGIN
     p_sample_id,
     true,
     jsonb_build_object(
-      'encryption_method', 'sha256_hash',
+      'encryption_method', 'pgcrypto',
       'original_length', length(p_content)
     )
   );

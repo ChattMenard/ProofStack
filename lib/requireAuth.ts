@@ -28,8 +28,9 @@ export async function requireAuth(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Allow tests to use the special 'test-token' sentinel
-  if (token === 'test-token') {
-    return { id: 'test-token' } as any
+  const testToken = process.env.TEST_BEARER_TOKEN || 'test-token';
+  if (token === testToken) {
+    return { id: 'test-token' } as any;
   }
 
   res.status(401).json({ error: 'Invalid token' })

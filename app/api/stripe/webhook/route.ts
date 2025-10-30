@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '../../../../lib/stripe'
 import { supabase } from '../../../../lib/supabaseClient'
 import Stripe from 'stripe'
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -32,9 +35,8 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session
         const planType = session.metadata?.plan_type
         const organizationId = session.metadata?.organization_id
-        const professionalId = session.metadata?.professional_id
 
-        // Handle employer job posting subscriptions
+        // Handle employer job posting subscriptions only
         if (planType === 'job_post' && organizationId) {
           const subscriptionData: any = await stripe.subscriptions.retrieve(session.subscription as string)
           const priceId = subscriptionData.items.data[0].price.id
@@ -64,83 +66,6 @@ export async function POST(request: NextRequest) {
             .eq('id', organizationId)
 
           console.log('Created employer subscription:', { organizationId, tier: planDetails.tier })
-        }
-
-        // Handle portfolio boost subscriptions
-        if (planType === 'boost' && professionalId) {
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
-          const priceId = subscription.items.data[0].price.id
-
-          const tierMapping: Record<string, string> = {
-            'price_1SMrEzEQExutgDZVOVMMHQvN': 'standard',
-            'price_1SMrF0EQExutgDZVJ18doYbU': 'premium',
-            'price_1SMrF0EQExutgDZV4Gc0RZac': 'featured'
-          }
-
-          const tier = tierMapping[priceId] || 'standard'
-          const startsAt = new Date()
-          const expiresAt = new Date()
-          expiresAt.setMonth(expiresAt.getMonth() + 1)
-
-          await supabase
-            .from('professional_promotions')
-            .insert({
-              professional_id: professionalId,
-              tier: tier,
-              starts_at: startsAt.toISOString(),
-              expires_at: expiresAt.toISOString(),
-              is_active: true,
-              stripe_subscription_id: subscription.id,
-              billing_cycle: 'monthly',
-              views_count: 0,
-              saves_count: 0,
-              messages_count: 0
-            })
-
-          console.log('Created portfolio boost:', { professionalId, tier })
-        }
-
-        // Legacy promotion handling (backwards compatibility)
-        if (session.metadata?.type === 'promotion_purchase') {
-          const professionalIdLegacy = session.metadata.professional_id
-          const tier = session.metadata.tier
-
-          if (professionalIdLegacy && tier) {
-            const startsAt = new Date()
-            const expiresAt = new Date()
-            expiresAt.setMonth(expiresAt.getMonth() + 1)
-
-            await supabase
-              .from('professional_promotions')
-              .insert({
-                professional_id: professionalIdLegacy,
-                tier: tier,
-                starts_at: startsAt.toISOString(),
-                expires_at: expiresAt.toISOString(),
-                is_active: true,
-                stripe_subscription_id: session.subscription as string,
-                views_count: 0,
-                saves_count: 0,
-                messages_count: 0
-              })
-
-            console.log('Created legacy promotion:', { professionalIdLegacy, tier })
-          }
-        }
-        
-        // Original Pro subscription handling (backwards compatibility)
-        const userId = session.metadata?.userId
-        if (userId) {
-          await supabase
-            .from('profiles')
-            .update({
-              plan: 'pro',
-              stripe_customer_id: session.customer as string,
-              stripe_subscription_id: session.subscription as string,
-            })
-            .eq('auth_uid', userId)
-
-          console.log('Upgraded user to Pro:', userId)
         }
         break
       }
@@ -254,7 +179,16 @@ export async function POST(request: NextRequest) {
           .eq('stripe_customer_id', invoice.customer as string)
 
         console.log('Payment failed for customer:', invoice.customer)
-        // TODO: Send email notification
+
+        // Send email notification
+        if (invoice.customer_email) {
+          await resend.emails.send({
+            from: 'no-reply@proofstack.com',
+            to: invoice.customer_email,
+            subject: 'Payment Failed',
+            html: `<p>Dear Customer,</p><p>Your recent payment attempt failed. Please update your payment details to avoid service interruptions.</p>`
+          })
+        }
         break
       }
     }

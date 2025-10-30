@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -8,6 +9,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 /**
  * POST /api/forum/threads/[id]/replies
@@ -109,7 +111,21 @@ export async function POST(
       // Fall back to manual increment if RPC fails
     }
 
-    // TODO: Send notification to thread creator if not the same user
+    // Send notification to thread creator if not the same user
+    const { data: threadData } = await supabase
+      .from('forum_threads')
+      .select('creator_id')
+      .eq('id', threadId)
+      .single()
+
+    if (threadData?.creator_id && threadData.creator_id !== userId) {
+      await resend.emails.send({
+        from: 'no-reply@proofstack.com',
+        to: threadData.creator_id,
+        subject: 'New Reply to Your Thread',
+        html: `<p>Someone has replied to your thread. Check it out <a href='/forum/threads/${threadId}'>here</a>.</p>`
+      })
+    }
 
     return NextResponse.json(reply, { status: 201 })
   } catch (err) {

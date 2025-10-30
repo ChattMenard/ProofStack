@@ -33,7 +33,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN}`
         },
         body: {
           url: 'https://example.com/large-file.zip',
@@ -54,7 +54,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/exact-limit.zip',
@@ -72,7 +72,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/empty.txt',
@@ -93,7 +93,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file.txt',
@@ -130,7 +130,7 @@ describe('Upload API - Fuzz Tests', () => {
         const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
           method: 'POST',
           headers: {
-            authorization: 'Bearer test-token'
+            authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
           },
           body: {
             url: 'https://example.com/file',
@@ -152,7 +152,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file.unknown',
@@ -172,7 +172,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file',
@@ -209,7 +209,7 @@ describe('Upload API - Fuzz Tests', () => {
         const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
           method: 'POST',
           headers: {
-            authorization: 'Bearer test-token'
+            authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
           },
           body: {
             url,
@@ -228,7 +228,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file\0.txt',
@@ -248,7 +248,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: longUrl,
@@ -269,7 +269,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           // Missing url, type, size
@@ -285,7 +285,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: null,
@@ -303,7 +303,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file.txt',
@@ -329,7 +329,7 @@ describe('Upload API - Fuzz Tests', () => {
         const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
           method: 'POST',
           headers: {
-            authorization: 'Bearer test-token'
+            authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
           },
           body: {
             url: 'https://example.com/file.txt',
@@ -359,7 +359,7 @@ describe('Upload API - Fuzz Tests', () => {
         const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
           method: 'POST',
           headers: {
-            authorization: 'Bearer test-token'
+            authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
           },
           body: {
             url: 'https://example.com/file.txt',
@@ -381,7 +381,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file.txt',
@@ -401,7 +401,7 @@ describe('Upload API - Fuzz Tests', () => {
       const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
         method: 'POST',
         headers: {
-          authorization: 'Bearer test-token'
+          authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
         },
         body: {
           url: 'https://example.com/file.txt',
@@ -480,7 +480,7 @@ describe('Upload API - Fuzz Tests', () => {
         const { req, res } = createMocks<NextApiRequest, NextApiResponse>({
           method: 'POST',
           headers: {
-            authorization: 'Bearer test-token'
+            authorization: `Bearer ${process.env.TEST_BEARER_TOKEN || 'test-token'}`
           },
           body: {
             url: 'https://example.com/file.txt',

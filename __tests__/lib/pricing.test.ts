@@ -1,4 +1,4 @@
-import { EMPLOYER_TIERS, DEVELOPER_BOOSTS, ADD_ONS, getEmployerTier, getDeveloperBoost, getAddOn, calculateYearlyPrice, getEffectivePrice } from '../../lib/pricing';
+import { EMPLOYER_TIERS, ADD_ONS, getEmployerTier, getAddOn, calculateYearlyPrice, getEffectivePrice } from '../../lib/pricing';
 
 describe('Pricing Module', () => {
   describe('Employer Tiers', () => {
@@ -26,21 +26,7 @@ describe('Pricing Module', () => {
     });
   });
 
-  describe('Developer Boosts', () => {
-    it('should have correct basic boost pricing', () => {
-      const boost = DEVELOPER_BOOSTS.basic;
-      expect(boost.name).toBe('Basic Boost');
-      expect(boost.monthlyPrice).toBe(15);
-      expect(boost.yearlyPrice).toBe(149);
-    });
 
-    it('should have correct premium boost pricing', () => {
-      const boost = DEVELOPER_BOOSTS.premium;
-      expect(boost.name).toBe('Premium Boost');
-      expect(boost.monthlyPrice).toBe(25);
-      expect(boost.yearlyPrice).toBe(299);
-    });
-  });
 
   describe('Add-ons', () => {
     it('should have custom assessment add-on', () => {
@@ -67,10 +53,6 @@ describe('Pricing Module', () => {
       expect(tier).toBeUndefined();
     });
 
-    it('should get developer boost by name', () => {
-      const boost = getDeveloperBoost('basic');
-      expect(boost?.name).toBe('Basic Boost');
-    });
 
     it('should get add-on by name', () => {
       const addon = getAddOn('codeReview');

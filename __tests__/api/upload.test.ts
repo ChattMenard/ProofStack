@@ -188,11 +188,10 @@ describe('/api/upload', () => {
     const mockUser = { id: 'user-123' }
     mockRequireAuth.mockResolvedValue(mockUser)
 
-    // Mock Cloudinary env vars
-    const originalEnv = process.env
-    process.env.CLOUDINARY_CLOUD_NAME = 'test-cloud'
-    process.env.CLOUDINARY_API_KEY = 'test-key'
-    process.env.CLOUDINARY_API_SECRET = 'test-secret'
+  // Mock Cloudinary env vars securely
+  process.env.CLOUDINARY_CLOUD_NAME = process.env.TEST_CLOUDINARY_CLOUD_NAME
+  process.env.CLOUDINARY_API_KEY = process.env.TEST_CLOUDINARY_API_KEY
+  process.env.CLOUDINARY_API_SECRET = process.env.TEST_CLOUDINARY_API_SECRET
 
     const mockCloudinaryResponse = {
       secure_url: 'https://cloudinary.com/test-image.jpg'
@@ -254,7 +253,6 @@ describe('/api/upload', () => {
     expect(mockCloudinary.uploader.upload).toHaveBeenCalled()
     expect(res._getStatusCode()).toBe(200)
 
-    process.env = originalEnv
   })
 
   it('should handle database errors gracefully', async () => {
