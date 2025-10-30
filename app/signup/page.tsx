@@ -1,12 +1,47 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import AuthForm from '../../components/AuthForm'
 import { useRouter } from 'next/navigation'
+import { supabase } from '../../lib/supabaseClient'
 
 function SignupContent() {
   const [accountType, setAccountType] = useState<'professional' | 'employer' | null>(null)
   const router = useRouter()
+  const [checking, setChecking] = useState(true)
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // User is already logged in - check their profile type and redirect
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('auth_uid', session.user.id)
+          .single()
+        
+        if (profile?.user_type === 'professional') {
+          router.replace('/professional/dashboard')
+        } else if (profile?.user_type === 'employer') {
+          router.replace('/employer/dashboard')
+        } else {
+          router.replace('/dashboard')
+        }
+        return
+      }
+      setChecking(false)
+    }
+    checkAuth()
+  }, [router])
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-forest-950">
+        <div className="text-forest-300">Loading...</div>
+      </div>
+    )
+  }
 
   // If account type not selected, show selection screen
   if (!accountType) {

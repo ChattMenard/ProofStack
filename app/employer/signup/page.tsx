@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
 
 const INDUSTRIES = [
   'Technology',
@@ -29,6 +30,7 @@ export default function EmployerSignupPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [checking, setChecking] = useState(true);
   const [formData, setFormData] = useState({
     companyName: '',
     industry: '',
@@ -39,6 +41,31 @@ export default function EmployerSignupPage() {
     password: '',
     confirmPassword: ''
   });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // User is already logged in - check their profile type and redirect
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('auth_uid', session.user.id)
+          .single()
+        
+        if (profile?.user_type === 'professional') {
+          router.replace('/professional/dashboard')
+        } else if (profile?.user_type === 'employer') {
+          router.replace('/employer/dashboard')
+        } else {
+          router.replace('/dashboard')
+        }
+        return
+      }
+      setChecking(false)
+    }
+    checkAuth()
+  }, [router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
@@ -95,6 +122,14 @@ export default function EmployerSignupPage() {
       setLoading(false);
     }
   };
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
