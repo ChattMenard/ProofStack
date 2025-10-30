@@ -27,19 +27,22 @@ DECLARE
   func_record RECORD;
   func_signature TEXT;
   set_search_path_sql TEXT;
+  invoker_count integer := 0;
+  definer_count integer := 0;
 BEGIN
-  -- Loop through all functions in public schema without explicit search_path
+  -- Loop through ALL functions in public schema without explicit search_path
+  -- Including SECURITY DEFINER functions (they need search_path too!)
   FOR func_record IN 
     SELECT 
       p.proname as function_name,
       pg_get_function_identity_arguments(p.oid) as arguments,
       p.oid::regprocedure::text as full_signature,
-      p.proconfig as config_array
+      p.proconfig as config_array,
+      p.prosecdef as is_security_definer
     FROM pg_proc p
     JOIN pg_namespace n ON p.pronamespace = n.oid
     WHERE n.nspname = 'public'
     AND p.proname NOT LIKE 'pg_%'
-    AND p.prosecdef = false  -- Skip SECURITY DEFINER functions (handle separately)
     AND (
       p.proconfig IS NULL  -- No config set
       OR NOT (p.proconfig::text LIKE '%search_path%')  -- Config exists but no search_path
@@ -54,14 +57,22 @@ BEGIN
     -- Execute the ALTER statement
     BEGIN
       EXECUTE set_search_path_sql;
-      RAISE NOTICE 'Set search_path on: %', func_record.full_signature;
+      
+      IF func_record.is_security_definer THEN
+        definer_count := definer_count + 1;
+        RAISE NOTICE '[SECURITY DEFINER] Set search_path on: %', func_record.full_signature;
+      ELSE
+        invoker_count := invoker_count + 1;
+        RAISE NOTICE '[SECURITY INVOKER] Set search_path on: %', func_record.full_signature;
+      END IF;
     EXCEPTION 
       WHEN OTHERS THEN
         RAISE WARNING 'Failed to set search_path on %: %', func_record.full_signature, SQLERRM;
     END;
   END LOOP;
   
-  RAISE NOTICE '✅ Migration complete: All functions now have explicit search_path';
+  RAISE NOTICE '✅ Migration complete: Set search_path on % INVOKER and % DEFINER functions', 
+    invoker_count, definer_count;
 END $$;
 
 -- =============================================================================
