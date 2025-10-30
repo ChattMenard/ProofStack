@@ -1,8 +1,60 @@
 "use client"
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import EmployerHero from '@/components/EmployerHero'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function Home() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Check if user is already authenticated and redirect to appropriate dashboard
+    const checkAuthAndRedirect = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (session?.user) {
+          // User is authenticated, check their profile type
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('user_type')
+            .eq('auth_uid', session.user.id)
+            .single()
+          
+          // Redirect based on user type
+          if (profile?.user_type === 'professional') {
+            router.replace('/professional/dashboard')
+            return
+          } else if (profile?.user_type === 'employer') {
+            router.replace('/employer/dashboard')
+            return
+          } else if (profile) {
+            // Fallback to generic dashboard if user_type is not set
+            router.replace('/dashboard')
+            return
+          }
+        }
+      } catch (error) {
+        console.error('Auth check error:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkAuthAndRedirect()
+  }, [router])
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-secondary">Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-20 min-h-screen">
       {/* Professional Hero Section */}
