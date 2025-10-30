@@ -142,6 +142,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <h4 className="font-semibold text-forest-200 dark:text-gray-200 mb-4">Product</h4>
                   <ul className="space-y-2 text-sm">
                     <li><Link href="/pricing" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Pricing</Link></li>
+                    <li><Link href="/pricing/talent" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Talent Pricing</Link></li>
+                    <li><Link href="/pricing/employer" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Employer Pricing</Link></li>
                     <li><Link href="/dashboard" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Dashboard</Link></li>
                     <li><Link href="/upload" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Upload</Link></li>
                     <li><Link href="/portfolio" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Portfolio</Link></li>
@@ -154,6 +156,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <ul className="space-y-2 text-sm">
                     <li><Link href="/about" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">About</Link></li>
                     <li><Link href="/contact" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Contact</Link></li>
+                    <li><Link href="/signup" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Sign Up</Link></li>
+                    <li><Link href="/login" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Login</Link></li>
                     <li><Link href="/terms" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Terms</Link></li>
                     <li><Link href="/privacy" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Privacy</Link></li>
                     <li><Link href="/sitemap" className="text-forest-400 dark:text-gray-400 hover:text-sage-400 dark:hover:text-sage-300 transition-colors">Sitemap</Link></li>

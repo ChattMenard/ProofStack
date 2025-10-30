@@ -50,7 +50,7 @@ function SignupContent() {
         <div className="max-w-4xl w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-forest-50">
-              Join ProofStack
+              Sign Up - Join ProofStack
             </h2>
             <p className="mt-2 text-center text-sm text-forest-300">
               Already have an account?{' '}
