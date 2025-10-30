@@ -76,17 +76,15 @@ export async function extractSkillsFromText(text: string, model = 'mistral') : P
       (resp as any)?.output && (Array.isArray((resp as any).output) ? (resp as any).output.map((o:any)=>o.content).join('') : (resp as any).output)
     ) || (Array.isArray((resp as any)?.choices) ? (resp as any).choices.map((c:any)=>c.text || c.message?.content).join('') : (resp as any).choices?.[0]?.message?.content) || JSON.stringify(resp)
   } catch (e: any) {
-    console.log('Ollama failed, trying Anthropic', e.message)
     // Try Anthropic
     try {
       raw = await analyzeWithAnthropic(prompt)
     } catch (e2: any) {
-      console.log('Anthropic also failed, trying Hugging Face', e2.message)
       // Try Hugging Face
       try {
         raw = await analyzeWithHuggingFace(prompt)
       } catch (e3: any) {
-        console.log('Hugging Face also failed', e3.message)
+        // All AI providers failed - return empty array
         return []
       }
     }

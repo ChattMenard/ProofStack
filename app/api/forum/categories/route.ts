@@ -13,7 +13,7 @@ const supabase = createClient(
  * GET /api/forum/categories
  * Fetch all public forum categories
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { data: categories, error } = await supabase
       .from('forum_categories')
