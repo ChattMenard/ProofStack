@@ -19,9 +19,15 @@ export default function SitemapPage() {
       icon: "🌐",
       items: [
         { path: "/", name: "Home", description: "Landing page" },
+        { path: "/portfolios", name: "Talent Marketplace", description: "Browse verified talent" },
+        { path: "/projectlistings", name: "Job Marketplace", description: "Browse job opportunities" },
         { path: "/about", name: "About", description: "About ProofStack" },
-        { path: "/pricing", name: "Pricing", description: "Pricing plans" },
+        { path: "/pricing", name: "Pricing", description: "Employer pricing plans" },
+        { path: "/pricing/talent", name: "Talent Pricing", description: "Talent boost pricing" },
+        { path: "/pricing/employer", name: "Employer Pricing", description: "Employer hiring plans" },
         { path: "/contact", name: "Contact", description: "Contact form" },
+        { path: "/forum", name: "Community Forum", description: "Discussion forum" },
+        { path: "/forum/new", name: "New Discussion", description: "Start a forum thread" },
         { path: "/privacy", name: "Privacy Policy", description: "Privacy policy" },
         { path: "/terms", name: "Terms of Service", description: "Terms of service" },
         { path: "/sitemap", name: "Sitemap", description: "This page" },
@@ -32,7 +38,8 @@ export default function SitemapPage() {
       icon: "🔐",
       items: [
         { path: "/login", name: "Sign In", description: "Login page" },
-        { path: "/auth/signup", name: "Sign Up", description: "Registration page" },
+        { path: "/signup", name: "Sign Up", description: "Registration page" },
+        { path: "/employer/signup", name: "Employer Sign Up", description: "Employer registration" },
         { path: "/auth/callback", name: "OAuth Callback", description: "OAuth redirect handler" },
       ]
     },
@@ -41,9 +48,17 @@ export default function SitemapPage() {
       icon: "👨‍💻",
       items: [
         { path: "/professional/dashboard", name: "Dashboard", description: "Professional home" },
-        { path: "/professional/settings", name: "Settings", description: "Profile settings & AI analysis" },
+        { path: "/professional/settings", name: "Settings", description: "Profile settings" },
+        { path: "/professional/preferences", name: "Preferences", description: "Work preferences" },
         { path: "/professional/messages", name: "Messages", description: "Inbox & conversations" },
-        { path: "/professional/upload", name: "Upload", description: "Upload work samples" },
+        { path: "/professional/reviews", name: "Reviews", description: "My reviews" },
+        { path: "/professional/my-jobs", name: "My Job Listings", description: "Posted job listings" },
+        { path: "/upload", name: "Upload", description: "Upload work samples" },
+        { path: "/professional/assessments", name: "Assessments", description: "Skill assessments" },
+        { path: "/professional/import-git", name: "Import GitHub", description: "Import GitHub activity" },
+        { path: "/professional/promote", name: "Promote Profile", description: "Profile promotion options" },
+        { path: "/professional/promote/manage", name: "Manage Promotion", description: "Track promotion analytics" },
+        { path: "/professional/verify", name: "Verify Accounts", description: "Verify LinkedIn/GitHub" },
         { path: "/portfolio/[username]", name: "Portfolio", description: "Public portfolio page" },
       ]
     },
@@ -52,18 +67,24 @@ export default function SitemapPage() {
       icon: "🏢",
       items: [
         { path: "/employer/dashboard", name: "Dashboard", description: "Employer home" },
-        { path: "/employer/discover", name: "Discover", description: "Browse professionals" },
+        { path: "/employer/discover", name: "Discover Talent", description: "Search and browse talent" },
+        { path: "/employer/saved", name: "Saved Talent", description: "Saved professionals" },
+        { path: "/employer/applications", name: "Applications", description: "Job applications" },
+        { path: "/employer/post-job", name: "Post a Job", description: "Create job listing" },
         { path: "/employer/messages", name: "Messages", description: "Inbox & conversations" },
-        { path: "/employer/reviews", name: "Reviews", description: "Manage reviews" },
+        { path: "/employer/reviews", name: "My Reviews", description: "Reviews I've written" },
         { path: "/employer/reviews/new/[professionalId]", name: "Write Review", description: "Submit review + work sample" },
-        { path: "/employer/organization", name: "Organization", description: "Company settings" },
+        { path: "/employer/profile", name: "Company Profile", description: "Company information" },
+        { path: "/employer/settings", name: "Settings", description: "Account settings" },
       ]
     },
     admin: {
       title: "Admin Panel",
       icon: "⚙️",
       items: [
-        { path: "/admin", name: "Admin Dashboard", description: "Platform administration" },
+        { path: "/admin/dashboard", name: "Admin Dashboard", description: "Platform administration" },
+        { path: "/admin/analytics/skills", name: "Skills Analytics", description: "Skill level analytics" },
+        { path: "/admin/security", name: "Security Dashboard", description: "Security monitoring" },
       ]
     },
     api: {
