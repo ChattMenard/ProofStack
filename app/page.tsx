@@ -72,12 +72,12 @@ export default function Home() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage-600 dark:bg-sage-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-sage-700 dark:bg-sage-500"></span>
             </span>
-            For Professionals - Build Your Verified Portfolio
+            For Talent - Build Your Verified Portfolio
           </div>
 
           {/* Main Headline */}
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-primary leading-tight px-4">
-            Turn Your Skills Into
+            ProofStack - Turn Your Skills Into
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-sage-600 to-earth-600 dark:from-sage-400 dark:to-earth-400 block mt-2 animate-gradient">
               Verified Proof
             </span>

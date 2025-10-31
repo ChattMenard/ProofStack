@@ -75,7 +75,7 @@ export default function PortfoliosPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            🎯 The Talent
+            🎯 Talent Marketplace
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
             Browse verified talent ready for your next project

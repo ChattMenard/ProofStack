@@ -137,7 +137,7 @@ export default function EmployerSignupPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Hire Top Talent
+            Employer Sign Up - Hire Top Talent
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-300">
             Create your employer account and start discovering verified professionals
