@@ -23,3 +23,7 @@ supabase/.temp/
 *.bak
 *.old
 *~
+
+# API routes
+app/api/
+pages/api/
