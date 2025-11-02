@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
 import { assessmentQuestions } from '@/lib/assessmentQuestions'
 
 // Use centralized question bank
@@ -72,6 +73,14 @@ export default function AssessmentTakePage() {
     setSubmitting(true)
 
     try {
+      // Get auth session for bearer token
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        alert('Please log in to submit assessment')
+        setSubmitting(false)
+        return
+      }
+
       // Calculate score
       let correct = 0
       quiz.questions.forEach((q: any, idx: number) => {
@@ -82,7 +91,10 @@ export default function AssessmentTakePage() {
 
       const res = await fetch('/api/assessments/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
           assessmentType: quiz.type,
           targetLevel: quiz.targetLevel,
